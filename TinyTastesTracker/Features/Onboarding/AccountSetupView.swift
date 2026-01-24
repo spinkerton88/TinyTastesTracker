@@ -187,8 +187,8 @@ struct AccountSetupView: View {
     private func createAccount() {
         isCreatingAccount = true
         
-        // Create UserAccount
-        let newAccount = UserAccount(
+        // Create ParentProfile
+        let newAccount = ParentProfile(
             parentName: accountName.isEmpty ? nil : accountName,
             icloudStatus: cloudKitStatus
         )

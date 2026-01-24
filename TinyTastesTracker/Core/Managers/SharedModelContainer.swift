@@ -12,7 +12,7 @@ class SharedModelContainer {
     static let shared: ModelContainer = {
         let schema = Schema([
             UserProfile.self,
-            UserAccount.self,
+            ParentProfile.self,
             Badge.self,
             Milestone.self,
 

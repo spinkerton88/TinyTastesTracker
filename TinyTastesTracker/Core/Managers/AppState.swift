@@ -17,7 +17,7 @@ class AppState {
     let profileManager = ProfileManager()
 
     /// The signed-in user/parent account
-    var userAccount: UserAccount?
+    var userAccount: ParentProfile?
 
     /// Active user profile (backward compatible property)
     var userProfile: UserProfile? {
@@ -479,7 +479,7 @@ class AppState {
 
     func loadData(context: ModelContext) {
         // Load User Account
-        let accountDescriptor = FetchDescriptor<UserAccount>()
+        let accountDescriptor = FetchDescriptor<ParentProfile>()
         if let accounts = try? context.fetch(accountDescriptor), let account = accounts.first {
             self.userAccount = account
         }
