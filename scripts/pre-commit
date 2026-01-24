@@ -1,0 +1,83 @@
+#!/bin/bash
+# pre-commit hook for Tiny Tastes Tracker
+# This hook runs SwiftLint and SwiftFormat checks before allowing commits
+
+echo "🔍 Running pre-commit checks..."
+
+# Check if SwiftLint is installed
+if ! command -v swiftlint &> /dev/null; then
+    echo "⚠️  SwiftLint is not installed. Install it with: brew install swiftlint"
+    echo "Skipping SwiftLint check..."
+else
+    echo "📝 Running SwiftLint..."
+    cd TinyTastesTracker
+
+    # Get list of staged Swift files
+    SWIFT_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep ".swift$")
+
+    if [ -n "$SWIFT_FILES" ]; then
+        # Run SwiftLint on staged files
+        echo "$SWIFT_FILES" | xargs swiftlint lint --quiet
+
+        if [ $? -ne 0 ]; then
+            echo "❌ SwiftLint found issues. Please fix them before committing."
+            echo "Run 'swiftlint autocorrect' to fix automatically correctable issues."
+            exit 1
+        fi
+        echo "✅ SwiftLint passed"
+    fi
+    cd ..
+fi
+
+# Check if SwiftFormat is installed
+if ! command -v swiftformat &> /dev/null; then
+    echo "⚠️  SwiftFormat is not installed. Install it with: brew install swiftformat"
+    echo "Skipping SwiftFormat check..."
+else
+    echo "📐 Running SwiftFormat..."
+    cd TinyTastesTracker
+
+    # Get list of staged Swift files
+    SWIFT_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep ".swift$")
+
+    if [ -n "$SWIFT_FILES" ]; then
+        # Check formatting (lint mode)
+        echo "$SWIFT_FILES" | xargs swiftformat --lint
+
+        if [ $? -ne 0 ]; then
+            echo "❌ SwiftFormat found formatting issues. Run 'swiftformat .' to fix them."
+            exit 1
+        fi
+        echo "✅ SwiftFormat passed"
+    fi
+    cd ..
+fi
+
+# Check for hardcoded secrets
+echo "🔒 Checking for hardcoded secrets..."
+if git diff --cached | grep -E "AIza[0-9A-Za-z\-_]{35}" > /dev/null; then
+    echo "❌ ERROR: Potential API key found in staged changes!"
+    echo "Please remove hardcoded API keys before committing."
+    exit 1
+fi
+echo "✅ No hardcoded secrets detected"
+
+# Check for excessive force unwraps (more than 5 in new changes)
+echo "⚠️  Checking for force unwraps..."
+FORCE_UNWRAPS=$(git diff --cached | grep -E "^\+" | grep "!" | grep -v "// swiftlint:disable" | wc -l | tr -d ' ')
+if [ "$FORCE_UNWRAPS" -gt 5 ]; then
+    echo "⚠️  WARNING: $FORCE_UNWRAPS force unwraps detected in staged changes."
+    echo "Consider using optional binding or guard statements instead."
+    echo "Proceeding with commit, but please review..."
+fi
+
+# Check for TODO/FIXME comments
+echo "📝 Checking for TODO/FIXME comments..."
+TODO_COUNT=$(git diff --cached | grep -E "^\+" | grep -E "(TODO|FIXME)" | wc -l | tr -d ' ')
+if [ "$TODO_COUNT" -gt 0 ]; then
+    echo "ℹ️  Found $TODO_COUNT new TODO/FIXME comments"
+    git diff --cached | grep -E "^\+" | grep -E "(TODO|FIXME)" || true
+fi
+
+echo "✅ All pre-commit checks passed!"
+exit 0

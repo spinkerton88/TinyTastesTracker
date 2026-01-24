@@ -1,0 +1,51 @@
+# Codecov Configuration
+# https://docs.codecov.com/docs/codecov-yaml
+
+coverage:
+  precision: 2
+  round: down
+  range: "50...90"
+
+  status:
+    project:
+      default:
+        target: 60%
+        threshold: 2%
+        if_ci_failed: error
+
+    patch:
+      default:
+        target: 70%
+        threshold: 5%
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+ignore:
+  - "TinyTastesTracker/Resources/**"
+  - "TinyTastesTracker/Supporting Files/**"
+  - "**/Info.plist"
+  - "**/*Tests.swift"
+  - "TinyTastesTrackerTests/**"
+  - "TinyTastesTrackerUITests/**"
+  - "TinyTastesWidget/**"
+
+flags:
+  unittests:
+    paths:
+      - TinyTastesTracker/Core/
+      - TinyTastesTracker/Features/
+    carryforward: true
+
+  uitests:
+    paths:
+      - TinyTastesTracker/UI/
+      - TinyTastesTracker/Features/
+    carryforward: true
+
+github_checks:
+  annotations: true

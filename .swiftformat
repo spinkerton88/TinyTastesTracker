@@ -1,0 +1,91 @@
+# SwiftFormat Configuration for Tiny Tastes Tracker
+# Automatic code formatting rules
+
+# File options
+--exclude Pods,build,.build,DerivedData,TinyTastesTracker/Resources/GenerativeAI-Info.plist
+
+# Format options
+--swiftversion 5.9
+
+# Indentation
+--indent 4
+--indentcase false
+--smarttabs enabled
+--tabwidth 4
+--xcodeindentation enabled
+
+# Wrapping
+--maxwidth 120
+--wraparguments before-first
+--wrapcollections before-first
+--wrapparameters before-first
+--closingparen balanced
+--funcattributes prev-line
+--typeattributes prev-line
+--varattributes prev-line
+
+# Spacing
+--trimwhitespace always
+--commas inline
+--decimalgrouping 3,6
+--binarygrouping 4,8
+--octalgrouping 4,8
+--hexgrouping 4,8
+--fractiongrouping disabled
+--exponentgrouping disabled
+--hexliteralcase uppercase
+--elseposition same-line
+--guardelse same-line
+--emptybraces spaced
+--ranges spaced
+
+# Linebreaks
+--linebreaks lf
+--semicolons never
+--ifdef no-indent
+--patternlet inline
+
+# Organization
+--importgrouping testable-bottom
+--organizetypes class,struct,enum,extension
+--extensionacl on-extension
+--marktypes always
+--markextensions always
+--beforemarks
+
+# Wrapping and alignment
+--wrapternary before-operators
+--wrapconditions before-first
+--wrapcollections before-first
+
+# Enable/disable specific rules
+--enable isEmpty
+--enable sortedImports
+--enable strongOutlets
+--enable strongifiedSelf
+--enable trailingCommas
+--enable typeSugar
+--enable void
+--enable wrapMultilineStatementBraces
+
+# Disable rules that conflict with team style
+--disable andOperator
+--disable redundantReturn
+--disable unusedArguments
+
+# Experimental rules (disabled by default)
+--disable wrapEnumCases
+--disable wrapSwitchCases
+
+# Additional rules
+--selfrequired
+--self insert
+--stripunusedargs closure-only
+--redundanttype inferred
+--nospaceoperators ...,..<
+
+# Comments
+--preservedoccomments
+
+# Header
+--header "\n {file}\n TinyTastesTracker\n\n"

@@ -1,0 +1,45 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project TinyTastesTracker.xcodeproj -scheme TinyTastesTracker -sdk iphonesimulator -destination "generic/platform=iOS Simulator" build
+
+Build settings from command line:
+    SDKROOT = iphonesimulator26.2
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  generative-ai-swift: https://github.com/google/generative-ai-swift @ 0.5.6
+
+2026-01-12 20:38:28.368 xcodebuild[11693:18076296] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (4 targets)
+    Target 'TinyTastesTracker' in project 'TinyTastesTracker'
+        ➜ Explicit dependency on target 'TinyTastesWidget' in project 'TinyTastesTracker'
+        ➜ Explicit dependency on target 'GoogleGenerativeAI' in project 'generative-ai-swift'
+    Target 'GoogleGenerativeAI' in project 'generative-ai-swift'
+        ➜ Explicit dependency on target 'GoogleGenerativeAI' in project 'generative-ai-swift'
+    Target 'GoogleGenerativeAI' in project 'generative-ai-swift' (no dependencies)
+    Target 'TinyTastesWidget' in project 'TinyTastesTracker' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+error: unable to attach DB: error: accessing build database "/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/XCBuildData/build.db": database is locked Possibly there are two concurrent builds running in the same filesystem location.
+** BUILD FAILED **
+
+
+The following build commands failed:
+	Building project TinyTastesTracker with scheme TinyTastesTracker
+(1 failure)

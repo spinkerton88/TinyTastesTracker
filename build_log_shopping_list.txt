@@ -1,0 +1,987 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project TinyTastesTracker.xcodeproj -scheme TinyTastesTracker -destination "platform=iOS Simulator,name=iPhone 16 Pro" clean build
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  generative-ai-swift: https://github.com/google/generative-ai-swift @ 0.5.6
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:B67619FD-417C-4EAD-A3E5-28234EB254E4, OS:18.5, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:B67619FD-417C-4EAD-A3E5-28234EB254E4, OS:18.5, name:iPhone 16 Pro }
+ComputePackagePrebuildTargetDependencyGraph
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+** CLEAN SUCCEEDED **
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:B67619FD-417C-4EAD-A3E5-28234EB254E4, OS:18.5, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:B67619FD-417C-4EAD-A3E5-28234EB254E4, OS:18.5, name:iPhone 16 Pro }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (4 targets)
+    Target 'TinyTastesTracker' in project 'TinyTastesTracker'
+        ➜ Explicit dependency on target 'TinyTastesWidget' in project 'TinyTastesTracker'
+        ➜ Explicit dependency on target 'GoogleGenerativeAI' in project 'generative-ai-swift'
+    Target 'GoogleGenerativeAI' in project 'generative-ai-swift'
+        ➜ Explicit dependency on target 'GoogleGenerativeAI' in project 'generative-ai-swift'
+    Target 'GoogleGenerativeAI' in project 'generative-ai-swift' (no dependencies)
+    Target 'TinyTastesWidget' in project 'TinyTastesTracker' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Assets.xcassets /Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Resources/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: f8e40b5b980d45c1636ff269e041932e
+Build description path: /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/XCBuildData/f8e40b5b980d45c1636ff269e041932e.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache
+
+CreateBuildDirectory /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    builtin-create-build-directory /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products
+
+CreateBuildDirectory /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    builtin-create-build-directory /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex
+
+CreateBuildDirectory /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    builtin-create-build-directory /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator
+
+CreateBuildDirectory /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    builtin-create-build-directory /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker-d5c5d7c8e3b2410b48e8c725747531df-VFS-iphonesimulator/all-product-headers.yaml
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker-d5c5d7c8e3b2410b48e8c725747531df-VFS-iphonesimulator/all-product-headers.yaml
+
+CreateBuildDirectory /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/PackageFrameworks
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    builtin-create-build-directory /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/PackageFrameworks
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-generated-files.hmap (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-generated-files.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-own-target-headers.hmap (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.hmap (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-project-headers.hmap (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-project-headers.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-all-non-framework-target-headers.hmap (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-DebugDylibPath-normal-arm64.txt (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-DebugDylibPath-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-DebugDylibInstallName-normal-arm64.txt (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-DebugDylibInstallName-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-all-target-headers.hmap (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-DebugEntryPoint-normal-arm64.txt (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-DebugEntryPoint-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.LinkFileList (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.LinkFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget_const_extract_protocols.json (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.DependencyStaticMetadataFileList (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.DependencyMetadataFileList (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.SwiftFileList (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.SwiftFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.SwiftConstValuesFileList (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget-OutputFileMap.json (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources/Entitlements-Simulated.plist (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources/Entitlements-Simulated.plist
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.DependencyStaticMetadataFileList (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.DependencyMetadataFileList (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-project-headers.hmap (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-project-headers.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.hmap (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-own-target-headers.hmap (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-generated-files.hmap (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-generated-files.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-all-target-headers.hmap (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-all-non-framework-target-headers.hmap (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-DebugDylibPath-normal-arm64.txt (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-DebugDylibPath-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-DebugDylibInstallName-normal-arm64.txt (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-DebugDylibInstallName-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker_const_extract_protocols.json (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker.SwiftFileList (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker.SwiftFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker.SwiftConstValuesFileList (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker.LinkFileList (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker.LinkFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker-OutputFileMap.json (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/Entitlements-Simulated.plist (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/Entitlements-Simulated.plist
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI_const_extract_protocols.json (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.SwiftFileList (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.SwiftFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.SwiftConstValuesFileList (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.LinkFileList (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.LinkFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI-OutputFileMap.json (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/GoogleGenerativeAI.modulemap (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/GoogleGenerativeAI.modulemap
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/GoogleGenerativeAI.DependencyStaticMetadataFileList (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/GoogleGenerativeAI.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/GoogleGenerativeAI.DependencyMetadataFileList (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    write-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/GoogleGenerativeAI.DependencyMetadataFileList
+
+MkDir /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.appex (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /bin/mkdir -p /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.appex
+
+MkDir /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app/PlugIns (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /bin/mkdir -p /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app/PlugIns
+
+MkDir /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app/Frameworks (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /bin/mkdir -p /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app/Frameworks
+
+MkDir /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /bin/mkdir -p /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app
+
+ProcessProductPackaging "" /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.appex-Simulated.xcent (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+    Entitlements:
+    
+    {
+    "application-identifier" = "7P655RDJXB.com.tinytastes.tracker.widget";
+}
+    
+    builtin-productPackagingUtility -entitlements -format xml -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.appex-Simulated.xcent
+
+Copy /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/GoogleGenerativeAI.modulemap /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/GoogleGenerativeAI.modulemap (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/GoogleGenerativeAI.modulemap /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator
+
+ProcessProductPackagingDER /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.appex-Simulated.xcent /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.appex-Simulated.xcent.der (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /usr/bin/derq query -f xml -i /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.appex-Simulated.xcent -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.appex-Simulated.xcent.der --raw
+
+ProcessInfoPlistFile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.appex/Info.plist /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesWidget/Info.plist (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-infoPlistUtility /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesWidget/Info.plist -producttype com.apple.product-type.app-extension -expandbuildsettings -format binary -platform iphonesimulator -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.appex/Info.plist
+
+Ld /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.appex/__preview.dylib normal (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F. -install_name @rpath/TinyTastesWidget.debug.dylib -dead_strip -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget_dependency_info.dat -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.appex-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget.appex-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.appex/__preview.dylib
+
+SwiftDriver TinyTastesWidget normal arm64 com.apple.xcode.tools.swift.compiler (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name TinyTastesWidget -Onone -enforce-exclusivity\=checked @/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -application-extension -enable-testing -index-store-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Index.noindex/DataStore -swift-version 5 -I /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F . -c -j12 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget_const_extract_protocols.json -Xcc -iquote -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-generated-files.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-own-target-headers.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker-d5c5d7c8e3b2410b48e8c725747531df-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-project-headers.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources-normal/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget-Swift.h -working-directory /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver GoogleGenerativeAI normal arm64 com.apple.xcode.tools.swift.compiler (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name GoogleGenerativeAI -Onone -enforce-exclusivity\=checked @/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DXcode -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios12.0-simulator -g -module-cache-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -suppress-warnings -index-store-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Index.noindex/DataStore -swift-version 5 -I /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -I /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/Developer/Library/Frameworks -c -j12 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI_const_extract_protocols.json -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/DerivedSources-normal/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/DerivedSources/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI-Swift.h -working-directory /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ LastFeedWidget.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesWidget/LastFeedWidget.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesWidget/LastFeedWidget.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 Compiling\ SleepActivityAttributes.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/SleepActivityAttributes.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/SleepActivityAttributes.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ TinyTastesWidget (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+EmitSwiftModule normal arm64 (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 Compiling\ TinyTastesWidgetBundle.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesWidget/TinyTastesWidgetBundle.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesWidget/TinyTastesWidgetBundle.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 Compiling\ WidgetLogBottleIntent.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesWidget/WidgetLogBottleIntent.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesWidget/WidgetLogBottleIntent.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 Compiling\ NewbornLog.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/NewbornLog.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/NewbornLog.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 Compiling\ SleepTimerActivity.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesWidget/SleepTimerActivity.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesWidget/SleepTimerActivity.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 Compiling\ Safety.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/Safety.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/Safety.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 Compiling\ GenerativeAISwift.swift,\ GenerativeModel.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerativeAISwift.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerativeModel.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerativeAISwift.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerativeModel.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ GoogleGenerativeAI (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+EmitSwiftModule normal arm64 (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 Compiling\ GenerativeAIRequest.swift,\ GenerativeAIService.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerativeAIRequest.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerativeAIService.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerativeAIRequest.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerativeAIService.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 Compiling\ PartsRepresentable.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/PartsRepresentable.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/PartsRepresentable.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 Compiling\ Errors.swift,\ FunctionCalling.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/Errors.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/FunctionCalling.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/Errors.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/FunctionCalling.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling PartsRepresentable.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 Compiling\ JSONValue.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/JSONValue.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/JSONValue.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling TinyTastesWidgetBundle.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 Compiling\ ModelContent.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/ModelContent.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/ModelContent.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling WidgetLogBottleIntent.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 Compiling\ GenerateContentResponse.swift,\ GenerationConfig.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerateContentResponse.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerationConfig.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerateContentResponse.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerationConfig.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for GoogleGenerativeAI (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftDriver\ Compilation\ Requirements GoogleGenerativeAI normal arm64 com.apple.xcode.tools.swift.compiler (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name GoogleGenerativeAI -Onone -enforce-exclusivity\=checked @/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.SwiftFileList -DSWIFT_PACKAGE -DDEBUG -DXcode -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios12.0-simulator -g -module-cache-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -suppress-warnings -index-store-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Index.noindex/DataStore -swift-version 5 -I /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -I /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/Developer/Library/Frameworks -c -j12 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI_const_extract_protocols.json -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/DerivedSources-normal/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/DerivedSources/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/DerivedSources -Xcc -DSWIFT_PACKAGE -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI-Swift.h -working-directory /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling SleepActivityAttributes.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 Compiling\ Logging.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/Logging.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/Logging.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftMergeGeneratedHeaders /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/GoogleGenerativeAI-Swift.h /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI-Swift.h (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    builtin-swiftHeaderTool -arch arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI-Swift.h -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/GoogleGenerativeAI-Swift.h
+
+SwiftDriverJobDiscovery normal arm64 Compiling SleepTimerActivity.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+Copy /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/GoogleGenerativeAI.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.swiftmodule (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.swiftmodule /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/GoogleGenerativeAI.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/GoogleGenerativeAI.swiftmodule/arm64-apple-ios-simulator.swiftdoc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.swiftdoc (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.swiftdoc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/GoogleGenerativeAI.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/GoogleGenerativeAI.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.abi.json (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.abi.json /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/GoogleGenerativeAI.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/GoogleGenerativeAI.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.swiftsourceinfo (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/generative-ai-swift.build/Debug-iphonesimulator/GoogleGenerativeAI.build/Objects-normal/arm64/GoogleGenerativeAI.swiftsourceinfo /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/GoogleGenerativeAI.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+SwiftCompile normal arm64 Compiling\ Chat.swift,\ CountTokensRequest.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/Chat.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/CountTokensRequest.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/Chat.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/CountTokensRequest.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 Compiling\ PartsRepresentable+Image.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/PartsRepresentable+Image.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/PartsRepresentable+Image.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling Safety.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 Compiling\ GenerateContentError.swift,\ GenerateContentRequest.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerateContentError.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerateContentRequest.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerateContentError.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/SourcePackages/checkouts/generative-ai-swift/Sources/GoogleAI/GenerateContentRequest.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker.xcodeproj
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling GenerativeAISwift.swift, GenerativeModel.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftDriverJobDiscovery normal arm64 Compiling LastFeedWidget.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftDriverJobDiscovery normal arm64 Compiling Logging.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for TinyTastesWidget (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftDriver\ Compilation\ Requirements TinyTastesWidget normal arm64 com.apple.xcode.tools.swift.compiler (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name TinyTastesWidget -Onone -enforce-exclusivity\=checked @/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -application-extension -enable-testing -index-store-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Index.noindex/DataStore -swift-version 5 -I /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F . -c -j12 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget_const_extract_protocols.json -Xcc -iquote -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-generated-files.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-own-target-headers.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker-d5c5d7c8e3b2410b48e8c725747531df-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-project-headers.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources-normal/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget-Swift.h -working-directory /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker -experimental-emit-module-separately -disable-cmo
+
+SwiftMergeGeneratedHeaders /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources/TinyTastesWidget-Swift.h /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget-Swift.h (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-swiftHeaderTool -arch arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget-Swift.h -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources/TinyTastesWidget-Swift.h
+
+Copy /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.swiftmodule/arm64-apple-ios-simulator.swiftdoc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.swiftdoc (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.swiftdoc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.swiftmodule (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.swiftmodule /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.abi.json (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.abi.json /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.swiftsourceinfo (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.swiftsourceinfo /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+SwiftDriverJobDiscovery normal arm64 Compiling GenerativeAIRequest.swift, GenerativeAIService.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+ProcessProductPackaging /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/TinyTastesTracker.entitlements /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app.xcent (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+    Entitlements:
+    
+    {
+}
+    
+    builtin-productPackagingUtility /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/TinyTastesTracker.entitlements -entitlements -format xml -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app.xcent
+
+ProcessProductPackaging /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/TinyTastesTracker.entitlements /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app-Simulated.xcent (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+    Entitlements:
+    
+    {
+    "application-identifier" = "7P655RDJXB.com.tinytastes.tracker";
+}
+    
+    builtin-productPackagingUtility /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/TinyTastesTracker.entitlements -entitlements -format xml -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app-Simulated.xcent
+
+ProcessProductPackagingDER /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app-Simulated.xcent /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app-Simulated.xcent.der (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /usr/bin/derq query -f xml -i /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app-Simulated.xcent -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app-Simulated.xcent.der --raw
+
+ProcessProductPackagingDER /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app.xcent /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app.xcent.der (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /usr/bin/derq query -f xml -i /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app.xcent -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker.app.xcent.der --raw
+
+SwiftDriverJobDiscovery normal arm64 Compiling JSONValue.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+MkDir /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_output/unthinned (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /bin/mkdir -p /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_output/unthinned
+
+GenerateAssetSymbols /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Assets.xcassets /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Resources/Assets.xcassets (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Assets.xcassets /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Resources/Assets.xcassets --compile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_dependencies --output-partial-info-plist /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_generated_info.plist --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 17.0 --platform iphonesimulator --bundle-identifier com.tinytastes.tracker --generate-swift-asset-symbol-extensions NO --generate-swift-asset-symbols /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/GeneratedAssetSymbols.h
+/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+MkDir /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_output/thinned (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /bin/mkdir -p /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_output/thinned
+
+CompileAssetCatalogVariant thinned /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Assets.xcassets /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Resources/Assets.xcassets (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Assets.xcassets /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Resources/Assets.xcassets --compile /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --filter-for-thinning-device-configuration iPhone17,1 --filter-for-device-os-version 18.5 --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 17.0 --platform iphonesimulator
+/* com.apple.actool.document.warnings */
+/Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Resources/Assets.xcassets:./AppIcon.appiconset: warning: The app icon set name "AppIcon" is used by multiple app icon sets.
+/Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Assets.xcassets:./AppIcon.appiconset: warning: The app icon set name "AppIcon" is used by multiple app icon sets.
+/Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Resources/Assets.xcassets:./AppIcon.appiconset: warning: The app icon set name "AppIcon" is used by multiple app icon sets.
+/Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Assets.xcassets:./AppIcon.appiconset: warning: The app icon set name "AppIcon" is used by multiple app icon sets.
+/* com.apple.actool.compilation-results */
+/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_generated_info.plist_thinned
+/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_output/thinned/AppIcon60x60@2x.png
+/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_output/thinned/AppIcon76x76@2x~ipad.png
+/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_output/thinned/Assets.car
+
+
+SwiftDriver TinyTastesTracker normal arm64 com.apple.xcode.tools.swift.compiler (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name TinyTastesTracker -Onone -enforce-exclusivity\=checked @/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Index.noindex/DataStore -swift-version 5 -I /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F . -c -j12 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker_const_extract_protocols.json -Xcc -iquote -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-generated-files.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-own-target-headers.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker-d5c5d7c8e3b2410b48e8c725747531df-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-project-headers.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources-normal/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker-Swift.h -working-directory /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling ModelContent.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 Compiling\ FoodTrackerPage.swift,\ GeminiLiveService.swift,\ GeminiService.swift,\ GenerateObfuscatedKey.swift,\ GrowthChart.swift,\ GrowthTrackingSheet.swift,\ HapticManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/FoodTrackerPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/GeminiLiveService.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/GeminiService.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Utilities/GenerateObfuscatedKey.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/GrowthChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/GrowthTrackingSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/HapticManager.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/FoodTrackerPage.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/GeminiLiveService.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/GeminiService.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Utilities/GenerateObfuscatedKey.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/GrowthChart.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/GrowthTrackingSheet.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/HapticManager.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 Compiling\ BadgeManager.swift,\ BadgesListView.swift,\ BalancePage.swift,\ BarcodeScannerView.swift,\ BottleFeedSheet.swift,\ CameraView.swift,\ ChartDataModels.swift,\ ChartExporter.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/BadgeManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Profile/BadgesListView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/BalancePage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/BarcodeScannerView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/BottleFeedSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/CameraView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/ChartDataModels.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Utilities/ChartExporter.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/BadgeManager.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Profile/BadgesListView.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/BalancePage.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/BarcodeScannerView.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/BottleFeedSheet.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/CameraView.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/ChartDataModels.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Utilities/ChartExporter.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 Compiling\ AIServiceManager.swift,\ APIRateLimiter.swift,\ APIUsageMonitor.swift,\ AddCustomFoodSheet.swift,\ AppState.swift,\ AudioPlayer.swift,\ AudioRecorder.swift,\ Badge.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AIServiceManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Security/APIRateLimiter.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Security/APIUsageMonitor.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Sheets/AddCustomFoodSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AppState.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/AudioPlayer.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/AudioRecorder.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Badge.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c -primary-file /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AIServiceManager.swift -primary-file /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Security/APIRateLimiter.swift -primary-file /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Security/APIUsageMonitor.swift -primary-file /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Sheets/AddCustomFoodSheet.swift -primary-file /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AppState.swift -primary-file /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/AudioPlayer.swift -primary-file /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/AudioRecorder.swift -primary-file /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Badge.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/BadgeManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Profile/BadgesListView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/BalancePage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/BarcodeScannerView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/BottleFeedSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/CameraView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/ChartDataModels.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Utilities/ChartExporter.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/ComparisonData.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Utilities/Constants.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/App/ContentView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/CustomFood.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/FeedingFrequencyChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/FeedingSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/FoodDetailModal.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/FoodTrackerPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/GeminiLiveService.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/GeminiService.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Utilities/GenerateObfuscatedKey.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/GrowthChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/GrowthTrackingSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/HapticManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Utilities/ImageCompression.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/ImageProcessingService.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/AppShortcuts/LogBottleIntent.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/AppShortcuts/LogSleepIntent.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/MealLog.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/MealPlan.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Milestone.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Profile/MilestonesListView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Components/NewbornComponents.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/NewbornDashboardPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/NewbornLog.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/NewbornManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/NewbornPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/NutrientGoals.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/NutrientIntakeChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Components/NutrientProgressBar.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/NutritionBalanceChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/OpenFoodFactsService.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/ProductResultSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/ProfileManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Components/RainbowCircle.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Components/RainbowProgressChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Recipe.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/RecipeManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/RecipeOCRService.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/RecipeScannerSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/RecipesPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/RecommendationsData.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Explorer/RecommendationsView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/RemindersIntegrationManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Sage/SageChatView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Sage/SageOverlay.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Sage/SagePage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Sage/SageView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Security/SecureAPIKeyManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/SettingsPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/ShareSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/SharedModelContainer.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/SleepActivityAttributes.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/SleepAndGrowthPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/SleepLogSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/SleepPatternsChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Components/SleepPredictionCard.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Components/StatisticsCard.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/AppShortcuts/TinyTastesShortcuts.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/App/TinyTastesTrackerApp.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/ToddlerManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/ToddlerPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/TrendAnalyzer.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/TrendInsight.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/TriedFoodLog.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/UserProfile.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Sage/VoiceChatView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/WHOPercentiles.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Analysis/Views/WeeklyTrendsView.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/GeneratedAssetSymbols.swift -supplementary-output-file-map /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/supplementaryOutputs-1 -target arm64-apple-ios17.0-simulator -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -I /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker -no-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=4 -module-cache-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -swift-version 5 -enforce-exclusivity\=checked -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/TinyTastesTracker_const_extract_protocols.json -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift -enable-anonymous-context-mangled-names -file-compilation-dir /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker -Xcc -ivfsstatcache -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-generated-files.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-own-target-headers.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker-d5c5d7c8e3b2410b48e8c725747531df-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/TinyTastesTracker-project-headers.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources-normal/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources -Xcc -DDEBUG\=1 -module-name TinyTastesTracker -frontend-parseable-output -disable-clang-spi -target-sdk-version 18.5 -target-sdk-name iphonesimulator18.5 -external-plugin-path /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/local/lib/swift/host/plugins\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/lib/swift/host/plugins -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/AIServiceManager.o -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/APIRateLimiter.o -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/APIUsageMonitor.o -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/AddCustomFoodSheet.o -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/AppState.o -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/AudioPlayer.o -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/AudioRecorder.o -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/Badge.o -index-unit-output-path /TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/AIServiceManager.o -index-unit-output-path /TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/APIRateLimiter.o -index-unit-output-path /TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/APIUsageMonitor.o -index-unit-output-path /TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/AddCustomFoodSheet.o -index-unit-output-path /TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/AppState.o -index-unit-output-path /TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/AudioPlayer.o -index-unit-output-path /TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/AudioRecorder.o -index-unit-output-path /TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/Objects-normal/arm64/Badge.o -index-store-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AIServiceManager.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+/Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AIServiceManager.swift:44:33: warning: non-sendable result type 'Recipe' cannot be sent from nonisolated context in call to instance method 'suggestRecipe(ingredients:ageInMonths:)'; this is an error in the Swift 6 language mode
+        try await geminiService.suggestRecipe(ingredients: ingredients, ageInMonths: ageInMonths)
+                                ^
+/Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Recipe.swift:12:13: note: class 'Recipe' does not conform to the 'Sendable' protocol
+final class Recipe: Codable {
+            ^
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Security/APIRateLimiter.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+/Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Core/Security/APIRateLimiter.swift:41:36: warning: immutable value 'seconds' was never used; consider replacing with '_' or removing it
+        case .dayLimitExceeded(let seconds):
+                               ~~~~^~~~~~~
+                               _
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Security/APIUsageMonitor.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+/Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Core/Security/APIUsageMonitor.swift:147:9: warning: result of call to 'checkForAnomalies()' is unused
+        checkForAnomalies()
+        ^                ~~
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Sheets/AddCustomFoodSheet.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AppState.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+/Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AppState.swift:361:13: error: cannot assign to property: 'userProfile' is a get-only property
+            userProfile = profiles.first
+            ^~~~~~~~~~~
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/AudioPlayer.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/AudioRecorder.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Badge.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 Compiling\ ComparisonData.swift,\ Constants.swift,\ ContentView.swift,\ CustomFood.swift,\ FeedingFrequencyChart.swift,\ FeedingSheet.swift,\ FoodDetailModal.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/ComparisonData.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Utilities/Constants.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/App/ContentView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/CustomFood.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/FeedingFrequencyChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/FeedingSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/FoodDetailModal.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/ComparisonData.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Utilities/Constants.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/App/ContentView.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/CustomFood.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/FeedingFrequencyChart.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/FeedingSheet.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/FoodDetailModal.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ TinyTastesTracker (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+EmitSwiftModule normal arm64 (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 Compiling\ TrendInsight.swift,\ TriedFoodLog.swift,\ UserProfile.swift,\ VoiceChatView.swift,\ WHOPercentiles.swift,\ WeeklyTrendsView.swift,\ GeneratedAssetSymbols.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/TrendInsight.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/TriedFoodLog.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/UserProfile.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Sage/VoiceChatView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/WHOPercentiles.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Analysis/Views/WeeklyTrendsView.swift /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/TrendInsight.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/TriedFoodLog.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/UserProfile.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Sage/VoiceChatView.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/WHOPercentiles.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Analysis/Views/WeeklyTrendsView.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling Chat.swift, CountTokensRequest.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 Compiling\ MilestonesListView.swift,\ NewbornComponents.swift,\ NewbornDashboardPage.swift,\ NewbornLog.swift,\ NewbornManager.swift,\ NewbornPage.swift,\ NutrientGoals.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Profile/MilestonesListView.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Components/NewbornComponents.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/NewbornDashboardPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/NewbornLog.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/NewbornManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/NewbornPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/NutrientGoals.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Profile/MilestonesListView.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Components/NewbornComponents.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/NewbornDashboardPage.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/NewbornLog.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/NewbornManager.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/NewbornPage.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/NutrientGoals.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling PartsRepresentable+Image.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 Compiling\ SettingsPage.swift,\ ShareSheet.swift,\ SharedModelContainer.swift,\ SleepActivityAttributes.swift,\ SleepAndGrowthPage.swift,\ SleepLogSheet.swift,\ SleepPatternsChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/SettingsPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/ShareSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/SharedModelContainer.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/SleepActivityAttributes.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/SleepAndGrowthPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/SleepLogSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/SleepPatternsChart.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/SettingsPage.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/ShareSheet.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/SharedModelContainer.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/SleepActivityAttributes.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/SleepAndGrowthPage.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Views/SleepLogSheet.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/SleepPatternsChart.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling GenerateContentError.swift, GenerateContentRequest.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 Compiling\ ImageCompression.swift,\ ImageProcessingService.swift,\ LogBottleIntent.swift,\ LogSleepIntent.swift,\ MealLog.swift,\ MealPlan.swift,\ Milestone.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Utilities/ImageCompression.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/ImageProcessingService.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/AppShortcuts/LogBottleIntent.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/AppShortcuts/LogSleepIntent.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/MealLog.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/MealPlan.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Milestone.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Utilities/ImageCompression.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/ImageProcessingService.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/AppShortcuts/LogBottleIntent.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/AppShortcuts/LogSleepIntent.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/MealLog.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/MealPlan.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Milestone.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling GenerateContentResponse.swift, GenerationConfig.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 Compiling\ SleepPredictionCard.swift,\ StatisticsCard.swift,\ TinyTastesShortcuts.swift,\ TinyTastesTrackerApp.swift,\ ToddlerManager.swift,\ ToddlerPage.swift,\ TrendAnalyzer.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Components/SleepPredictionCard.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Components/StatisticsCard.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/AppShortcuts/TinyTastesShortcuts.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/App/TinyTastesTrackerApp.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/ToddlerManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/ToddlerPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/TrendAnalyzer.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Components/SleepPredictionCard.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Newborn/Components/StatisticsCard.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/AppShortcuts/TinyTastesShortcuts.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/App/TinyTastesTrackerApp.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/ToddlerManager.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/ToddlerPage.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/TrendAnalyzer.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling Errors.swift, FunctionCalling.swift (in target 'GoogleGenerativeAI' from project 'generative-ai-swift')
+
+SwiftCompile normal arm64 Compiling\ RainbowProgressChart.swift,\ Recipe.swift,\ RecipeManager.swift,\ RecipeOCRService.swift,\ RecipeScannerSheet.swift,\ RecipesPage.swift,\ RecommendationsData.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Components/RainbowProgressChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Recipe.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/RecipeManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/RecipeOCRService.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/RecipeScannerSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/RecipesPage.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/RecommendationsData.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Components/RainbowProgressChart.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Recipe.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/RecipeManager.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/RecipeOCRService.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/RecipeScannerSheet.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Views/RecipesPage.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/RecommendationsData.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NewbornLog.swift (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+SwiftDriver\ Compilation TinyTastesWidget normal arm64 com.apple.xcode.tools.swift.compiler (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name TinyTastesWidget -Onone -enforce-exclusivity\=checked @/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -application-extension -enable-testing -index-store-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Index.noindex/DataStore -swift-version 5 -I /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F . -c -j12 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget_const_extract_protocols.json -Xcc -iquote -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-generated-files.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-own-target-headers.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker-d5c5d7c8e3b2410b48e8c725747531df-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-project-headers.hmap -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources-normal/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources/arm64 -Xcc -I/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget-Swift.h -working-directory /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker -experimental-emit-module-separately -disable-cmo
+
+LinkAssetCatalog /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Assets.xcassets /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Resources/Assets.xcassets (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    builtin-linkAssetCatalog --thinned /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_output/thinned --thinned-dependencies /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_generated_info.plist_unthinned --output /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app --plist-output /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesTracker.build/assetcatalog_generated_info.plist
+note: Emplaced /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app/AppIcon76x76@2x~ipad.png (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+note: Emplaced /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app/Assets.car (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+note: Emplaced /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesTracker.app/AppIcon60x60@2x.png (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+
+Ld /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.appex/TinyTastesWidget.debug.dylib normal (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator -F. -filelist /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.LinkFileList -install_name @rpath/TinyTastesWidget.debug.dylib -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/../../Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget_dependency_info.dat -fapplication-extension -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/Objects-normal/arm64/TinyTastesWidget.swiftmodule -Xlinker -alias -Xlinker _NSExtensionMain -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.appex/TinyTastesWidget.debug.dylib
+
+SwiftCompile normal arm64 Compiling\ NutrientIntakeChart.swift,\ NutrientProgressBar.swift,\ NutritionBalanceChart.swift,\ OpenFoodFactsService.swift,\ ProductResultSheet.swift,\ ProfileManager.swift,\ RainbowCircle.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/NutrientIntakeChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Components/NutrientProgressBar.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/NutritionBalanceChart.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/OpenFoodFactsService.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/ProductResultSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/ProfileManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Components/RainbowCircle.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/NutrientIntakeChart.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Components/NutrientProgressBar.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Charts/NutritionBalanceChart.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/OpenFoodFactsService.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Components/ProductResultSheet.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/ProfileManager.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Features/Toddler/Components/RainbowCircle.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    
+
+ConstructStubExecutorLinkFileList /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-ExecutorLinkFileList-normal-arm64.txt (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+    cd /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker
+    construct-stub-executor-link-file-list /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Products/Debug-iphonesimulator/TinyTastesWidget.appex/TinyTastesWidget.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/seanpinkerton/Library/Developer/Xcode/DerivedData/TinyTastesTracker-gyzdqqyrbqgotsegkuwaizyvxfwp/Build/Intermediates.noindex/TinyTastesTracker.build/Debug-iphonesimulator/TinyTastesWidget.build/TinyTastesWidget-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'TinyTastesWidget' from project 'TinyTastesTracker')
+
+** BUILD FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ AIServiceManager.swift,\ APIRateLimiter.swift,\ APIUsageMonitor.swift,\ AddCustomFoodSheet.swift,\ AppState.swift,\ AudioPlayer.swift,\ AudioRecorder.swift,\ Badge.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AIServiceManager.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Security/APIRateLimiter.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Security/APIUsageMonitor.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/UI/Sheets/AddCustomFoodSheet.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AppState.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/AudioPlayer.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Services/AudioRecorder.swift /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Models/Badge.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+	SwiftCompile normal arm64 /Users/seanpinkerton/Documents/Personal/Tiny\ Tastes\ Tracker\ AI/TinyTastesTracker/TinyTastesTracker/Core/Managers/AppState.swift (in target 'TinyTastesTracker' from project 'TinyTastesTracker')
+	Building project TinyTastesTracker with scheme TinyTastesTracker
+(3 failures)

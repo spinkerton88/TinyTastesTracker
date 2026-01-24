@@ -1,0 +1,6 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme TinyTastesTracker -destination "platform=iOS Simulator,name=iPhone 15 Pro"
+
+2026-01-13 20:48:07.155 xcodebuild[83351:19218240] Writing error result bundle to /var/folders/3s/m06tvg_n2kz9mk6n8c6hks0c0000gn/T/ResultBundle_2026-13-01_20-48-0007.xcresult
+xcodebuild: error: The directory /Users/seanpinkerton/Documents/Personal/Tiny Tastes Tracker AI/TinyTastesTracker/TinyTastesTracker does not contain an Xcode project, workspace or package.
+
