@@ -154,3 +154,13 @@ firebase-export-*/
 # Test Results
 test-results/
 *.log
+*_log.txt
+build*.txt
+test_output.log
+
+# Build artifacts (additional patterns)
+build_error_log.txt
+build_log*.txt
+local_test_log.txt
+onboarding_test_log.txt
+snapshot_test_log.txt
