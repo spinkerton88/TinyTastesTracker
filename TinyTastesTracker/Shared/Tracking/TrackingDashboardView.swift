@@ -6,12 +6,10 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct TrackingDashboardView: View {
     let mode: AppMode
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
     
     // Sheet States
     @State private var showingFeedingSheet = false
@@ -32,12 +30,7 @@ struct TrackingDashboardView: View {
         NavigationStack {
             ZStack {
                 // Gradient Background Header
-                LinearGradient(
-                    colors: [appState.themeColor.opacity(0.15), appState.themeColor.opacity(0.05), Color.clear],
-                    startPoint: .top,
-                    endPoint: .center
-                )
-                .ignoresSafeArea()
+                GradientBackground(color: appState.themeColor)
                 
                 ScrollView {
                     VStack(spacing: 24) {
@@ -100,7 +93,7 @@ struct TrackingDashboardView: View {
                                     // Last Fed Card
                                     StatusCard(
                                         title: "LAST FED",
-                                        icon: "drop.fill",
+                                        icon: "spoon.serving",
                                         iconColor: appState.themeColor,
                                         mainText: lastFedString
                                     )
@@ -180,7 +173,7 @@ struct TrackingDashboardView: View {
                         
                         // MARK: - Action Buttons
                         HStack(spacing: 12) {
-                            ActionCapsule(icon: "drop.fill", label: "Feed", color: appState.themeColor) {
+                            ActionCapsule(icon: "spoon.serving", label: "Feed", color: appState.themeColor) {
                                 showingFeedingSheet = true
                             }
                             ActionCapsule(icon: isSleeping ? "moon.zzz.fill" : "moon.fill", label: isSleeping ? "Wake Up" : "Sleep", color: .indigo) {
@@ -242,8 +235,8 @@ struct TrackingDashboardView: View {
                 MedicationSheet(appState: appState)
             }
             .sheet(isPresented: $showingReportImport) {
-            ReportImportView(themeColor: appState.themeColor)
-        }
+                ReportImportView(appState: appState, themeColor: appState.themeColor)
+            }
         }
     }
     
@@ -254,7 +247,7 @@ struct TrackingDashboardView: View {
             return "Sleeping"
         }
         
-        if let lastSleep = appState.sleepLogs.sorted(by: { $0.endTime < $1.endTime }).last {
+        if let lastSleep = appState.sleepLogs.first {
             if lastSleep.endTime > currentTime {
                 return "Sleeping"
             }
@@ -271,8 +264,8 @@ struct TrackingDashboardView: View {
     }
     
     var lastFedString: String {
-        let lastBottle = appState.bottleFeedLogs.last
-        let lastNursing = appState.nursingLogs.last
+        let lastBottle = appState.bottleFeedLogs.first
+        let lastNursing = appState.nursingLogs.first
         
         var lastTime: Date?
         if let b = lastBottle, let n = lastNursing {
@@ -286,14 +279,15 @@ struct TrackingDashboardView: View {
     }
     
     var lastSleepString: String {
-        guard let last = appState.sleepLogs.last else { return "Ready" }
+        guard let last = appState.sleepLogs.first else { return "Ready" }
         return last.startTime.formatted(date: .omitted, time: .shortened)
     }
     
     var nextFeedTime: String {
         // Find last feed (Bottle or Nursing)
-        let lastBottle = appState.bottleFeedLogs.sorted { $0.timestamp < $1.timestamp }.last
-        let lastNursing = appState.nursingLogs.sorted { $0.timestamp < $1.timestamp }.last
+        // Access .first because logs are sorted Descending (Newest First)
+        let lastBottle = appState.bottleFeedLogs.first
+        let lastNursing = appState.nursingLogs.first
         
         var lastTime: Date?
         if let b = lastBottle, let n = lastNursing {

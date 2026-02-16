@@ -6,12 +6,10 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct SageView: View {
     @Bindable var appState: AppState
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
     
     // UI State
     @State private var currentState: SageState = .menu
@@ -182,7 +180,10 @@ struct SageView: View {
                 }
                 .accessibilityLabel(AccessibilityIdentifiers.Sage.chatButton)
                 .accessibilityHint("Opens text chat with Sage")
-                
+
+                // TEMPORARILY DISABLED: Voice chat requires WebSocket support
+                // TODO: Re-enable after adding Cloudflare Durable Objects or alternative WebSocket backend
+                /*
                 SageOptionButton(
                     title: "Voice Chat",
                     subtitle: "Talk to Sage hands-free",
@@ -193,6 +194,7 @@ struct SageView: View {
                 }
                 .accessibilityLabel(AccessibilityIdentifiers.Sage.voiceChatButton)
                 .accessibilityHint("Opens voice chat with Sage")
+                */
                 
                 if let error = errorMessage {
                     Text(error)
@@ -234,6 +236,7 @@ struct SageView: View {
                         FlavorPairingsList(response: pairings) { pairing in
                             // Convert FlavorPairing to Recipe and save
                             let recipe = Recipe(
+                                ownerId: appState.currentOwnerId ?? "",
                                 title: pairing.title,
                                 ingredients: pairing.ingredients.joined(separator: "\n"),
                                 instructions: """
@@ -243,7 +246,9 @@ struct SageView: View {
                                 """,
                                 tags: ["Sage Suggestion", "Flavor Pairing"]
                             )
-                            appState.saveRecipe(recipe, context: modelContext)
+                            Task {
+                                try? await appState.saveRecipe(recipe)
+                            }
                         }
                     }
                 case .toddler:
@@ -252,7 +257,9 @@ struct SageView: View {
                             recipe: recipe,
                             themeColor: appState.themeColor,
                             onSave: {
-                                appState.saveRecipe(recipe, context: modelContext)
+                                Task {
+                                    try? await appState.saveRecipe(recipe)
+                                }
                                 dismiss()
                             },
                             onRegenerate: {
@@ -271,21 +278,24 @@ struct SageView: View {
                             },
                             onSave: { strategy in
                                 let recipe = Recipe(
+                                    ownerId: appState.currentOwnerId ?? "",
                                     title: "\(strategy.strategyType): \(targetFood)",
                                     ingredients: "Target: \(targetFood)\nSafe: \(safeFood)",
                                     instructions: strategy.steps.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n\n"),
                                     tags: ["Sage Strategy", "Picky Eater", strategy.strategyType]
                                 )
-                                appState.saveRecipe(recipe, context: modelContext)
+                                Task {
+                                    try? await appState.saveRecipe(recipe)
+                                }
                             }
                         )
                     }
                 }
-                
+
                 // Disclaimer
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "info.circle")
-                    Text("Sage is an AI assistant. Use judgment.")
+                    Text("Sage is your feeding assistant. Use judgment.")
                 }
                 .font(.caption2)
                 .foregroundStyle(.secondary)

@@ -6,10 +6,8 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct WelcomeView: View {
-    @Environment(\.modelContext) private var modelContext
     @Binding var isPresented: Bool
     @Bindable var appState: AppState
     
@@ -36,11 +34,11 @@ struct WelcomeView: View {
                         )
                         .accessibilityHidden(true) // Decorative
                     
-                    Text("Welcome to")
+                Text(NSLocalizedString("onboarding.welcome.pretitle", comment: "Welcome pre-title"))
                         .font(.title2)
                         .foregroundStyle(.secondary)
                     
-                    Text("Tiny Tastes Tracker")
+                    Text(NSLocalizedString("onboarding.welcome.title", comment: "App title"))
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
@@ -50,7 +48,7 @@ struct WelcomeView: View {
                 .accessibilityLabel(AccessibilityIdentifiers.Onboarding.welcomeTitle)
                 .accessibilityAddTraits(.isHeader)
                 
-                Text("Track your little one's feeding journey with AI-powered guidance")
+                Text(NSLocalizedString("onboarding.welcome.subtitle", comment: "Welcome subtitle"))
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
@@ -71,12 +69,12 @@ struct WelcomeView: View {
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 28, height: 28)
                                     .foregroundStyle(.purple)
-                                Text("Explore with Sample Data")
+                                Text(NSLocalizedString("onboarding.action.sample_data.title", comment: "Sample data button title"))
                                     .font(.headline)
                                     .foregroundStyle(.primary)
                             }
                             
-                            Text("See how the app works with realistic data")
+                            Text(NSLocalizedString("onboarding.action.sample_data.description", comment: "Sample data button description"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -90,8 +88,8 @@ struct WelcomeView: View {
                         )
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Explore with Sample Data")
-                    .accessibilityHint("Loads realistic sample data to explore app features")
+                    .accessibilityLabel(Text(NSLocalizedString("onboarding.action.sample_data.title", comment: "Sample data button title")))
+                    .accessibilityHint(Text(NSLocalizedString("onboarding.action.sample_data.accessibility_hint", comment: "Sample data button hint")))
                     
                     // Fresh Start Option
                     Button {
@@ -102,12 +100,12 @@ struct WelcomeView: View {
                                 Image(systemName: "pencil.circle")
                                     .font(.title2)
                                     .foregroundStyle(.blue)
-                                Text("Start Fresh")
+                                Text(NSLocalizedString("onboarding.action.start_fresh.title", comment: "Start fresh button title"))
                                     .font(.headline)
                                     .foregroundStyle(.primary)
                             }
                             
-                            Text("Add your own data from scratch")
+                            Text(NSLocalizedString("onboarding.action.start_fresh.description", comment: "Start fresh button description"))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -117,8 +115,8 @@ struct WelcomeView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Start Fresh")
-                    .accessibilityHint("Begin with empty data and add your own information")
+                    .accessibilityLabel(Text(NSLocalizedString("onboarding.action.start_fresh.title", comment: "Start fresh button title")))
+                    .accessibilityHint(Text(NSLocalizedString("onboarding.action.start_fresh.accessibility_hint", comment: "Start fresh button hint")))
                 }
                 .padding(.horizontal, 24)
                 
@@ -130,14 +128,14 @@ struct WelcomeView: View {
             if isLoadingSampleData {
                 ZStack {
                     Color.black.opacity(0.4)
-                        .ignoresSafeArea()
+                    .ignoresSafeArea()
                     
                     VStack(spacing: 16) {
                         ProgressView()
                             .scaleEffect(1.5)
                             .tint(.white)
                         
-                        Text("Loading sample data...")
+                        Text(NSLocalizedString("onboarding.loading.sample_data", comment: "Loading text"))
                             .font(.headline)
                             .foregroundStyle(.white)
                     }
@@ -160,13 +158,15 @@ struct WelcomeView: View {
         // Generate sample data on main actor
         Task { @MainActor in
             // Generate sample data
-            SampleDataGenerator.generateSampleData(context: modelContext)
-            
-            // Wait a moment for visual feedback
-            try? await Task.sleep(for: .seconds(1))
-            
-            // Reload app state
-            appState.loadData(context: modelContext)
+            if let ownerId = appState.currentOwnerId {
+                await SampleDataGenerator.generateSampleData(ownerId: ownerId, appState: appState)
+                
+                // Wait a moment for visual feedback
+                try? await Task.sleep(for: .seconds(1))
+                
+                // Reload app state
+                appState.loadData(forUser: ownerId)
+            }
             
             // Mark as using sample data
             UserDefaults.standard.set(true, forKey: "isUsingSampleData")

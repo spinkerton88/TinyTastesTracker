@@ -6,7 +6,8 @@
 //
 
 import Foundation
-import SwiftData
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 enum FeedingStrategy: String, Codable, CaseIterable {
     case none = "None"
@@ -28,17 +29,22 @@ enum FeedingStrategy: String, Codable, CaseIterable {
     }
 }
 
-@Model
-final class MealLog: Codable {
-    var id: UUID
-    var foods: [String]  // Array of food IDs from Constants.allFoods
-    var feedingStrategy: FeedingStrategy
-    var notes: String
-    var platePhotoData: Data?  // Optional photo of the meal
-    var timestamp: Date
-    var mealType: MealType
+struct MealLog: Identifiable, Codable {
+    @DocumentID var id: String?
+    var ownerId: String
+    var childId: String
     
-    init(id: UUID = UUID(),
+    var foods: [String] = []  // Array of food IDs from Constants.allFoods
+    var feedingStrategy: FeedingStrategy = FeedingStrategy.none
+    var notes: String = ""
+    var platePhotoData: Data?  // Optional photo of the meal
+    var timestamp: Date = Date()
+    var mealType: MealType = MealType.lunch
+    
+    // Explicit init allows creating instances without Firestore decoding
+    init(id: String? = nil,
+         ownerId: String,
+         childId: String,
          foods: [String],
          feedingStrategy: FeedingStrategy = .none,
          notes: String = "",
@@ -46,6 +52,8 @@ final class MealLog: Codable {
          timestamp: Date = Date(),
          mealType: MealType) {
         self.id = id
+        self.ownerId = ownerId
+        self.childId = childId
         self.foods = foods
         self.feedingStrategy = feedingStrategy
         self.notes = notes
@@ -54,31 +62,8 @@ final class MealLog: Codable {
         self.mealType = mealType
     }
     
-    // MARK: - Codable Conformance
-    
-    enum CodingKeys: String, CodingKey {
-        case id, foods, feedingStrategy, notes, platePhotoData, timestamp, mealType
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(UUID.self, forKey: .id)
-        self.foods = try container.decode([String].self, forKey: .foods)
-        self.feedingStrategy = try container.decode(FeedingStrategy.self, forKey: .feedingStrategy)
-        self.notes = try container.decode(String.self, forKey: .notes)
-        self.platePhotoData = try container.decodeIfPresent(Data.self, forKey: .platePhotoData)
-        self.timestamp = try container.decode(Date.self, forKey: .timestamp)
-        self.mealType = try container.decode(MealType.self, forKey: .mealType)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(foods, forKey: .foods)
-        try container.encode(feedingStrategy, forKey: .feedingStrategy)
-        try container.encode(notes, forKey: .notes)
-        try container.encodeIfPresent(platePhotoData, forKey: .platePhotoData)
-        try container.encode(timestamp, forKey: .timestamp)
-        try container.encode(mealType, forKey: .mealType)
-    }
+    // Customize coding keys if needed (usually not needed for simple properties, 
+    // but good for checking exact mapping)
+    // CodingKeys can be omitted if property names match field names exactly. 
+    // Usually Firestore uses camelCase which matches Swift properties.
 }

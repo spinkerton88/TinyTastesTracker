@@ -12,22 +12,20 @@ import SwiftUI
 @MainActor
 @Observable
 class NotificationManager {
-    static let shared = NotificationManager()
-    
     // MARK: - Published Properties
     var permissionStatus: UNAuthorizationStatus = .notDetermined
     var feedNotificationsEnabled: Bool = false
     var allergenNotificationsEnabled: Bool = true
-    
+
     // MARK: - Private Properties
     private let notificationCenter = UNUserNotificationCenter.current()
-    
+
     // Notification identifiers
     private let feedReminderIdentifier = "com.tinytastes.feed.reminder"
     private let allergenCheckInIdentifier = "com.tinytastes.allergen.checkin"
-    
+
     // MARK: - Initialization
-    private init() {
+    init() {
         Task {
             await checkPermissionStatus()
             loadSettings()

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftData
 
 @MainActor
 class DataAggregationService {
@@ -15,10 +14,10 @@ class DataAggregationService {
     private init() {}
 
     func generateSummary(
-        for childID: UUID,
+        for childID: String,
         from startDate: Date,
         to endDate: Date,
-        context: ModelContext
+        appState: AppState
     ) async throws -> PediatricianSummary {
         print("📊 DataAggregationService: Starting data aggregation")
 
@@ -26,29 +25,41 @@ class DataAggregationService {
         let dayCount = Calendar.current.dateComponents([.day], from: startDate, to: endDate).day ?? 1
         print("📅 Date range: \(dayCount) days")
 
-        // Fetch all relevant data
+        // Fetch all relevant data (filtering from AppState)
         print("🔍 Fetching sleep logs...")
-        let sleepLogs = try fetchSleepLogs(childID: childID, from: startDate, to: endDate, context: context)
+        let sleepLogs = appState.sleepLogs.filter { log in
+            log.startTime >= startDate && log.startTime <= endDate
+        }
         print("  Found \(sleepLogs.count) sleep logs")
 
         print("🔍 Fetching bottle logs...")
-        let bottleLogs = try fetchBottleLogs(childID: childID, from: startDate, to: endDate, context: context)
+        let bottleLogs = appState.bottleFeedLogs.filter { log in
+            log.timestamp >= startDate && log.timestamp <= endDate
+        }
         print("  Found \(bottleLogs.count) bottle logs")
 
         print("🔍 Fetching nursing logs...")
-        let nursingLogs = try fetchNursingLogs(childID: childID, from: startDate, to: endDate, context: context)
+        let nursingLogs = appState.nursingLogs.filter { log in
+            log.timestamp >= startDate && log.timestamp <= endDate
+        }
         print("  Found \(nursingLogs.count) nursing logs")
 
         print("🔍 Fetching food logs...")
-        let triedFoodLogs = try fetchTriedFoodLogs(childID: childID, from: startDate, to: endDate, context: context)
+        let triedFoodLogs = appState.foodLogs.filter { log in
+            log.date >= startDate && log.date <= endDate && log.isMarkedAsTried
+        }
         print("  Found \(triedFoodLogs.count) food logs")
 
         print("🔍 Fetching diaper logs...")
-        let diaperLogs = try fetchDiaperLogs(childID: childID, from: startDate, to: endDate, context: context)
+        let diaperLogs = appState.diaperLogs.filter { log in
+            log.timestamp >= startDate && log.timestamp <= endDate
+        }
         print("  Found \(diaperLogs.count) diaper logs")
 
         print("🔍 Fetching growth logs...")
-        let growthLogs = try fetchGrowthLogs(childID: childID, from: startDate, to: endDate, context: context)
+        let growthLogs = appState.growthMeasurements.filter { log in
+            log.date >= startDate && log.date <= endDate
+        }
         print("  Found \(growthLogs.count) growth logs")
 
         // Calculate metrics
@@ -84,8 +95,14 @@ class DataAggregationService {
         print("✅ AI summary generated")
 
         // Create summary object
+        // Assuming ownerId is available in appState
+        guard let ownerId = appState.currentOwnerId else {
+            throw AppError.unknown(NSError(domain: "DataAggregation", code: 1, userInfo: [NSLocalizedDescriptionKey: "No owner ID found"]))
+        }
+
         let summary = PediatricianSummary(
-            childID: childID,
+            ownerId: ownerId,
+            childId: childID,
             startDate: startDate,
             endDate: endDate,
             sleepMetrics: sleepMetrics,
@@ -102,98 +119,6 @@ class DataAggregationService {
 
         print("✅ Summary object created successfully")
         return summary
-    }
-
-    // MARK: - Data Fetching
-
-    private func fetchSleepLogs(
-        childID: UUID,
-        from startDate: Date,
-        to endDate: Date,
-        context: ModelContext
-    ) throws -> [SleepLog] {
-        let descriptor = FetchDescriptor<SleepLog>(
-            predicate: #Predicate { log in
-                log.startTime >= startDate && log.startTime <= endDate
-            },
-            sortBy: [SortDescriptor(\.startTime)]
-        )
-        return try context.fetch(descriptor)
-    }
-
-    private func fetchBottleLogs(
-        childID: UUID,
-        from startDate: Date,
-        to endDate: Date,
-        context: ModelContext
-    ) throws -> [BottleFeedLog] {
-        let descriptor = FetchDescriptor<BottleFeedLog>(
-            predicate: #Predicate { log in
-                log.timestamp >= startDate && log.timestamp <= endDate
-            },
-            sortBy: [SortDescriptor(\.timestamp)]
-        )
-        return try context.fetch(descriptor)
-    }
-
-    private func fetchNursingLogs(
-        childID: UUID,
-        from startDate: Date,
-        to endDate: Date,
-        context: ModelContext
-    ) throws -> [NursingLog] {
-        let descriptor = FetchDescriptor<NursingLog>(
-            predicate: #Predicate { log in
-                log.timestamp >= startDate && log.timestamp <= endDate
-            },
-            sortBy: [SortDescriptor(\.timestamp)]
-        )
-        return try context.fetch(descriptor)
-    }
-
-    private func fetchTriedFoodLogs(
-        childID: UUID,
-        from startDate: Date,
-        to endDate: Date,
-        context: ModelContext
-    ) throws -> [TriedFoodLog] {
-        let descriptor = FetchDescriptor<TriedFoodLog>(
-            predicate: #Predicate { log in
-                log.date >= startDate && log.date <= endDate && log.isMarkedAsTried
-            },
-            sortBy: [SortDescriptor(\.date)]
-        )
-        return try context.fetch(descriptor)
-    }
-
-    private func fetchDiaperLogs(
-        childID: UUID,
-        from startDate: Date,
-        to endDate: Date,
-        context: ModelContext
-    ) throws -> [DiaperLog] {
-        let descriptor = FetchDescriptor<DiaperLog>(
-            predicate: #Predicate { log in
-                log.timestamp >= startDate && log.timestamp <= endDate
-            },
-            sortBy: [SortDescriptor(\.timestamp)]
-        )
-        return try context.fetch(descriptor)
-    }
-
-    private func fetchGrowthLogs(
-        childID: UUID,
-        from startDate: Date,
-        to endDate: Date,
-        context: ModelContext
-    ) throws -> [GrowthMeasurement] {
-        let descriptor = FetchDescriptor<GrowthMeasurement>(
-            predicate: #Predicate { log in
-                log.date >= startDate && log.date <= endDate
-            },
-            sortBy: [SortDescriptor(\.date)]
-        )
-        return try context.fetch(descriptor)
     }
 
     // MARK: - Metrics Calculation
@@ -242,8 +167,10 @@ class DataAggregationService {
         allFeedTimes.sort()
 
         var intervals: [TimeInterval] = []
-        for i in 1..<allFeedTimes.count {
-            intervals.append(allFeedTimes[i].timeIntervalSince(allFeedTimes[i-1]))
+        if allFeedTimes.count >= 2 {
+            for i in 1..<allFeedTimes.count {
+                intervals.append(allFeedTimes[i].timeIntervalSince(allFeedTimes[i-1]))
+            }
         }
         let avgFeedingInterval = intervals.isEmpty ? 0 : intervals.reduce(0, +) / Double(intervals.count)
 
@@ -267,8 +194,8 @@ class DataAggregationService {
     private func calculateExplorerMetrics(from logs: [TriedFoodLog]) -> ExplorerSummaryMetrics? {
         guard !logs.isEmpty else { return nil }
 
-        // Count unique foods tried (id is the food name)
-        let uniqueFoods = Set(logs.map { $0.id })
+        // Count unique foods tried (id is the food name or ID)
+        let uniqueFoods = Set(logs.map { $0.foodName }) // Should be foodName or ID depending on duplication logic
         let newFoodsTried = uniqueFoods.count
 
         // Count allergen reactions

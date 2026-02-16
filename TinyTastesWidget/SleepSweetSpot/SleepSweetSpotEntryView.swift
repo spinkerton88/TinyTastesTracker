@@ -35,7 +35,11 @@ struct SleepSweetSpotEntryView: View {
             }
         }
         .padding()
-        .background(Color(UIColor.systemBackground))
+        .background {
+            if #unavailable(iOS 17.0) {
+                Color(UIColor.systemBackground)
+            }
+        }
     }
 
     // MARK: - Medium Widget
@@ -68,7 +72,11 @@ struct SleepSweetSpotEntryView: View {
                 noPredictionViewMedium
             }
         }
-        .background(Color(UIColor.systemBackground))
+        .background {
+            if #unavailable(iOS 17.0) {
+                Color(UIColor.systemBackground)
+            }
+        }
     }
 
     // MARK: - Accessory Rectangular

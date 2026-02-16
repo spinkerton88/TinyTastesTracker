@@ -194,7 +194,7 @@ class PhotoTimelineExportService {
             
             let filename = String(format: "%03d_%@_%@.jpg",
                                 index + 1,
-                                log.id.replacingOccurrences(of: " ", with: "_"),
+                                (log.id ?? log.foodName).replacingOccurrences(of: " ", with: "_"),
                                 formattedDate(log.date))
             let fileURL = tempDir.appendingPathComponent(filename)
             try jpegData.write(to: fileURL)
@@ -202,7 +202,7 @@ class PhotoTimelineExportService {
             // Add metadata
             metadata.append([
                 "filename": filename,
-                "foodName": log.id,
+                "foodName": log.foodName,
                 "date": ISO8601DateFormatter().string(from: log.date),
                 "mealType": log.meal.rawValue,
                 "reaction": log.reaction,
@@ -417,7 +417,7 @@ class PhotoTimelineExportService {
                 .font: foodFont,
                 .foregroundColor: UIColor.label
             ]
-            log.id.draw(at: CGPoint(x: infoX, y: infoY), withAttributes: foodAttrs)
+            log.foodName.draw(at: CGPoint(x: infoX, y: infoY), withAttributes: foodAttrs)
             infoY += 20
             
             let dateFormatter = DateFormatter()

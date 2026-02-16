@@ -1,0 +1,5 @@
+app_identifier("com.tinytastes.tracker") # The bundle identifier of your app
+apple_id("sean@tinytastes.ai") # Your Apple ID email address
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile

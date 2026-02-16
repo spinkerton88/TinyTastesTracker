@@ -1,0 +1,24 @@
+{
+  "name": "tinytastestracker-security-tests",
+  "version": "1.0.0",
+  "description": "Firestore security rules testing for TinyTastesTracker",
+  "scripts": {
+    "test:rules": "firebase emulators:exec --only firestore 'npm run test:rules:run'",
+    "test:rules:run": "mocha --require @babel/register --timeout 10000 'firestore-tests/**/*.test.js'",
+    "test:rules:watch": "mocha --require @babel/register --watch 'firestore-tests/**/*.test.js'",
+    "emulator:start": "firebase emulators:start --only firestore",
+    "emulator:export": "firebase emulators:export ./emulator-data"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "@babel/register": "^7.22.15",
+    "@firebase/rules-unit-testing": "^3.0.0",
+    "chai": "^4.3.10",
+    "firebase-tools": "^13.0.0",
+    "mocha": "^10.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

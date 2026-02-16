@@ -107,12 +107,8 @@ class GeminiService {
 
     private func loadConfiguration() {
         let urlString = SecureAPIKeyManager.shared.getBackendURL()
-        // Append the model path we expect on the server if the base URL is just the host
-        // But for flexibility, let's assume the backend handles the routing or we append here.
-        // The worker expects: /v1beta/models/gemini-2.0-flash:generateContent
         
         if let url = URL(string: urlString) {
-             // We'll append the path in makeRequest
              self.backendURL = url
              print("✅ Gemini Service configured with Backend: \(urlString)")
         } else {
@@ -130,6 +126,11 @@ class GeminiService {
             throw AppError.noInternetConnection
         }
         
+        // Ensure backend is configured
+        guard backendURL != nil else {
+            throw GeminiError.apiKeyNotFound
+        }
+
         // Check rate limit
         do {
             try APIRateLimiter.shared.checkRateLimit()
@@ -220,7 +221,6 @@ class GeminiService {
             }
 
             let prompt = "Identify this food item. Return only the food name."
-            
             let text = try await self.makeRequest(prompt: prompt, images: [imageData])
             return text.trimmingCharacters(in: .whitespacesAndNewlines)
         }
@@ -258,19 +258,25 @@ class GeminiService {
             """
 
             let text = try await self.makeRequest(prompt: prompt)
-            
+
             // Reusing existing parse logic via helper
             guard let jsonData = try? self.extractJSONData(from: text) else {
                  throw GeminiError.invalidResponse
             }
 
             do {
-                let response = try JSONDecoder().decode(RecipeResponse.self, from: jsonData)
-                return Recipe(title: response.title, ingredients: response.ingredients, instructions: response.instructions)
+                let response = try self.extractAndDecodeJSON(from: text, type: RecipeResponse.self)
+                return Recipe(
+                    ownerId: "",
+                    title: response.title,
+                    ingredients: response.ingredients,
+                    instructions: response.instructions
+                )
             } catch {
                 // If JSON parsing fails, create a simple recipe from the text
-                print("Failed to parse JSON, creating simple recipe from text")
+                print("Failed to parse JSON, creating simple recipe from text: \(error)")
                 return Recipe(
+                    ownerId: "",
                     title: "Recipe for \(ingredients.joined(separator: " & "))",
                     ingredients: ingredients.joined(separator: "\n"),
                     instructions: text
@@ -283,7 +289,8 @@ class GeminiService {
     
     func generateText(prompt: String) async throws -> String {
         try await executeWithSecurity(callType: .general) {
-            return try await self.makeRequest(prompt: prompt)
+            let text = try await self.makeRequest(prompt: prompt)
+            return text
         }
     }
 
@@ -323,7 +330,8 @@ class GeminiService {
             FOLLOWUP: [Question 3]
             """
 
-            return try await self.makeRequest(prompt: prompt)
+            let text = try await self.makeRequest(prompt: prompt)
+            return text
         }
     }
 
@@ -481,27 +489,35 @@ class GeminiService {
         }
     }
 
-    func generateFlavorPairings(triedFoods: [TriedFoodLog], childName: String) async throws -> FlavorPairingResponse {
+    func generateFlavorPairings(triedFoods: [TriedFoodLog], childName: String, ageInMonths: Int) async throws -> FlavorPairingResponse {
         try await executeWithSecurity(callType: .recipeGeneration) {
             // Group foods by reaction to give context
-            let lovedFoods = triedFoods.filter { $0.reaction >= 5 }.map { $0.id }
-            let allTried = triedFoods.map { $0.id }.joined(separator: ", ")
+            let lovedFoods = triedFoods.filter { $0.reaction >= 5 }.compactMap { $0.id }
+            let allTried = triedFoods.compactMap { $0.id }.joined(separator: ", ")
 
             let prompt = """
-            You are "Sage", an AI Flavor Sommelier for infants and toddlers.
-            Create 3 creative food pairings for \(childName).
+            You are "Sage", an AI Flavor Sommelier for babies and toddlers.
+            Create 3 creative food pairings for \(childName), who is \(ageInMonths) months old.
+
+            AGE-APPROPRIATE TEXTURES FOR \(ageInMonths) MONTHS:
+            - 6-8 months: Smooth purées, mashed textures, very soft foods
+            - 9-11 months: Soft finger foods, small soft pieces, mashed with small lumps
+            - 12-18 months: Chopped foods, soft chunks, ground meats
+            - 18+ months: Most table foods, still avoiding hard/round choking hazards
 
             CONTEXT:
             - Loved Foods: \(lovedFoods.joined(separator: ", "))
             - All Tried Foods: \(allTried)
 
             TASK:
-            Suggest 3 unique flavor combinations.
+            Suggest 3 unique flavor combinations that are texture-appropriate for \(ageInMonths) months.
             - Rules: Use mostly foods they have tried, but you can introduce 1 new spice or ingredient per pairing to expand their palate.
             - Goal: sophisticated but baby-friendly flavor profiles (e.g., Sweet Potato + Cinnamon, Avocado + Cumin).
+            - CRITICAL: Ensure all pairings match the texture requirements for \(ageInMonths) months old.
 
             SAFETY ALWAYS:
-            - Remind parents to insure textures are appropriate for the baby's age.
+            - All suggestions must be texture-appropriate for \(ageInMonths) months
+            - Mention specific preparation methods (purée, mash, chop size) in the description
 
             Return ONLY valid JSON in this exact format:
             {
@@ -513,7 +529,7 @@ class GeminiService {
                   "ingredients": ["Sweet Potato", "Cinnamon"]
                 }
               ],
-              "chefTips": "General tip about flavor exploration..."
+              "chefTips": "General tip about flavor exploration for \(ageInMonths)-month-olds..."
             }
             """
 
@@ -718,22 +734,22 @@ class GeminiService {
         try await executeWithSecurity(callType: .general) {
             let prompt = """
             You are a pediatric pharmacist providing medication safety information for parents.
-            
+
             MEDICATION DETAILS:
             - Medicine: \(medicineName)
             - Baby's Weight: \(String(format: "%.1f", babyWeight)) lbs
             - Dosage Given: \(dosage)
             - Baby's Age: \(ageInMonths) months
-            
+
             TASK:
             Analyze this medication administration and provide safety guidance.
-            
+
             IMPORTANT SAFETY RULES:
             1. If the medication or dosage seems unsafe, set status to "Consult Doctor"
             2. Always recommend consulting a pediatrician for prescription medications
             3. Provide age-appropriate guidance based on AAP/FDA guidelines
             4. Flag any potential overdose risks
-            
+
             Return ONLY valid JSON in this exact format:
             {
               "status": "Safe" or "Caution" or "Consult Doctor",
@@ -742,12 +758,52 @@ class GeminiService {
               "ageAppropriate": true/false,
               "summary": "One-sentence overall assessment"
             }
-            
+
             CRITICAL: Always err on the side of caution. When in doubt, recommend consulting a doctor.
             """
-            
+
             let text = try await self.makeRequest(prompt: prompt)
             return try self.extractAndDecodeJSON(from: text, type: MedicationSafetyInfo.self)
+        }
+    }
+
+    /// Analyze a medication bottle image to extract medicine information
+    func analyzeMedicationBottle(image: UIImage) async throws -> MedicationBottleAnalysis {
+        try await executeWithSecurity(callType: .imageAnalysis) {
+            guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+                throw GeminiError.invalidResponse
+            }
+
+            let prompt = """
+            You are a pediatric pharmacist analyzing a medication bottle label.
+
+            TASK:
+            Extract the following information from this medication bottle/package image:
+            1. Medicine name (brand and generic if visible)
+            2. Active ingredient
+            3. Dosage form (liquid, tablet, capsule, etc.)
+            4. Concentration (e.g., "160mg/5ml", "100mg per tablet")
+            5. Any visible dosage recommendations for children
+            6. Important warnings visible on the label
+
+            Return ONLY valid JSON in this exact format:
+            {
+              "medicineName": "Full medicine name from label",
+              "activeIngredient": "Active ingredient name or null if not visible",
+              "dosageForm": "liquid/tablet/capsule/etc or null",
+              "concentration": "Concentration string or null",
+              "recommendedDosage": "Dosage recommendation if visible or null",
+              "warnings": ["Warning 1", "Warning 2"] (or empty array if none visible)
+            }
+
+            IMPORTANT:
+            - Extract EXACT text from the label, don't infer or guess
+            - If information is not clearly visible, use null
+            - Focus on information relevant to pediatric use
+            """
+
+            let text = try await self.makeRequest(prompt: prompt, images: [imageData])
+            return try self.extractAndDecodeJSON(from: text, type: MedicationBottleAnalysis.self)
         }
     }
     

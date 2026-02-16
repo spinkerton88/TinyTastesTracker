@@ -1,26 +1,27 @@
 # Tiny Tastes Tracker - Feature Implementation Task List
 
 ## 1. Account Creation with iCloudKit
-- [ ] Create account creation screen before child setup
-  - [ ] Design welcome/account setup UI
-  - [ ] Implement iCloud account detection
-  - [ ] Create user profile model synced via CloudKit
-  - [ ] Add iCloud sign-in prompt if not signed in
-  - [ ] Store user preferences in CloudKit
-- [ ] Integrate with existing onboarding flow
-  - [ ] Show account creation before child profile setup
-  - [ ] Link user account to child profiles
-  - [ ] Handle multiple devices with same iCloud account
-- [ ] Remove backend dependencies
-  - [ ] Ensure all data storage uses CloudKit/SwiftData
-  - [ ] Remove any server-side authentication code
-  - [ ] Implement offline-first architecture
-- [ ] Implement Data Sharing (CKShare)
-  - [ ] Support sharing "Baby Profile" zones between iCloud accounts
-  - [ ] Implement UI for sending/accepting invites (UICloudSharingController)
-  - [ ] Handle permissions (Owner vs. Viewer/Editor)
-  - [ ] Handle multi-user merge conflicts with SwiftData
-  - [ ] Test sharing flow (Mom invites Dad scenario)
+- [x] Create account creation screen before child setup
+  - [x] Design welcome/account setup UI
+  - [x] Implement iCloud account detection
+  - [x] Create user profile model synced via CloudKit
+  - [x] Add iCloud sign-in prompt if not signed in
+  - [x] Store user preferences in CloudKit
+- [x] Integrate with existing onboarding flow
+  - [x] Show account creation before child profile setup
+  - [x] Link user account to child profiles
+  - [x] Handle multiple devices with same iCloud account
+- [x] Remove backend dependencies
+  - [x] Ensure all data storage uses CloudKit/SwiftData
+  - [x] Remove any server-side authentication code
+  - [x] Implement offline-first architecture
+- [ ] Implement Data Sharing (CKShare) - Explicit Family Sharing
+  - [ ] Create `CloudKitShareService` to handle CKShare lifecycle
+  - [ ] Implement `CloudKitSharingViewController` wrapper
+  - [ ] Add "Family Sharing" section to SettingsPage
+  - [ ] Implement Share Management UI (Participants, Remove Access)
+  - [ ] Handle incoming share links (Universal Links) in App Delegate
+  - [ ] Test sharing flow between two iCloud accounts
 
 ## 2. Pediatrician Summary Feature
 - [x] Design Pediatrician Summary data model
@@ -227,7 +228,7 @@
 - [ ] Add comprehensive testing
   - [ ] Unit tests for sync logic
   - [ ] Integration tests with mock CloudKit
-  - [ ] Test crash scenarios from tonight's incident
+  - [x] Test crash scenarios from tonight's incident
   - [ ] Test multi-device sync
 - [x] Monitor and log CloudKit operations
   - [x] Track sync success/failure rates

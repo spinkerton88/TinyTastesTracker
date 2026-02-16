@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct TimelineExportView: View {
     @Bindable var appState: AppState

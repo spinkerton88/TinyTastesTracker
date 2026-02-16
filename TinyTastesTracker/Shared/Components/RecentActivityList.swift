@@ -1,12 +1,19 @@
+//
+//  RecentActivityList.swift
+//  TinyTastesTracker
+//
+//
+
 import SwiftUI
-import SwiftData
 
 // MARK: - Activity Log Item Model
 
 struct ActivityLogItem: Identifiable {
-    let id: UUID
+    let id: String // Changed to String to match Firestore IDs usually, but could be UUID if model uses it. Firestore models use String?.
+    // Previous code used UUID. Models like NursingLog now conform to Identifiable with String? id.
+    // I should check if I can just use String. Or fallback to UUID string.
     let timestamp: Date
-    let icon: String
+    let icon: String // Emoji
     let description: String
     let logType: LogType
     let originalLog: Any  // Reference to the actual log object
@@ -18,35 +25,22 @@ struct ActivityLogItem: Identifiable {
 
 // MARK: - Recent Activity List
 
-
 struct RecentActivityList: View {
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
-
-    // Fetch logs directly from database with @Query
-    @Query(sort: \NursingLog.timestamp, order: .reverse) private var nursingLogs: [NursingLog]
-    @Query(sort: \BottleFeedLog.timestamp, order: .reverse) private var bottleFeedLogs: [BottleFeedLog]
-    @Query(sort: \DiaperLog.timestamp, order: .reverse) private var diaperLogs: [DiaperLog]
-    @Query(sort: \SleepLog.startTime, order: .reverse) private var sleepLogs: [SleepLog]
-    @Query(sort: \MedicationLog.timestamp, order: .reverse) private var medicationLogs: [MedicationLog]
-    @Query(sort: \PumpingLog.timestamp, order: .reverse) private var pumpingLogs: [PumpingLog]
-    @Query(sort: \MealLog.timestamp, order: .reverse) private var mealLogs: [MealLog]
-    @Query(sort: \TriedFoodLog.date, order: .reverse) private var foodLogs: [TriedFoodLog]
 
     @State private var logToDelete: ActivityLogItem?
     @State private var showingDeleteConfirmation = false
     @State private var logToEdit: EditableLog?
     @State private var showingEditSheet = false
 
-
     var recentLogs: [ActivityLogItem] {
         var logs: [ActivityLogItem] = []
 
         // Nursing logs
-        for log in nursingLogs.prefix(5) {
+        for log in appState.nursingLogs.prefix(5) {
             let minutes = Int(log.duration) / 60
             logs.append(ActivityLogItem(
-                id: log.id,
+                id: log.id ?? UUID().uuidString,
                 timestamp: log.timestamp,
                 icon: "🍼",
                 description: "\(log.side.rawValue.capitalized) • \(minutes)m",
@@ -56,7 +50,7 @@ struct RecentActivityList: View {
         }
         
         // Bottle feed logs
-        for log in bottleFeedLogs.prefix(5) {
+        for log in appState.bottleFeedLogs.prefix(5) {
             let typeIcon: String
             switch log.feedType {
             case .breastMilk: typeIcon = "🥛"
@@ -64,7 +58,7 @@ struct RecentActivityList: View {
             case .mixed: typeIcon = "🍶"
             }
             logs.append(ActivityLogItem(
-                id: log.id,
+                id: log.id ?? UUID().uuidString,
                 timestamp: log.timestamp,
                 icon: typeIcon,
                 description: "\(String(format: "%.1f", log.amount))oz bottle",
@@ -74,10 +68,10 @@ struct RecentActivityList: View {
         }
         
         // Diaper logs
-        for log in diaperLogs.prefix(5) {
+        for log in appState.diaperLogs.prefix(5) {
             let icon = log.type == .wet ? "💧" : (log.type == .dirty ? "💩" : "💧💩")
             logs.append(ActivityLogItem(
-                id: log.id,
+                id: log.id ?? UUID().uuidString,
                 timestamp: log.timestamp,
                 icon: icon,
                 description: log.type.rawValue.capitalized,
@@ -87,7 +81,7 @@ struct RecentActivityList: View {
         }
         
         // Sleep logs
-        for log in sleepLogs.prefix(5) {
+        for log in appState.sleepLogs.prefix(5) {
             let hours = log.duration / 3600
             let qualityEmoji: String
             switch log.quality {
@@ -97,7 +91,7 @@ struct RecentActivityList: View {
             case .excellent: qualityEmoji = "🌟"
             }
             logs.append(ActivityLogItem(
-                id: log.id,
+                id: log.id ?? UUID().uuidString,
                 timestamp: log.startTime,
                 icon: qualityEmoji,
                 description: String(format: "%.1fh • %@", hours, log.quality.rawValue.capitalized),
@@ -107,16 +101,17 @@ struct RecentActivityList: View {
         }
         
         // Medication logs
-        for log in medicationLogs.prefix(5) {
+        let medLogs = appState.medicationLogs
+        for log in medLogs.prefix(5) {
             let calendar = Calendar.current
             let today = calendar.startOfDay(for: Date())
-            let todayCount = medicationLogs.filter { medLog in
+            let todayCount = medLogs.filter { medLog in
                 calendar.isDate(medLog.timestamp, inSameDayAs: today) && medLog.medicineName == log.medicineName
             }.count
             
             let description = "\(log.medicineName) • \(log.dosage)" + (todayCount > 1 ? " (\(todayCount)x today)" : "")
             logs.append(ActivityLogItem(
-                id: log.id,
+                id: log.id ?? UUID().uuidString,
                 timestamp: log.timestamp,
                 icon: "💊",
                 description: description,
@@ -126,9 +121,9 @@ struct RecentActivityList: View {
         }
         
         // Pumping logs
-        for log in pumpingLogs.prefix(5) {
+        for log in appState.pumpingLogs.prefix(5) {
             logs.append(ActivityLogItem(
-                id: log.id,
+                id: log.id ?? UUID().uuidString,
                 timestamp: log.timestamp,
                 icon: "🫗",
                 description: "Pumped \(String(format: "%.1f", log.totalYield))oz",
@@ -137,28 +132,15 @@ struct RecentActivityList: View {
             ))
         }
 
-        // Meal logs (Explorer/Toddler) - combine with tried foods
-        // First, collect all tried foods grouped by timestamp and meal type
-        var triedFoodsByMeal: [String: [TriedFoodLog]] = [:]
-        for foodLog in foodLogs {
-            let key = "\(foodLog.date.timeIntervalSince1970)_\(foodLog.meal.rawValue)"
-            if triedFoodsByMeal[key] == nil {
-                triedFoodsByMeal[key] = []
-            }
-            triedFoodsByMeal[key]?.append(foodLog)
-        }
-        
-        // Track which food logs we've already included in meal logs
         // Meal logs (Explorer/Toddler)
-        for log in mealLogs.prefix(10) {
-            // Iterate over the foods stored directly on the meal log
+        for log in appState.mealLogs.prefix(10) {
             let foodNames = log.foods.compactMap { foodId in
                 appState.allKnownFoods.first(where: { $0.id == foodId })?.name
             }
             let foodsText = foodNames.isEmpty ? "None" : foodNames.joined(separator: ", ")
             
             logs.append(ActivityLogItem(
-                id: log.id,
+                id: log.id ?? UUID().uuidString,
                 timestamp: log.timestamp,
                 icon: "🍽️",
                 description: "\(log.mealType.rawValue.capitalized) • \(foodsText)",
@@ -168,16 +150,42 @@ struct RecentActivityList: View {
         }
 
         // Tried Food logs that weren't part of a meal
-        for log in foodLogs.prefix(10) {
-            // Look up the food name from Known Foods (includes custom/recipes)
-            let foodName = appState.allKnownFoods.first(where: { $0.id == log.id })?.name ?? log.id
+        for log in appState.foodLogs.prefix(20) { // Increase prefix to ensure we find enough standalone logs
+            // Check if this food log is part of a meal log
+            let isPartOfMeal = appState.mealLogs.contains { mealLog in
+                // Check if timestamps match (created at same time) and food is in the meal
+                abs(mealLog.timestamp.timeIntervalSince(log.date)) < 1.0 && mealLog.foods.contains(log.foodId)
+            }
+            
+            if isPartOfMeal { continue }
+            
+            let foodName = appState.allKnownFoods.first(where: { $0.id == log.foodName })?.name ?? log.foodName
 
             logs.append(ActivityLogItem(
-                id: UUID(), // Wrap purely for List identifiability
+                id: log.id ?? UUID().uuidString,
                 timestamp: log.date,
                 icon: "😋",
                 description: "Tried \(foodName)",
                 logType: .triedFood,
+                originalLog: log
+            ))
+        }
+        
+        // Growth logs
+        for log in appState.growthMeasurements.prefix(5) {
+            var details: [String] = []
+            if let weight = log.weight { details.append("\(String(format: "%.1f", weight))lb") }
+            if let height = log.height { details.append("\(String(format: "%.1f", height))in") }
+            if let head = log.headCircumference { details.append("Head: \(String(format: "%.1f", head))in") }
+            
+            let description = details.joined(separator: ", ")
+            
+            logs.append(ActivityLogItem(
+                id: log.id ?? UUID().uuidString,
+                timestamp: log.date,
+                icon: "📏",
+                description: description.isEmpty ? "Growth Log" : description,
+                logType: .growth,
                 originalLog: log
             ))
         }
@@ -263,41 +271,26 @@ struct RecentActivityList: View {
             EditLogSheet(log: log, appState: appState)
         }
     }
-
+    
     // MARK: - Helper Methods
     
     private func createEditableLog(from item: ActivityLogItem) -> EditableLog? {
         switch item.logType {
         case .nursing:
-            if let log = item.originalLog as? NursingLog {
-                return .nursing(log)
-            }
+            if let log = item.originalLog as? NursingLog { return .nursing(log) }
         case .bottle:
-            if let log = item.originalLog as? BottleFeedLog {
-                return .bottle(log)
-            }
+            if let log = item.originalLog as? BottleFeedLog { return .bottle(log) }
         case .diaper:
-            if let log = item.originalLog as? DiaperLog {
-                return .diaper(log)
-            }
+            if let log = item.originalLog as? DiaperLog { return .diaper(log) }
         case .sleep:
-            if let log = item.originalLog as? SleepLog {
-                return .sleep(log)
-            }
+            if let log = item.originalLog as? SleepLog { return .sleep(log) }
         case .medication:
-            if let log = item.originalLog as? MedicationLog {
-                return .medication(log)
-            }
+            if let log = item.originalLog as? MedicationLog { return .medication(log) }
         case .pumping:
-            if let log = item.originalLog as? PumpingLog {
-                return .pumping(log)
-            }
+            if let log = item.originalLog as? PumpingLog { return .pumping(log) }
         case .growth:
-            if let measurement = item.originalLog as? GrowthMeasurement {
-                return .growth(measurement)
-            }
+            if let measurement = item.originalLog as? GrowthMeasurement { return .growth(measurement) }
         case .meal, .triedFood:
-            // Editing not yet supported from this view for these types
             return nil
         }
         return nil
@@ -306,41 +299,23 @@ struct RecentActivityList: View {
     private func deleteLog(_ item: ActivityLogItem) {
         switch item.logType {
         case .nursing:
-            if let log = item.originalLog as? NursingLog {
-                appState.deleteNursingLog(log, context: modelContext)
-            }
+            if let log = item.originalLog as? NursingLog { appState.deleteNursingLog(log) }
         case .bottle:
-            if let log = item.originalLog as? BottleFeedLog {
-                appState.deleteBottleFeedLog(log, context: modelContext)
-            }
+            if let log = item.originalLog as? BottleFeedLog { appState.deleteBottleFeedLog(log) }
         case .diaper:
-            if let log = item.originalLog as? DiaperLog {
-                appState.deleteDiaperLog(log, context: modelContext)
-            }
+            if let log = item.originalLog as? DiaperLog { appState.deleteDiaperLog(log) }
         case .sleep:
-            if let log = item.originalLog as? SleepLog {
-                appState.deleteSleepLog(log, context: modelContext)
-            }
+            if let log = item.originalLog as? SleepLog { appState.deleteSleepLog(log) }
         case .medication:
-            if let log = item.originalLog as? MedicationLog {
-                appState.deleteMedicationLog(log, context: modelContext)
-            }
+            if let log = item.originalLog as? MedicationLog { appState.deleteMedicationLog(log) }
         case .pumping:
-            if let log = item.originalLog as? PumpingLog {
-                appState.deletePumpingLog(log, context: modelContext)
-            }
+            if let log = item.originalLog as? PumpingLog { appState.deletePumpingLog(log) }
         case .growth:
-            if let measurement = item.originalLog as? GrowthMeasurement {
-                appState.deleteGrowthMeasurement(measurement, context: modelContext)
-            }
+            if let measurement = item.originalLog as? GrowthMeasurement { appState.deleteGrowthMeasurement(measurement) }
         case .meal:
-            if let log = item.originalLog as? MealLog {
-                appState.deleteMealLog(log, context: modelContext)
-            }
+            if let log = item.originalLog as? MealLog { appState.deleteMealLog(log) }
         case .triedFood:
-            if let log = item.originalLog as? TriedFoodLog {
-                appState.deleteFoodLog(log, context: modelContext)
-            }
+            if let log = item.originalLog as? TriedFoodLog { appState.deleteFoodLog(log) }
         }
         
         HapticManager.success()

@@ -6,10 +6,8 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct NewbornPage: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     
     @State private var leftTimerStart: Date?
@@ -80,7 +78,9 @@ struct NewbornPage: View {
                     onStop: {
                         if let start = leftTimerStart {
                             let duration = Date().timeIntervalSince(start)
-                            appState.saveNursingLog(startTime: start, duration: duration, side: .left, context: modelContext)
+                            Task {
+                                try? await appState.saveNursingLog(startTime: start, duration: duration, side: .left)
+                            }
                             leftTimerStart = nil
                             HapticManager.success()
                         }
@@ -99,7 +99,9 @@ struct NewbornPage: View {
                     onStop: {
                         if let start = rightTimerStart {
                             let duration = Date().timeIntervalSince(start)
-                            appState.saveNursingLog(startTime: start, duration: duration, side: .right, context: modelContext)
+                            Task {
+                                try? await appState.saveNursingLog(startTime: start, duration: duration, side: .right)
+                            }
                             rightTimerStart = nil
                             HapticManager.success()
                         }
@@ -126,7 +128,9 @@ struct NewbornPage: View {
                     color: .blue,
                     action: {
                         HapticManager.impact()
-                        appState.saveDiaperLog(type: .wet, context: modelContext)
+                        Task {
+                            try? await appState.saveDiaperLog(type: .wet)
+                        }
                         HapticManager.success()
                     }
                 )
@@ -137,7 +141,9 @@ struct NewbornPage: View {
                     color: .brown,
                     action: {
                         HapticManager.impact()
-                        appState.saveDiaperLog(type: .dirty, context: modelContext)
+                        Task {
+                            try? await appState.saveDiaperLog(type: .dirty)
+                        }
                         HapticManager.success()
                     }
                 )
@@ -148,7 +154,9 @@ struct NewbornPage: View {
                     color: .orange,
                     action: {
                         HapticManager.impact()
-                        appState.saveDiaperLog(type: .both, context: modelContext)
+                        Task {
+                            try? await appState.saveDiaperLog(type: .both)
+                        }
                         HapticManager.success()
                     }
                 )
@@ -164,7 +172,7 @@ struct NewbornPage: View {
                 )
                 
                 QuickActionButton(
-                    icon: "drop.triangle.fill",
+                    icon: "baby.bottle.fill",
                     label: "Bottle",
                     color: .cyan,
                     action: {

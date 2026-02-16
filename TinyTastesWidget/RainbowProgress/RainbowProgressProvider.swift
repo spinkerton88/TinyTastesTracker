@@ -18,20 +18,55 @@ struct RainbowProgressProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        // Load rainbow progress data from shared UserDefaults
-        let progressData = WidgetDataManager.loadRainbowProgress()
-        let timeRange = WidgetDataManager.rainbowProgressTimeRange()
+        Task {
+            var progressData: [ColorProgressData] = []
+            let timeRange = WidgetDataManager.rainbowProgressTimeRange()
 
-        let entry = RainbowProgressEntry(
-            date: Date(),
-            colorProgress: progressData.isEmpty ? placeholderProgress() : progressData,
-            timeRange: timeRange
-        )
+            // Try fetching from Firestore if authenticated and have active profile
+            if WidgetDataManager.isUserAuthenticated(),
+               let profileId = WidgetDataManager.getActiveProfileId() {
 
-        // Update every 30 minutes (changes slowly)
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        completion(timeline)
+                // Calculate date range based on timeRange setting
+                let calendar = Calendar.current
+                let now = Date()
+                let startDate: Date
+
+                switch timeRange {
+                case "day":
+                    startDate = calendar.startOfDay(for: now)
+                case "month":
+                    startDate = calendar.date(byAdding: .month, value: -1, to: now) ?? now
+                default: // "week"
+                    startDate = calendar.date(byAdding: .day, value: -7, to: now) ?? now
+                }
+
+                // Fetch meal logs from Firestore
+                if let mealLogs = try? await WidgetDataManager.fetchRecentMealLogs(for: profileId, since: startDate) {
+                    progressData = WidgetDataManager.calculateRainbowProgress(from: mealLogs)
+                }
+            }
+
+            // Fallback to UserDefaults if Firestore fetch failed or no auth
+            if progressData.isEmpty {
+                progressData = WidgetDataManager.loadRainbowProgress()
+            }
+
+            // Use placeholder if still no data
+            if progressData.isEmpty {
+                progressData = placeholderProgress()
+            }
+
+            let entry = RainbowProgressEntry(
+                date: Date(),
+                colorProgress: progressData,
+                timeRange: timeRange
+            )
+
+            // Update every 30 minutes (changes slowly)
+            let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
+            let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+            completion(timeline)
+        }
     }
 
     private func placeholderProgress() -> [ColorProgressData] {

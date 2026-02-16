@@ -1,0 +1,52 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new release to the App Store"
+  lane :release do
+    # App Store Connect API Key Authentication
+    api_key = app_store_connect_api_key(
+      key_id: "6HHRJ37TY8",
+      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"], # Set via: export APP_STORE_CONNECT_ISSUER_ID=your-issuer-id
+      key_filepath: "~/private_keys/AuthKey_6HHRJ37TY8.p8",
+      in_house: false
+    )
+
+    # Upload metadata, screenshots, and binary to App Store Connect
+    deliver(
+      api_key: api_key,
+      force: true, # Skip HTML report verification
+      skip_screenshots: true, # Initial setup usually focuses on metadata
+      submit_for_review: false # Just upload, don't submit automatically
+    )
+  end
+
+  desc "Update only metadata (description, keywords, etc)"
+  lane :metadata_only do
+    # App Store Connect API Key Authentication
+    api_key = app_store_connect_api_key(
+      key_id: "6HHRJ37TY8",
+      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"], # Set via: export APP_STORE_CONNECT_ISSUER_ID=your-issuer-id
+      key_filepath: "~/private_keys/AuthKey_6HHRJ37TY8.p8",
+      in_house: false
+    )
+
+    deliver(
+      api_key: api_key,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_app_version_update: true, # Skip if no version exists yet
+      force: true,
+      precheck_include_in_app_purchases: false
+    )
+  end
+
+  desc "Drive simulator to take screenshots automatically"
+  lane :screenshots do
+    capture_ios_screenshots(
+      scheme: "TinyTastesTracker",
+      clean: true,
+      only_testing: "TinyTastesTrackerUITests/SnapshotUITests"
+    )
+    # optional: frame_screenshots(white: true) # to add device frames
+  end
+end

@@ -6,11 +6,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct BadgesListView: View {
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
     
     @State private var selectedMode: AppMode
     
@@ -85,9 +83,7 @@ struct BadgesListView: View {
         .background(Color(UIColor.systemGroupedBackground))
         .onAppear {
             seedBadgesIfNeeded()
-            if let profile = appState.userProfile {
-                BadgeManager.shared.refreshBadges(for: profile, context: modelContext)
-            }
+            checkBadgeProgress()
         }
     }
     
@@ -102,28 +98,36 @@ struct BadgesListView: View {
         let defaults = Badge.defaults()
         let existingBadges = profile.badges ?? []
         
-        // If we have significantly fewer badges than defaults, or empty, run a merge.
+        // If we have fewer badges than defaults, run a merge.
         if existingBadges.count < defaults.count {
             print("Detected missing badges. Running merge...")
             
-            // Create a set of existing types for fast lookup
-            let existingTypes = Set(existingBadges.map { $0.type })
+            var updatedProfile = profile
+            var currentBadges = updatedProfile.badges ?? []
             
-            var addedCount = 0
+            let existingTypes = Set(currentBadges.map { $0.type })
+            
             for defaultBadge in defaults {
-                // Check if this badge type already exists
                 if !existingTypes.contains(defaultBadge.type) {
-                    // Add it!
-                    modelContext.insert(defaultBadge)
-                    profile.badges?.append(defaultBadge)
-                    addedCount += 1
+                    currentBadges.append(defaultBadge)
                 }
             }
             
-            if addedCount > 0 {
-                try? modelContext.save()
-                print("Badges merged: Added \(addedCount) new badges.")
-            }
+            updatedProfile.badges = currentBadges
+            appState.profileManager.updateProfile(updatedProfile)
+        }
+    }
+    
+    private func checkBadgeProgress() {
+        guard let profile = appState.userProfile else { return }
+        
+        // Use BadgeManager to check for updates
+        if let updatedBadges = BadgeManager.shared.checkBadges(for: profile, appState: appState) {
+            print("Badges updated! Saving changes...")
+            var updatedProfile = profile
+            updatedProfile.badges = updatedBadges
+            
+            appState.profileManager.updateProfile(updatedProfile)
         }
     }
 }

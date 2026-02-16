@@ -6,13 +6,10 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct FeedingTrackerView: View {
     let mode: AppMode
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
-    
     @State private var showingFeedingSheet = false
     
     // Get last feeding log
@@ -63,7 +60,7 @@ struct FeedingTrackerView: View {
             // Last feeding summary
             if !appState.nursingLogs.isEmpty || !appState.bottleFeedLogs.isEmpty || !appState.pumpingLogs.isEmpty {
                 HStack {
-                    Image(systemName: "drop.fill")
+                    Image(systemName: "spoon.serving")
                         .foregroundStyle(appState.themeColor.opacity(0.7))
                     
                     VStack(alignment: .leading, spacing: 2) {
@@ -147,7 +144,7 @@ struct FeedingTrackerView: View {
         case .explorer:
             return "drop.triangle.fill"
         case .toddler:
-            return "fork.knife"
+            return "spoon.serving"
         }
     }
     
@@ -183,7 +180,7 @@ struct FeedingTrackerView: View {
         // Add nursing logs
         for log in appState.nursingLogs.suffix(5) {
             items.append(FeedingItem(
-                id: log.id.uuidString,
+                id: log.id ?? UUID().uuidString,
                 icon: "heart.fill",
                 description: "Nursed \(formatDuration(log.duration)) (\(log.side.rawValue))",
                 time: log.timestamp.formatted(date: .omitted, time: .shortened),
@@ -195,7 +192,7 @@ struct FeedingTrackerView: View {
         for log in appState.bottleFeedLogs.suffix(5) {
             let formatted = String(format: "%.1f", log.amount)
             items.append(FeedingItem(
-                id: log.id.uuidString,
+                id: log.id ?? UUID().uuidString,
                 icon: "drop.triangle.fill",
                 description: "Bottle: \(formatted)oz",
                 time: log.timestamp.formatted(date: .omitted, time: .shortened),
@@ -207,7 +204,7 @@ struct FeedingTrackerView: View {
         for log in appState.pumpingLogs.suffix(5) {
             let formatted = String(format: "%.1f", log.totalYield)
             items.append(FeedingItem(
-                id: log.id.uuidString,
+                id: log.id ?? UUID().uuidString,
                 icon: "drop.fill",
                 description: "Pumped: \(formatted)oz",
                 time: log.timestamp.formatted(date: .omitted, time: .shortened),

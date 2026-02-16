@@ -1,9 +1,14 @@
+//
+//  SleepLogSheet.swift
+//  TinyTastesTracker
+//
+//
+
 import SwiftUI
-import SwiftData
 
 struct SleepLogSheet: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
     @Environment(\.scenePhase) private var scenePhase
     @Bindable var appState: AppState
     
@@ -18,10 +23,8 @@ struct SleepLogSheet: View {
     // Timer State
     @State private var activeSleepStart: Date?
     @State private var timerDuration: TimeInterval = 0
-    @State private var showingQualityPicker = false
-    @State private var pendingSleepStart: Date?
-    @State private var pendingSleepEnd: Date?
-    @State private var selectedQuality: SleepQuality = .good
+
+    @State private var isSaving = false
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
@@ -53,28 +56,79 @@ struct SleepLogSheet: View {
                         }
                         
                         // Action Button
-                        Button {
-                            toggleSleepTimer()
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .fill(activeSleepStart != nil ? Color.pink.opacity(0.8) : Color.pink)
-                                    .frame(width: 200, height: 200)
-                                    .shadow(color: .pink.opacity(0.3), radius: 15)
+                        if let start = activeSleepStart {
+                            // Wake Up Menu
+                            Menu {
+                                Text("How was the sleep?")
                                 
-                                VStack(spacing: 8) {
-                                    Image(systemName: activeSleepStart != nil ? "moon.zzz.fill" : "moon.stars.fill")
-                                        .font(.system(size: 44))
-                                    Text(activeSleepStart != nil ? "Wake Up" : "Start Sleep")
-                                        .font(.title2)
-                                        .fontWeight(.semibold)
+                                Button {
+                                    stopSleep(quality: .excellent)
+                                } label: {
+                                    Label("Excellent", systemImage: "star.fill")
                                 }
-                                .foregroundStyle(.white)
+                                
+                                Button {
+                                    stopSleep(quality: .good)
+                                } label: {
+                                    Label("Good", systemImage: "hand.thumbsup.fill")
+                                }
+                                
+                                Button {
+                                    stopSleep(quality: .fair)
+                                } label: {
+                                    Label("Fair", systemImage: "hand.thumbsdown")
+                                }
+                                
+                                Button {
+                                    stopSleep(quality: .poor)
+                                } label: {
+                                    Label("Poor", systemImage: "exclamationmark.triangle")
+                                }
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.pink.opacity(0.8))
+                                        .frame(width: 200, height: 200)
+                                        .shadow(color: .pink.opacity(0.3), radius: 15)
+                                    
+                                    VStack(spacing: 8) {
+                                        Image(systemName: "moon.zzz.fill")
+                                            .font(.system(size: 44))
+                                        Text("Wake Up")
+                                            .font(.title2)
+                                            .fontWeight(.semibold)
+                                    }
+                                    .foregroundStyle(.white)
+                                }
                             }
+                            .accessibilityLabel("Stop Sleep Timer")
+                            .accessibilityValue("Running for \(formatDuration(timerDuration))")
+                            .accessibilityHint("Double tap to wake up baby and rate sleep")
+                        } else {
+                            // Start Sleep Button
+                            Button {
+                                startSleep()
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.pink)
+                                        .frame(width: 200, height: 200)
+                                        .shadow(color: .pink.opacity(0.3), radius: 15)
+                                    
+                                    VStack(spacing: 8) {
+                                        Image(systemName: "moon.stars.fill")
+                                            .font(.system(size: 44))
+                                        Text("Start Sleep")
+                                            .font(.title2)
+                                            .fontWeight(.semibold)
+                                    }
+                                    .foregroundStyle(.white)
+                                }
+                            }
+                            .accessibilityLabel("Start Sleep Timer")
+                            .accessibilityValue("Not running")
+                            .accessibilityHint("Double tap to start tracking sleep")
                         }
-                        .accessibilityLabel(activeSleepStart != nil ? "Stop Sleep Timer" : "Start Sleep Timer")
-                        .accessibilityValue(activeSleepStart != nil ? "Running for \(formatDuration(timerDuration))" : "Not running")
-                        .accessibilityHint(activeSleepStart != nil ? "Double tap to wake up baby" : "Double tap to start tracking sleep")
                         
                         if let start = activeSleepStart {
                             Text("Started at \(start.formatted(date: .omitted, time: .shortened))")
@@ -114,6 +168,7 @@ struct SleepLogSheet: View {
                             .frame(maxWidth: .infinity)
                             .foregroundStyle(.white)
                             .listRowBackground(appState.themeColor)
+                            .disabled(isSaving)
                         }
                     }
                 }
@@ -140,30 +195,6 @@ struct SleepLogSheet: View {
                     checkActiveSleep()
                 }
             }
-            .confirmationDialog("How was the sleep?", isPresented: $showingQualityPicker) {
-                Button("😴 Excellent") {
-                    selectedQuality = .excellent
-                    saveSleepWithQuality()
-                }
-                Button("😊 Good") {
-                    selectedQuality = .good
-                    saveSleepWithQuality()
-                }
-                Button("😐 Fair") {
-                    selectedQuality = .fair
-                    saveSleepWithQuality()
-                }
-                Button("😟 Poor") {
-                    selectedQuality = .poor
-                    saveSleepWithQuality()
-                }
-                Button("Cancel", role: .cancel) {
-                    // Don't save, just dismiss
-                    pendingSleepEnd = nil
-                }
-            } message: {
-                Text("Rate the sleep quality")
-            }
         }
     }
     
@@ -179,60 +210,67 @@ struct SleepLogSheet: View {
         }
     }
     
-    private func toggleSleepTimer() {
+    private func startSleep() {
         HapticManager.impact()
         
-        if let start = activeSleepStart {
-            // Stop Sleep (Wake Up) - Show quality picker
-            pendingSleepStart = start
-            pendingSleepEnd = Date()
-            selectedQuality = .good // Default selection
-            showingQualityPicker = true
-            
-            // Update local state immediately
-            activeSleepStart = nil
-            timerDuration = 0
-            
-            // Stop activity
-            appState.stopSleepActivity()
-        } else {
-            // Start Sleep
-            let startTime = Date()
-            
-            // Update local state immediately BEFORE calling the activity
-            activeSleepStart = startTime
-            timerDuration = 0
-            
-            // Start the activity
-            appState.startSleepActivity()
-            
-            HapticManager.success()
-            
-            // Dismiss sheet so user can see dashboard status
-            dismiss()
+        let startTime = Date()
+        
+        // Update local state immediately BEFORE calling the activity
+        activeSleepStart = startTime
+        timerDuration = 0
+        
+        // Start the activity
+        appState.startSleepActivity()
+        
+        HapticManager.success()
+        
+        // Dismiss sheet so user can see dashboard status
+        dismiss()
+    }
+    
+    private func stopSleep(quality: SleepQuality) {
+        guard let start = activeSleepStart else { return }
+        HapticManager.impact()
+        
+        let endTime = Date()
+        
+        Task {
+            do {
+                try await appState.saveSleepLog(start: start, end: endTime, quality: quality)
+                
+                await MainActor.run {
+                    // Update local state
+                    activeSleepStart = nil
+                    timerDuration = 0
+                    
+                    // Stop activity
+                    appState.stopSleepActivity()
+                    
+                    HapticManager.success()
+                    errorPresenter.showSuccess("Sleep logged")
+                    dismiss()
+                }
+            } catch {
+                await MainActor.run {
+                    errorPresenter.present(error)
+                }
+            }
         }
     }
     
-    private func saveSleepWithQuality() {
-        guard let start = pendingSleepStart, let end = pendingSleepEnd else { return }
-        
-        // Save log with selected quality
-        appState.saveSleepLog(start: start, end: end, quality: selectedQuality, context: modelContext)
-        
-        HapticManager.success()
-        
-        // Clear pending state
-        pendingSleepStart = nil
-        pendingSleepEnd = nil
-        
-        // Dismiss sheet
-        dismiss()
-    }
-    
     private func saveManualSleep() {
-        appState.saveSleepLog(start: startTime, end: endTime, quality: quality, context: modelContext)
-        HapticManager.success()
-        dismiss()
+        Task {
+            isSaving = true
+            defer { isSaving = false }
+            
+            do {
+                try await appState.saveSleepLog(start: startTime, end: endTime, quality: quality)
+                errorPresenter.showSuccess("Sleep logged")
+                dismiss()
+            } catch {
+                errorPresenter.present(error)
+            }
+        }
     }
     
     private func formatDuration(_ duration: TimeInterval) -> String {

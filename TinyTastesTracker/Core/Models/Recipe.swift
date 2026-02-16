@@ -6,21 +6,30 @@
 //
 
 import Foundation
-import SwiftData
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
-@Model
-final class Recipe: Codable {
-    @Attribute(.unique) var id: UUID
-    var title: String
-    var ingredients: String
-    var instructions: String
-    var tags: [String]
-    var mealTypes: [MealType]
-    var createdAt: Date
-    @Attribute(.externalStorage) var imageData: Data?
-    @Attribute(.externalStorage) var thumbnailData: Data?
+struct Recipe: Identifiable, Codable {
+    @DocumentID var id: String?
+    var ownerId: String
+    var sharedWith: [String]? // User IDs who have access via profile sharing
+
+    var title: String = ""
+    var ingredients: String = ""
+    var instructions: String = ""
+    var tags: [String] = []
+    var mealTypes: [MealType] = []
+    var createdAt: Date = Date()
     
-    init(id: UUID = UUID(),
+    // External storage logic is handled by services, but we keep the property for now.
+    // In a real Firestore app, we would store the URL string here, not the Data.
+    // However, keeping Data? to match previous model for now, but note robust implementation
+    // should use StorageReference or URL string.
+    var imageData: Data?
+    var thumbnailData: Data?
+    
+    init(id: String? = nil,
+         ownerId: String,
          title: String,
          ingredients: String,
          instructions: String,
@@ -30,6 +39,7 @@ final class Recipe: Codable {
          thumbnailData: Data? = nil,
          createdAt: Date = Date()) {
         self.id = id
+        self.ownerId = ownerId
         self.title = title
         self.ingredients = ingredients
         self.instructions = instructions
@@ -129,37 +139,5 @@ final class Recipe: Codable {
             result.append(current.trimmingCharacters(in: .whitespacesAndNewlines))
         }
         return result.filter { !$0.isEmpty }
-    }
-    
-    // MARK: - Codable Conformance
-    
-    enum CodingKeys: String, CodingKey {
-        case id, title, ingredients, instructions, tags, mealTypes, imageData, thumbnailData, createdAt
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(UUID.self, forKey: .id)
-        self.title = try container.decode(String.self, forKey: .title)
-        self.ingredients = try container.decode(String.self, forKey: .ingredients)
-        self.instructions = try container.decode(String.self, forKey: .instructions)
-        self.tags = try container.decode([String].self, forKey: .tags)
-        self.mealTypes = try container.decode([MealType].self, forKey: .mealTypes)
-        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
-        self.imageData = try container.decodeIfPresent(Data.self, forKey: .imageData)
-        self.thumbnailData = try container.decodeIfPresent(Data.self, forKey: .thumbnailData)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(title, forKey: .title)
-        try container.encode(ingredients, forKey: .ingredients)
-        try container.encode(instructions, forKey: .instructions)
-        try container.encode(tags, forKey: .tags)
-        try container.encode(mealTypes, forKey: .mealTypes)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encodeIfPresent(imageData, forKey: .imageData)
-        try container.encodeIfPresent(thumbnailData, forKey: .thumbnailData)
     }
 }

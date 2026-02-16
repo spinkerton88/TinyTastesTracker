@@ -37,6 +37,7 @@ struct SageOverlayModifier: ViewModifier {
                 }
                 .padding(.trailing, 20)
                 .padding(.bottom, 16)
+                .accessibilityIdentifier("ask_sage_button")
             }
             .sheet(isPresented: $showSageView) {
                 SageView(appState: appState)

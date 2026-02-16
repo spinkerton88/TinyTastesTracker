@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SummaryDetailView: View {
-    @Bindable var summary: PediatricianSummary
+    @Binding var summary: PediatricianSummary
     @Bindable var appState: AppState
     @State private var isEditingNotes = false
 
@@ -65,7 +65,7 @@ struct SummaryDetailView: View {
             HStack {
                 Image(systemName: "doc.text.fill")
                     .foregroundStyle(appState.themeColor)
-                Text("AI Summary")
+                Text("Summary")
                     .font(.headline)
             }
 

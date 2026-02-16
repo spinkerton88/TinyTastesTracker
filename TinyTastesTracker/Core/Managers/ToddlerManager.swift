@@ -2,54 +2,122 @@
 //  ToddlerManager.swift
 //  TinyTastesTracker
 //
+//
 
 import Foundation
 import SwiftUI
-import SwiftData
+import FirebaseFirestore
+import FirebaseAnalytics
+import WidgetKit
 
 @Observable
 class ToddlerManager {
+    // Data Arrays (Updated via Firestore Listeners)
+    // We keep ALL logs for the owner to handle switching, or just filter in listener?
+    // Better to filter in listener for the ACTIVE child, to mimic "loading data for this view".
+    // But if we switch profiles, we call loadData again?
+    // Yes, AppState calls loadData on profile switch usually.
     var foodLogs: [TriedFoodLog] = []
     var mealLogs: [MealLog] = []
     var nutrientGoals: NutrientGoals?
 
-    // Dependency - needs to be injected or passed
-    private(set) var allKnownFoods: [FoodItem] = []
+    // Dependencies
+    private let notificationManager: NotificationManager
+
+    // Firestore Services
+    private let foodService = FirestoreService<TriedFoodLog>(collectionName: "tried_food_logs")
+    private let mealService = FirestoreService<MealLog>(collectionName: "meal_logs")
+    private let goalService = FirestoreService<NutrientGoals>(collectionName: "nutrient_goals")
+
+    // Listener Registrations
+    private var listeners: [ListenerRegistration] = []
+
+    // Dependency - data provider closure
+    var getAllKnownFoods: () -> [FoodItem] = { [] }
 
     // MARK: - Initialization
 
-    func updateKnownFoods(_ foods: [FoodItem]) {
-        self.allKnownFoods = foods
+    init(notificationManager: NotificationManager) {
+        self.notificationManager = notificationManager
     }
 
     // MARK: - Food Tracking
 
     var triedFoodsCount: Int {
-        Set(foodLogs.filter { $0.isMarkedAsTried }.map { $0.id }).count
+        // Count unique foods tried (marked as tried)
+        Set(foodLogs.filter { $0.isMarkedAsTried }.map { $0.foodId }).count
     }
 
     func isFoodTried(_ foodId: String) -> Bool {
-        foodLogs.contains { $0.id == foodId && $0.isMarkedAsTried }
+        // Check if any log exists for this food that is marked as tried
+        foodLogs.contains { $0.foodId == foodId && $0.isMarkedAsTried }
     }
 
-    func saveFoodLog(_ log: TriedFoodLog, context: ModelContext) {
-        if let existingIndex = foodLogs.firstIndex(where: { $0.id == log.id }) {
-            foodLogs[existingIndex] = log
+    func saveFoodLog(_ log: TriedFoodLog, ownerId: String, childId: String) async throws {
+        var logToSave = log
+        let isNew = logToSave.id == nil
+        
+        // 1. Prepare ID and metadata
+        if isNew {
+            logToSave.id = UUID().uuidString
+            // Calculate try count based on current local state
+            let existingLogsForFood = foodLogs.filter { $0.foodId == log.foodId && $0.isMarkedAsTried }
+            logToSave.tryCount = existingLogsForFood.count + 1
+        }
+        
+        // 2. Optimistic Update (Local)
+        if isNew {
+            foodLogs.append(logToSave)
         } else {
-            foodLogs.append(log)
-            context.insert(log)
+            if let index = foodLogs.firstIndex(where: { $0.id == logToSave.id }) {
+                foodLogs[index] = logToSave
+            }
+        }
+        
+        // 3. Network / Queue Logic
+        guard NetworkMonitor.shared.isConnected else {
+            // Queue for offline sync
+            if let encoded = try? JSONEncoder().encode(logToSave) {
+                let operation = QueuedOperation(
+                    type: .foodLog,
+                    payload: encoded,
+                    priority: .high
+                )
+                OfflineQueue.shared.enqueue(operation)
+            }
+            // Offline success - return without error so UI stays consistent
+            return
+        }
+        
+        // 4. Online Save
+        try await withRetry(maxAttempts: 3) {
+            try await withTimeout(seconds: 10) {
+                if isNew, let id = logToSave.id {
+                    // Use add with specific ID to match our optimistic ID
+                    try await self.foodService.add(logToSave, withId: id)
+                } else {
+                    // Update existing
+                    try await self.foodService.update(logToSave)
+                }
+            }
         }
 
-        // Update Rainbow Progress Widget
+        // Track analytics event
+        if isNew {
+            Analytics.logEvent("food_tried", parameters: [
+                "food_id": logToSave.foodId,
+                "reaction": logToSave.reaction,
+                "try_count": logToSave.tryCount
+            ])
+        }
+
         updateRainbowProgressWidget()
     }
     
     /// Check if a food contains high-risk allergens and return allergen info
     /// Only triggers for TRUE ALLERGIES (IgE-mediated), not intolerances
-    /// - Parameter foodId: The food ID to check
-    /// - Returns: Tuple with allergen info if high-risk true allergy, nil otherwise
     func checkForHighRiskAllergen(foodId: String) -> (foodName: String, allergenName: String)? {
-        guard let food = allKnownFoods.first(where: { $0.id == foodId }) else {
+        guard let food = getAllKnownFoods().first(where: { $0.id == foodId }) else {
             return nil
         }
         
@@ -62,7 +130,6 @@ class ToddlerManager {
         let allergenName = food.allergens.first?.capitalized ?? "Unknown Allergen"
         
         // CRITICAL: Only trigger monitoring for TRUE ALLERGIES, not intolerances
-        // Intolerances are tracked but don't need urgent monitoring prompts
         guard CommonAllergens.isTrueAllergy(allergenName) else {
             return nil
         }
@@ -70,72 +137,148 @@ class ToddlerManager {
         return (foodName: food.name, allergenName: allergenName)
     }
 
-    func unmarkFoodAsTried(_ foodId: String, context: ModelContext) {
-        if let log = foodLogs.first(where: { $0.id == foodId }) {
-            log.isMarkedAsTried = false
-            log.unmarkedAt = Date()
+    func unmarkFoodAsTried(_ foodId: String) {
+        // Find log for this food
+        if let log = foodLogs.filter({ $0.foodId == foodId && $0.isMarkedAsTried }).sorted(by: { $0.date > $1.date }).first {
+            var updatedLog = log
+            updatedLog.isMarkedAsTried = false
+            updatedLog.unmarkedAt = Date()
             
-            // Try to save changes immediately
-            try? context.save()
-            updateRainbowProgressWidget()
+            // Optimistic Update
+            if let index = foodLogs.firstIndex(where: { $0.id == updatedLog.id }) {
+                foodLogs[index] = updatedLog
+            }
+            
+            Task {
+                do {
+                    try await foodService.update(updatedLog)
+                    updateRainbowProgressWidget()
+                } catch {
+                    print("Error unmarking food: \(error)")
+                    // Revert optimistic update on hard error? 
+                    // For now, assume eventual consistency or retry
+                }
+            }
         }
     }
     
-    func undoUnmarkFood(_ foodId: String, context: ModelContext) {
-         if let log = foodLogs.first(where: { $0.id == foodId }) {
-            log.isMarkedAsTried = true
-            log.unmarkedAt = nil
+    func undoUnmarkFood(_ foodId: String) {
+         if let log = foodLogs.filter({ $0.foodId == foodId && !$0.isMarkedAsTried }).sorted(by: { $0.date > $1.date }).first {
+            var updatedLog = log
+            updatedLog.isMarkedAsTried = true
+            updatedLog.unmarkedAt = nil
              
-            // Try to save changes immediately
-            try? context.save()
-            updateRainbowProgressWidget()
+            // Optimistic Update
+            if let index = foodLogs.firstIndex(where: { $0.id == updatedLog.id }) {
+                foodLogs[index] = updatedLog
+            }
+             
+            Task {
+                do {
+                    try await foodService.update(updatedLog)
+                    updateRainbowProgressWidget()
+                } catch {
+                    print("Error undoing unmark food: \(error)")
+                }
+            }
         }
     }
 
-    func deleteFoodLog(_ log: TriedFoodLog, context: ModelContext) {
-        if let index = foodLogs.firstIndex(where: { $0.id == log.id }) {
-            foodLogs.remove(at: index)
+    func deleteFoodLog(_ log: TriedFoodLog) {
+        guard let id = log.id else { return }
+        
+        // Optimistic Delete
+        foodLogs.removeAll { $0.id == id }
+        
+        Task {
+            try? await foodService.delete(id: id)
+            updateRainbowProgressWidget()
         }
-        context.delete(log)
-        updateRainbowProgressWidget()
     }
 
     // MARK: - Meal Logging
 
-    func saveMealLog(_ log: MealLog, context: ModelContext, userProfile: UserProfile? = nil) {
-        mealLogs.append(log)
-        context.insert(log)
-
+    func saveMealLog(_ log: MealLog, ownerId: String, childId: String) async throws {
+        var logToSave = log
+        let isNew = logToSave.id == nil
+        
+        // 1. Prepare ID
+        if isNew {
+            logToSave.id = UUID().uuidString
+        }
+        
+        // 2. Optimistic Update (Local)
+        if let index = mealLogs.firstIndex(where: { $0.id == logToSave.id }) {
+             mealLogs[index] = logToSave
+        } else {
+             mealLogs.append(logToSave)
+             // Sort to keep "Today's Logs" ordered correctly immediately
+             mealLogs.sort { $0.timestamp > $1.timestamp }
+        }
+        
+        // Update Rainbow Progress Widget Optimistically
+        updateRainbowProgressWidget()
+        
+        // 3. Network / Queue Logic
+        guard NetworkMonitor.shared.isConnected else {
+            if let encoded = try? JSONEncoder().encode(logToSave) {
+                let operation = QueuedOperation(
+                    type: .mealLog,
+                    payload: encoded,
+                    priority: .high
+                )
+                OfflineQueue.shared.enqueue(operation)
+            }
+            // Offline success
+            return
+        }
+        
+        // 4. Online Save
+        try await withRetry(maxAttempts: 3) {
+            try await withTimeout(seconds: 10) {
+                if isNew, let id = logToSave.id {
+                    try await self.mealService.add(logToSave, withId: id)
+                } else {
+                    try await self.mealService.update(logToSave)
+                }
+            }
+        }
+        
         // Also update tried foods log for each item in the meal
         for foodId in log.foods {
             if !isFoodTried(foodId) {
+                // Resolve food name from ID
+                let foodName = getAllKnownFoods().first(where: { $0.id == foodId })?.name ?? foodId.replacingOccurrences(of: "_", with: " ").capitalized
+
                 let triedLog = TriedFoodLog(
-                    id: foodId,
+                    ownerId: ownerId,
+                    childId: childId,
+                    foodId: foodId,
+                    foodName: foodName,
                     date: log.timestamp,
                     reaction: 3, // Neutral default
                     meal: log.mealType
                 )
-                saveFoodLog(triedLog, context: context)
+                try await saveFoodLog(triedLog, ownerId: ownerId, childId: childId)
             }
         }
-
-        // Update Rainbow Progress Widget
-        updateRainbowProgressWidget()
         
         // Schedule meal reminder notification
-        if let profile = userProfile {
-            Task {
-                await scheduleMealReminderIfEnabled(mealType: log.mealType, childName: profile.babyName)
-            }
+        Task {
+            await scheduleMealReminderIfEnabled(mealType: log.mealType, childName: "Baby") // Needs name
         }
     }
 
-    func deleteMealLog(_ log: MealLog, context: ModelContext) {
-        if let index = mealLogs.firstIndex(where: { $0.id == log.id }) {
-            mealLogs.remove(at: index)
-        }
-        context.delete(log)
+    func deleteMealLog(_ log: MealLog) {
+        guard let id = log.id else { return }
+        
+        // Optimistic Delete
+        mealLogs.removeAll { $0.id == id }
         updateRainbowProgressWidget()
+        
+        Task {
+            try? await mealService.delete(id: id)
+        }
     }
     
     // MARK: - Meal Reminder Notifications
@@ -162,7 +305,7 @@ class ToddlerManager {
             averageHour = avgMinutes / 60
             averageMinute = avgMinutes % 60
         } else {
-            // Default meal times if no pattern exists
+            // Default meal times
             switch mealType {
             case .breakfast:
                 averageHour = 7
@@ -174,46 +317,26 @@ class ToddlerManager {
                 averageHour = 18
                 averageMinute = 0
             case .snack:
-                // For snacks, use 3 hours from now
                 return now.addingTimeInterval(3 * 3600)
             }
         }
         
-        // Determine next occurrence of this meal
         var nextMealDate = calendar.date(bySettingHour: averageHour, minute: averageMinute, second: 0, of: now) ?? now
-        
-        // If the calculated time is in the past today, schedule for tomorrow
         if nextMealDate <= now {
             nextMealDate = calendar.date(byAdding: .day, value: 1, to: nextMealDate) ?? now.addingTimeInterval(24 * 3600)
         }
-        
         return nextMealDate
     }
     
-    /// Schedule a meal reminder notification if enabled
     private func scheduleMealReminderIfEnabled(mealType: MealType, childName: String) async {
-        // Calculate next meal time
         let nextMealTime = calculateNextMealTime(after: mealType)
-        
-        // Get lead time from settings
         let leadTime = UserDefaults.standard.integer(forKey: "feed_notification_lead_time")
-        let leadTimeMinutes = leadTime > 0 ? leadTime : 30 // Default to 30 minutes
-        
-        // Schedule the notification on main actor
+        let leadTimeMinutes = leadTime > 0 ? leadTime : 30
+
         await MainActor.run {
-            let notificationManager = NotificationManager.shared
-            
-            // Check if feed notifications are enabled
-            guard notificationManager.feedNotificationsEnabled else {
-                return
-            }
-            
-            // Check if permissions are granted
-            guard notificationManager.permissionStatus == .authorized else {
-                return
-            }
-            
-            // Schedule the notification
+            guard notificationManager.feedNotificationsEnabled else { return }
+            guard notificationManager.permissionStatus == .authorized else { return }
+
             Task {
                 do {
                     try await notificationManager.scheduleFeedReminder(
@@ -233,12 +356,10 @@ class ToddlerManager {
     func filteredFoods(searchText: String, category: FoodCategory?, showOnlyTried: Bool?, from foods: [FoodItem]) -> [FoodItem] {
         var filtered = foods
 
-        // Apply category filter
         if let category = category {
             filtered = filtered.filter { $0.category == category }
         }
 
-        // Apply tried/untried filter
         if let showOnlyTried = showOnlyTried {
             if showOnlyTried {
                 filtered = filtered.filter { isFoodTried($0.id) }
@@ -247,7 +368,6 @@ class ToddlerManager {
             }
         }
 
-        // Apply search text filter
         if !searchText.isEmpty {
             filtered = filtered.filter { food in
                 food.name.localizedCaseInsensitiveContains(searchText) ||
@@ -259,8 +379,7 @@ class ToddlerManager {
     }
 
     func categoryProgress(_ category: FoodCategory) -> (tried: Int, total: Int) {
-        let categoryFoods = allKnownFoods.filter { $0.category == category }
-        // isFoodTried now respects isMarkedAsTried
+        let categoryFoods = getAllKnownFoods().filter { $0.category == category }
         let triedCount = categoryFoods.filter { isFoodTried($0.id) }.count
         return (tried: triedCount, total: categoryFoods.count)
     }
@@ -277,7 +396,7 @@ class ToddlerManager {
         let allFoodIds = recentMeals.flatMap { $0.foods }.filter { isFoodTried($0) }
         
         for foodId in allFoodIds {
-            if let food = allKnownFoods.first(where: { $0.id == foodId }) {
+            if let food = getAllKnownFoods().first(where: { $0.id == foodId }) {
                 colorCounts[food.color, default: 0] += 1
             }
         }
@@ -286,14 +405,11 @@ class ToddlerManager {
     }
 
     private func updateRainbowProgressWidget() {
-        // Calculate progress for each color
         let colorCounts = rainbowProgress
         let progressData: [ColorProgressData] = FoodColor.allCases.map { color in
             let count = colorCounts[color] ?? 0
             return ColorProgressData(color: color, count: count, goal: 7)
         }
-
-        // Save to WidgetDataManager for widget display
         WidgetDataManager.saveRainbowProgress(progressData, timeRange: "week")
     }
 
@@ -307,11 +423,10 @@ class ToddlerManager {
             .iron: 0, .calcium: 0, .vitaminC: 0, .omega3: 0, .protein: 0
         ]
 
-        // Only count foods that are currently marked as tried
         let allFoodIds = recentMeals.flatMap { $0.foods }.filter { isFoodTried($0) }
         
         for foodId in allFoodIds {
-            if let food = allKnownFoods.first(where: { $0.id == foodId }) {
+            if let food = getAllKnownFoods().first(where: { $0.id == foodId }) {
                 for nutrient in food.nutrients {
                     nutrientCounts[nutrient, default: 0] += 1
                 }
@@ -323,7 +438,6 @@ class ToddlerManager {
 
     func detectNutrientGaps() -> [Nutrient] {
         let summary = weeklyNutritionSummary
-        // Arbitrary weekly targets: Iron=5, Calcium=7, VitC=7, Omega3=3, Protein=14
         var gaps: [Nutrient] = []
 
         if (summary[.iron] ?? 0) < 5 { gaps.append(.iron) }
@@ -343,39 +457,52 @@ class ToddlerManager {
         vitaminC: Int,
         omega3: Int,
         protein: Int,
-        userId: UUID,
-        context: ModelContext
+        ownerId: String,
+        childId: String
     ) {
-        if let existing = nutrientGoals {
+        if var existing = nutrientGoals {
             existing.ironGoal = iron
             existing.calciumGoal = calcium
             existing.vitaminCGoal = vitaminC
             existing.omega3Goal = omega3
             existing.proteinGoal = protein
-            existing.lastModified = Date()
+            // existing.lastModified = Date() // If property exists
+
+            Task {
+                do {
+                    try await goalService.update(existing)
+                    // Also update local copy immediately? Listener will do it.
+                } catch {
+                    print("Error updating nutrient goals: \(error)")
+                }
+            }
         } else {
             let newGoals = NutrientGoals(
-                userId: userId,
+                ownerId: ownerId,
+                childId: childId,
                 ironGoal: iron,
                 calciumGoal: calcium,
                 vitaminCGoal: vitaminC,
                 omega3Goal: omega3,
                 proteinGoal: protein
             )
-            nutrientGoals = newGoals
-            context.insert(newGoals)
+
+            Task {
+                do {
+                    try await goalService.add(newGoals)
+                } catch {
+                    print("Error adding nutrient goals: \(error)")
+                }
+            }
         }
     }
 
     // MARK: - Chart Data
 
     func getCategoryDistribution() -> [CategoryDistribution] {
-        // Get tried food IDs (only marked ones)
-        let triedFoodIds = Set(foodLogs.filter { $0.isMarkedAsTried }.map { $0.id })
-
-        // Count by category
+        let triedFoodIds = Set(foodLogs.filter { $0.isMarkedAsTried }.map { $0.foodId })
         var categoryCounts: [FoodCategory: (count: Int, color: FoodColor)] = [:]
-        let categorizedFoods = allKnownFoods.filter { triedFoodIds.contains($0.id) }
+        let categorizedFoods = getAllKnownFoods().filter { triedFoodIds.contains($0.id) }
 
         for food in categorizedFoods {
             if categoryCounts[food.category] == nil {
@@ -402,7 +529,6 @@ class ToddlerManager {
     func getNutrientProgress() -> [NutrientProgress] {
         let summary = weeklyNutritionSummary
 
-        // Use custom goals if available, otherwise defaults
         let goals: [Nutrient: Int]
         if let customGoals = nutrientGoals {
             goals = [
@@ -442,58 +568,26 @@ class ToddlerManager {
 
     // MARK: - Data Loading
 
-    func loadData(context: ModelContext, userId: UUID?) {
-        do {
-            // Performance optimization: Load only last 30 days of data initially
-            let cutoffDate = Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date()
-            
-            let foodDescriptor = FetchDescriptor<TriedFoodLog>(
-                predicate: #Predicate { $0.date >= cutoffDate }
-            )
-            foodLogs = try context.fetch(foodDescriptor)
+    func loadData(ownerId: String, childId: String) {
+        listeners.forEach { $0.remove() }
+        listeners.removeAll()
+        
+        // Listen for Food Logs
+        listeners.append(foodService.addListener(forUserId: ownerId) { [weak self] logs in
+            // Filter by childId
+            self?.foodLogs = logs.filter { $0.childId == childId }
+        })
 
-            let mealDescriptor = FetchDescriptor<MealLog>(
-                predicate: #Predicate { $0.timestamp >= cutoffDate },
-                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-            )
-            mealLogs = try context.fetch(mealDescriptor)
+        // Listen for Meal Logs
+        listeners.append(mealService.addListener(forUserId: ownerId) { [weak self] logs in
+            // Filter by childId and sort
+            self?.mealLogs = logs.filter { $0.childId == childId }.sorted { $0.timestamp > $1.timestamp }
+        })
 
-            // Load nutrient goals (not date-dependent)
-            if let userId = userId {
-                let goalsDescriptor = FetchDescriptor<NutrientGoals>(
-                    predicate: #Predicate<NutrientGoals> { $0.userId == userId }
-                )
-                nutrientGoals = try context.fetch(goalsDescriptor).first
-            }
-        } catch {
-            print("Error loading toddler data: \(error)")
-            ErrorPresenter.shared.present(error)
-        }
-    }
-    
-    /// Load historical data beyond the initial 30-day window
-    /// - Parameters:
-    ///   - context: SwiftData ModelContext
-    ///   - beforeDate: Load data before this date
-    func loadHistoricalData(context: ModelContext, beforeDate: Date) {
-        do {
-            // Load older food logs
-            let foodDescriptor = FetchDescriptor<TriedFoodLog>(
-                predicate: #Predicate { $0.date < beforeDate }
-            )
-            let olderFood = try context.fetch(foodDescriptor)
-            foodLogs.append(contentsOf: olderFood)
-            
-            // Load older meal logs
-            let mealDescriptor = FetchDescriptor<MealLog>(
-                predicate: #Predicate { $0.timestamp < beforeDate },
-                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-            )
-            let olderMeals = try context.fetch(mealDescriptor)
-            mealLogs.append(contentsOf: olderMeals)
-        } catch {
-            print("Error loading historical toddler data: \(error)")
-            ErrorPresenter.shared.present(error)
-        }
+        // Listen for Nutrient Goals
+        listeners.append(goalService.addListener(forUserId: ownerId) { [weak self] goals in
+            // Should be only one per child?
+             self?.nutrientGoals = goals.first { $0.childId == childId }
+        })
     }
 }

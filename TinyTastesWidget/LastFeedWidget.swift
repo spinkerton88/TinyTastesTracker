@@ -12,17 +12,57 @@ struct LastFeedProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        // Fetch from shared UserDefaults
-        let sharedDefaults = UserDefaults(suiteName: "group.com.tinytastes.tracker")
-        let lastFeedTime = sharedDefaults?.object(forKey: "lastFeedTime") as? Date ?? Date()
-        let feedType = sharedDefaults?.string(forKey: "lastFeedType") ?? "Feed"
-        
-        let entry = SimpleEntry(date: Date(), lastFeedTime: lastFeedTime, feedType: feedType)
-        
-        // Update every 15 minutes to keep "Time Since" somewhat fresh, though `style: .relative` handles display
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        completion(timeline)
+        Task {
+            var lastFeedTime: Date?
+            var feedType: String = "Feed"
+
+            // Try fetching from Firestore if authenticated and have active profile
+            if WidgetDataManager.isUserAuthenticated(),
+               let profileId = WidgetDataManager.getActiveProfileId() {
+
+                // Fetch both bottle and nursing feeds to find most recent
+                let bottleFeeds = try? await WidgetDataManager.fetchRecentBottleFeeds(for: profileId, limit: 1)
+                let nursingLogs = try? await WidgetDataManager.fetchRecentNursingLogs(for: profileId, limit: 1)
+
+                let latestBottle = bottleFeeds?.first
+                let latestNursing = nursingLogs?.first
+
+                // Compare and use most recent
+                if let bottle = latestBottle, let nursing = latestNursing {
+                    if bottle.timestamp > nursing.timestamp {
+                        lastFeedTime = bottle.timestamp
+                        feedType = "Bottle"
+                    } else {
+                        lastFeedTime = nursing.timestamp
+                        feedType = "Nursing"
+                    }
+                } else if let bottle = latestBottle {
+                    lastFeedTime = bottle.timestamp
+                    feedType = "Bottle"
+                } else if let nursing = latestNursing {
+                    lastFeedTime = nursing.timestamp
+                    feedType = "Nursing"
+                }
+            }
+
+            // Fallback to UserDefaults if Firestore failed or no data
+            if lastFeedTime == nil {
+                let sharedDefaults = UserDefaults(suiteName: "group.com.tinytastes.tracker")
+                lastFeedTime = sharedDefaults?.object(forKey: "lastFeedTime") as? Date
+                feedType = sharedDefaults?.string(forKey: "lastFeedType") ?? "Feed"
+            }
+
+            let entry = SimpleEntry(
+                date: Date(),
+                lastFeedTime: lastFeedTime ?? Date(),
+                feedType: feedType
+            )
+
+            // Update every 15 minutes to keep "Time Since" somewhat fresh, though `style: .relative` handles display
+            let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
+            let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+            completion(timeline)
+        }
     }
 }
 
@@ -42,9 +82,9 @@ struct LastFeedWidgetEntryView : View {
             ZStack {
                 Circle()
                     .fill(.pink.opacity(0.1))
-                
+
                 VStack(spacing: 0) {
-                    Image(systemName: "drop.fill")
+                    Image(systemName: "fork.knife")
                         .font(.caption2)
                     Text(entry.lastFeedTime, style: .relative)
                         .font(.caption2)
@@ -52,7 +92,7 @@ struct LastFeedWidgetEntryView : View {
             }
         case .accessoryRectangular:
             HStack {
-                Image(systemName: "drop.fill")
+                Image(systemName: "fork.knife")
                     .font(.title3)
                 VStack(alignment: .leading) {
                     Text(entry.feedType)
@@ -122,9 +162,7 @@ struct LastFeedWidgetEntryView : View {
                 }
             }
             .padding()
-            .containerBackground(for: .widget) {
-                Color(UIColor.secondarySystemBackground)
-            }
+
         default:
              Text("Last Feed")
         }

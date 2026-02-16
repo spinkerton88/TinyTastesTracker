@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct TrackingTab: View {
     let mode: AppMode

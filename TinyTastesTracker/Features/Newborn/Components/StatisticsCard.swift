@@ -19,7 +19,7 @@ struct StatisticsCard: View {
             
             HStack(spacing: 12) {
                 StatItem(
-                    icon: "fork.knife",
+                    icon: "spoon.serving",
                     value: "\(stats.feedingCount)",
                     label: "Feedings",
                     color: themeColor,

@@ -8,6 +8,8 @@
 
 import Foundation
 import WidgetKit
+import FirebaseFirestore
+import FirebaseAuth
 
 /// Centralized manager for widget data storage and retrieval
 /// Uses App Groups UserDefaults for sharing data between app and widget extension
@@ -214,6 +216,131 @@ struct WidgetDataManager {
         }
         return date
     }
+
+    // MARK: - Firestore Data Fetching (for Widgets)
+
+    /// Fetch recent bottle feed logs from Firestore
+    static func fetchRecentBottleFeeds(for profileId: String, limit: Int = 1) async throws -> [BottleFeedLog] {
+        guard Auth.auth().currentUser != nil else {
+            return []
+        }
+
+        let db = Firestore.firestore()
+        let snapshot = try await db.collection("bottle_feed_logs")
+            .whereField("babyId", isEqualTo: profileId)
+            .order(by: "timestamp", descending: true)
+            .limit(to: limit)
+            .getDocuments()
+
+        return snapshot.documents.compactMap { try? $0.data(as: BottleFeedLog.self) }
+    }
+
+    /// Fetch recent nursing logs from Firestore
+    static func fetchRecentNursingLogs(for profileId: String, limit: Int = 1) async throws -> [NursingLog] {
+        guard Auth.auth().currentUser != nil else {
+            return []
+        }
+
+        let db = Firestore.firestore()
+        let snapshot = try await db.collection("nursing_logs")
+            .whereField("babyId", isEqualTo: profileId)
+            .order(by: "timestamp", descending: true)
+            .limit(to: limit)
+            .getDocuments()
+
+        return snapshot.documents.compactMap { try? $0.data(as: NursingLog.self) }
+    }
+
+    /// Fetch recent diaper logs from Firestore
+    static func fetchRecentDiaperLogs(for profileId: String, limit: Int = 1) async throws -> [DiaperLog] {
+        guard Auth.auth().currentUser != nil else {
+            return []
+        }
+
+        let db = Firestore.firestore()
+        let snapshot = try await db.collection("diaper_logs")
+            .whereField("babyId", isEqualTo: profileId)
+            .order(by: "timestamp", descending: true)
+            .limit(to: limit)
+            .getDocuments()
+
+        return snapshot.documents.compactMap { try? $0.data(as: DiaperLog.self) }
+    }
+
+    /// Fetch recent sleep logs from Firestore
+    static func fetchRecentSleepLogs(for profileId: String, limit: Int = 10) async throws -> [SleepLog] {
+        guard Auth.auth().currentUser != nil else {
+            return []
+        }
+
+        let db = Firestore.firestore()
+        let snapshot = try await db.collection("sleep_logs")
+            .whereField("babyId", isEqualTo: profileId)
+            .order(by: "startTime", descending: true)
+            .limit(to: limit)
+            .getDocuments()
+
+        return snapshot.documents.compactMap { try? $0.data(as: SleepLog.self) }
+    }
+
+    /// Fetch recent meal logs for rainbow progress (toddler mode)
+    static func fetchRecentMealLogs(for profileId: String, since date: Date) async throws -> [MealLog] {
+        guard Auth.auth().currentUser != nil else {
+            return []
+        }
+
+        let db = Firestore.firestore()
+        let snapshot = try await db.collection("meal_logs")
+            .whereField("childId", isEqualTo: profileId)
+            .whereField("date", isGreaterThanOrEqualTo: Timestamp(date: date))
+            .order(by: "date", descending: true)
+            .getDocuments()
+
+        return snapshot.documents.compactMap { try? $0.data(as: MealLog.self) }
+    }
+
+    /// Calculate rainbow progress from meal logs
+    static func calculateRainbowProgress(from mealLogs: [MealLog]) -> [ColorProgressData] {
+        var colorCounts: [String: Int] = [:]
+
+        // Count foods by color
+        for log in mealLogs {
+            for foodId in log.foods {
+                // Look up the food in Constants.allFoods
+                if let foodItem = Constants.allFoods.first(where: { $0.id == foodId }) {
+                    let colorKey = foodItem.color.rawValue
+                    colorCounts[colorKey, default: 0] += 1
+                }
+            }
+        }
+
+        // Convert to ColorProgressData using all available color cases
+        return FoodColor.allCases.map { color in
+            let count = colorCounts[color.rawValue] ?? 0
+            return ColorProgressData(color: color, count: count, goal: 7)
+        }
+    }
+
+    /// Get the active child profile ID (for widgets to know which profile to query)
+    static func getActiveProfileId() -> String? {
+        shared?.string(forKey: "activeProfileId")
+    }
+
+    /// Save active profile ID (called by app when profile is selected)
+    static func saveActiveProfileId(_ profileId: String?) {
+        if let profileId = profileId {
+            shared?.set(profileId, forKey: "activeProfileId")
+        } else {
+            shared?.removeObject(forKey: "activeProfileId")
+        }
+        reloadAllWidgets()
+    }
+
+    /// Check if user is authenticated
+    static func isUserAuthenticated() -> Bool {
+        return Auth.auth().currentUser != nil
+    }
+
 
     // MARK: - Widget Refresh
 

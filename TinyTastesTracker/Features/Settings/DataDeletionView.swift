@@ -6,12 +6,10 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct DataDeletionView: View {
     @Bindable var appState: AppState
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
     
     @State private var showingDeleteAllConfirmation = false
     @State private var showingDeleteConfirmation = false
@@ -27,7 +25,8 @@ struct DataDeletionView: View {
         case bottleLogs = "Bottle Logs"
         case growthData = "Growth Data"
         case recipes = "Recipes"
-        case mealPlans = "Meal Plans"
+        case mealPlans = "Meal Plans" // Note: Meal Plans not fully migrated/used in AppState arrays yet?
+        // AppState has mealPlanEntries in RecipeManager?
         case milestones = "Milestones"
         case badges = "Badges"
         
@@ -220,34 +219,62 @@ struct DataDeletionView: View {
         deletionError = nil
         deletionSuccess = nil
         
+        // Use Task/Sleep to allow UI to update if deletion is fast
+        // In real Firestore, this is async.
+        
+        // Note: Efficient deletion in Firestore usually requires iterating or batching.
+        // Here we iterate local state and delete one by one via Managers.
+        
         do {
-            let deletionService = DataDeletionService(modelContext: modelContext)
-            
             switch type {
             case .mealLogs:
-                try await deletionService.deleteMealLogs()
+                for log in appState.mealLogs {
+                    appState.toddlerManager.deleteMealLog(log)
+                }
             case .sleepLogs:
-                try await deletionService.deleteSleepLogs()
+                for log in appState.sleepLogs {
+                    appState.newbornManager.deleteSleepLog(log)
+                }
             case .diaperLogs:
-                try await deletionService.deleteDiaperLogs()
+                for log in appState.diaperLogs {
+                    appState.newbornManager.deleteDiaperLog(log)
+                }
             case .bottleLogs:
-                try await deletionService.deleteBottleLogs()
+                for log in appState.bottleLogs {
+                    appState.newbornManager.deleteBottleFeedLog(log)
+                }
             case .growthData:
-                try await deletionService.deleteGrowthData()
+                for log in appState.growthMeasurements {
+                    appState.newbornManager.deleteGrowthMeasurement(log)
+                }
             case .recipes:
-                try await deletionService.deleteRecipes()
+                for recipe in appState.recipes {
+                    appState.recipeManager.deleteRecipe(recipe)
+                }
+                for food in appState.customFoods {
+                    appState.recipeManager.deleteCustomFood(food)
+                }
             case .mealPlans:
-                try await deletionService.deleteMealPlans()
+                // Meal Plan entries
+                for entry in appState.recipeManager.mealPlanEntries {
+                    appState.recipeManager.deleteMealPlanEntry(entry)
+                }
+                for item in appState.recipeManager.shoppingListItems {
+                    appState.recipeManager.deleteShoppingListItem(item)
+                }
             case .milestones:
-                try await deletionService.deleteMilestones()
+                if var profile = appState.userProfile {
+                    profile.milestones = Milestone.defaults() // Reset to defaults
+                    try appState.profileManager.updateProfile(profile)
+                }
             case .badges:
-                try await deletionService.deleteBadges()
+                if var profile = appState.userProfile {
+                    profile.badges = Badge.defaults() // Reset to defaults
+                    try appState.profileManager.updateProfile(profile)
+                }
             }
             
             deletionSuccess = "\(type.rawValue) deleted successfully."
-            
-            // Reload app data
-            await appState.loadData(context: modelContext)
             
         } catch {
             deletionError = "Failed to delete \(type.rawValue): \(error.localizedDescription)"
@@ -262,13 +289,12 @@ struct DataDeletionView: View {
         deletionSuccess = nil
         
         do {
-            let deletionService = DataDeletionService(modelContext: modelContext)
-            try await deletionService.deleteAllData()
+           // Iterate all types
+           for type in DataType.allCases {
+               await deleteData(type: type)
+           }
             
             deletionSuccess = "All data deleted successfully."
-            
-            // Reload app data (will be empty)
-            await appState.loadData(context: modelContext)
             
             // Dismiss after a delay
             try? await Task.sleep(for: .seconds(1))
@@ -284,5 +310,4 @@ struct DataDeletionView: View {
 
 #Preview {
     DataDeletionView(appState: AppState())
-        .modelContainer(for: [UserProfile.self, MealLog.self])
 }

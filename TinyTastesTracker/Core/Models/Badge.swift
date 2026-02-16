@@ -2,11 +2,10 @@
 //  Badge.swift
 //  TinyTastesTracker
 //
-//  Created by Antigravity AI on 1/3/26.
+//  Created by Antigravity AI on 2/4/26.
 //
 
 import Foundation
-import SwiftData
 
 enum BadgeType: String, Codable {
     // Newborn
@@ -26,11 +25,10 @@ enum BadgeType: String, Codable {
     case streakMaster = "STREAK_MASTER" // 3 days streak
 }
 
-@Model
-final class Badge: Codable {
-    var id: UUID
+struct Badge: Identifiable, Codable, Equatable {
+    var id: String = UUID().uuidString
     var title: String
-    var userDescription: String // 'description' is a reserved word in some contexts, safer to use a distinct name
+    var userDescription: String
     var category: AppMode
     var icon: String
     var isUnlocked: Bool
@@ -39,7 +37,7 @@ final class Badge: Codable {
     var target: Int
     var type: BadgeType
     
-    init(id: UUID = UUID(),
+    init(id: String = UUID().uuidString,
          title: String,
          userDescription: String,
          category: AppMode,
@@ -59,40 +57,6 @@ final class Badge: Codable {
         self.progress = progress
         self.target = target
         self.type = type
-    }
-    
-    // MARK: - Codable Conformance
-    
-    enum CodingKeys: String, CodingKey {
-        case id, title, userDescription, category, icon, isUnlocked, dateUnlocked, progress, target, type
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(UUID.self, forKey: .id)
-        self.title = try container.decode(String.self, forKey: .title)
-        self.userDescription = try container.decode(String.self, forKey: .userDescription)
-        self.category = try container.decode(AppMode.self, forKey: .category)
-        self.icon = try container.decode(String.self, forKey: .icon)
-        self.isUnlocked = try container.decode(Bool.self, forKey: .isUnlocked)
-        self.dateUnlocked = try container.decodeIfPresent(Date.self, forKey: .dateUnlocked)
-        self.progress = try container.decode(Int.self, forKey: .progress)
-        self.target = try container.decode(Int.self, forKey: .target)
-        self.type = try container.decode(BadgeType.self, forKey: .type)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(title, forKey: .title)
-        try container.encode(userDescription, forKey: .userDescription)
-        try container.encode(category, forKey: .category)
-        try container.encode(icon, forKey: .icon)
-        try container.encode(isUnlocked, forKey: .isUnlocked)
-        try container.encodeIfPresent(dateUnlocked, forKey: .dateUnlocked)
-        try container.encode(progress, forKey: .progress)
-        try container.encode(target, forKey: .target)
-        try container.encode(type, forKey: .type)
     }
     
     static func defaults() -> [Badge] {

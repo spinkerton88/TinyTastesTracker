@@ -2,30 +2,45 @@
 //  SettingsPage.swift
 //  TinyTastesTracker
 //
+//
 
 import SwiftUI
+import UIKit
+import FirebaseAuth
 
 struct SettingsPage: View {
     @Bindable var appState: AppState
-    
     @AppStorage("isNightMode") private var isNightMode = false
+
+    // Sharing State - Disabled for Firebase Migration Phase
+    // @State private var isPreparingShare = false
+    // @State private var shareError: String?
     
     private var modeBinding: Binding<AppMode?> {
         Binding(
             get: { appState.userProfile?.preferredMode },
-            set: { appState.userProfile?.preferredMode = $0 }
+            set: { newValue in
+                if var profile = appState.userProfile {
+                    profile.preferredMode = newValue
+                    // Trigger update in ProfileManager
+                    appState.profileManager.updateProfile(profile)
+                }
+            }
         )
     }
     
     var body: some View {
         NavigationStack {
-            List {
+            ZStack {
+                GradientBackground(color: appState.themeColor)
+                
+                List {
                 if let profile = appState.userProfile {
                     Section("Baby Profile") {
                         HStack {
                             Text("Name")
                             Spacer()
-                            Text(profile.babyName)
+                            Text(profile.name)
                                 .foregroundStyle(.secondary)
                         }
 
@@ -98,6 +113,18 @@ struct SettingsPage: View {
 
                     Section("Family") {
                         NavigationLink {
+                            AcceptInviteView(appState: appState)
+                        } label: {
+                            Label("Accept Invitation", systemImage: "envelope.badge")
+                        }
+
+                        NavigationLink {
+                            ShareManagementView(appState: appState)
+                        } label: {
+                            Label("Manage Sharing", systemImage: "person.2.badge.gearshape")
+                        }
+
+                        NavigationLink {
                             ProfileSwitcherView(appState: appState)
                         } label: {
                             Label("Manage Children", systemImage: "person.2.fill")
@@ -161,11 +188,28 @@ struct SettingsPage: View {
                     }
                 }
                 
-                Section("iCloud Sync") {
-                    NavigationLink {
-                        CloudKitSyncStatusView()
-                    } label: {
-                        Label("Sync Status", systemImage: "icloud.fill")
+                Section("Account") {
+                    HStack {
+                        Image(systemName: "person.circle")
+                        Text("Signed in")
+                        Spacer()
+                        if let user = appState.authenticationManager.userSession {
+                            let displayText: String = {
+                                if let name = user.displayName, !name.isEmpty { return name }
+                                if let email = user.email, !email.isEmpty { return email }
+                                if user.isAnonymous { return "Guest User" }
+                                return String(user.uid.prefix(6) + "...")
+                            }()
+
+                            Text(displayText)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                        }
+                    }
+
+                    Button("Sign Out", role: .destructive) {
+                        try? appState.authenticationManager.signOut()
                     }
                 }
                 
@@ -183,7 +227,7 @@ struct SettingsPage: View {
                     } label: {
                         HStack {
                             HStack {
-                                SageIcon(size: .medium, style: .gradient)
+                                SageIcon(size: .medium, style: .themedGradient(appState.themeColor))
                                 Text("Load Sample Data")
                             }
                             
@@ -208,25 +252,16 @@ struct SettingsPage: View {
                         Label("Privacy & Data", systemImage: "hand.raised.fill")
                     }
                 }
-                
+
                 Section {
-                    Text("Tiny Tastes Tracker AI v1.0")
+                    Text("Tiny Tastes Tracker v1.0")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                
-                #if DEBUG
-                Section("Developer Tools") {
-                    // TODO: Fix BatchImageGeneratorView target membership
-                    // NavigationLink {
-                    //     BatchImageGeneratorView()
-                    // } label: {
-                    //     Label("Batch Image Generator", systemImage: "photo.stack")
-                    // }
-                }
-                #endif
-            }
+                } // List
+            } // ZStack
             .navigationTitle("Settings")
-        }
-    }
+            .scrollContentBackground(.hidden)
+        } // NavigationStack
+    } // body
 }

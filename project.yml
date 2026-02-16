@@ -8,6 +8,9 @@ packages:
   GoogleGenerativeAI:
     url: https://github.com/google/generative-ai-swift
     from: 0.4.0
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: 10.22.0
 
 targets:
   TinyTastesTracker:
@@ -29,13 +32,17 @@ targets:
       properties:
         com.apple.security.application-groups:
           - group.com.tinytastes.tracker
-        com.apple.developer.icloud-container-identifiers:
-          - iCloud.tinytastestracker
-        com.apple.developer.icloud-services:
-          - CloudKit
     dependencies:
       - target: TinyTastesWidget
       - package: GoogleGenerativeAI
+      - product: FirebaseAuth
+        package: Firebase
+      - product: FirebaseFirestore
+        package: Firebase
+      - product: FirebaseFirestoreSwift
+        package: Firebase
+      - product: FirebaseStorage
+        package: Firebase
       - sdk: EventKit.framework
       - sdk: Network.framework
 
@@ -46,11 +53,10 @@ targets:
     sources:
       - TinyTastesWidget
       # Include specific shared models needed for the widget
-      - path: TinyTastesTracker/Core/Models/NewbornLog.swift
-      - path: TinyTastesTracker/Core/Models/SleepActivityAttributes.swift
-      - path: TinyTastesTracker/Core/Models/ChartDataModels.swift
+      - path: TinyTastesTracker/Core/Models
       - path: TinyTastesTracker/Core/Utilities/Constants.swift
       - path: TinyTastesTracker/Core/Utilities/WidgetDataManager.swift
+      - path: TinyTastesTracker/Assets.xcassets
     settings:
       base:
         INFOPLIST_FILE: TinyTastesWidget/Info.plist
@@ -68,6 +74,12 @@ targets:
       - framework: WidgetKit
       - framework: SwiftUI
       - framework: AppIntents
+      - product: FirebaseAuth
+        package: Firebase
+      - product: FirebaseFirestore
+        package: Firebase
+      - product: FirebaseFirestoreSwift
+        package: Firebase
 
   TinyTastesTrackerTests:
     type: bundle.unit-test

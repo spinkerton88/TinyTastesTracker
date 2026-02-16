@@ -8,6 +8,6 @@ struct TinyTastesWidgetBundle: WidgetBundle {
         SleepTimerActivity()
         QuickLogWidget()
         RainbowProgressWidget()
-        SleepSweetSpotWidget()
+
     }
 }

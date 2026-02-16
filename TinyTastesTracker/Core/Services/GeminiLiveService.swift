@@ -21,18 +21,15 @@ enum ConnectionState: Equatable {
 class GeminiLiveService: NSObject, ObservableObject {
     @Published var connectionState: ConnectionState = .disconnected
     @Published var isSpeaking = false
-    @Published var transcript: String =  ""
-
+    @Published var transcript: String = ""
     private var webSocketTask: URLSessionWebSocketTask?
     private var session: URLSession?
-    private let apiKey: String
     private let audioPlayer = AudioPlayer()
 
-    // Base URL for Gemini Live API (Bidirectional Streaming)
-    private let baseURL = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent"
+    // Base path for Gemini Live API logic
+    private let bidiPath = "/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent"
 
-    init(apiKey: String) {
-        self.apiKey = apiKey
+    override init() {
         super.init()
     }
     
@@ -42,40 +39,59 @@ class GeminiLiveService: NSObject, ObservableObject {
         guard connectionState != .connected && connectionState != .connecting else {
             return
         }
-        
+
         await MainActor.run {
             connectionState = .connecting
         }
-        
-        // Build WebSocket URL with API key
-        guard var urlComponents = URLComponents(string: baseURL) else {
+
+        // Fetch backend URL and build WebSocket URL
+        var backendBaseURL = SecureAPIKeyManager.shared.getBackendURL()
+
+        // Convert https to wss for WebSocket
+        if backendBaseURL.hasPrefix("http://") {
+            backendBaseURL = backendBaseURL.replacingOccurrences(of: "http://", with: "ws://")
+        } else if backendBaseURL.hasPrefix("https://") {
+            backendBaseURL = backendBaseURL.replacingOccurrences(of: "https://", with: "wss://")
+        }
+
+        let wsURLString = backendBaseURL + bidiPath
+
+        guard let url = URL(string: wsURLString) else {
+            await MainActor.run {
+                connectionState = .error("Invalid WebSocket URL")
+            }
             throw GeminiLiveError.invalidURL
         }
-        
-        urlComponents.queryItems = [
-            URLQueryItem(name: "key", value: apiKey)
-        ]
-        
-        guard let url = urlComponents.url else {
-            throw GeminiLiveError.invalidURL
-        }
-        
+
+        print("🔌 Connecting to WebSocket: \(wsURLString)")
+
         // Create WebSocket session
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 30
         session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
-        
+
         webSocketTask = session?.webSocketTask(with: url)
         webSocketTask?.resume()
-        
-        // Send initial setup message with system instruction
-        try await sendSetupMessage(systemInstruction: systemInstruction)
-        
-        // Start listening for messages
-        receiveMessages()
-        
-        await MainActor.run {
-            connectionState = .connected
+
+        do {
+            // Send initial setup message with system instruction
+            try await sendSetupMessage(systemInstruction: systemInstruction)
+
+            // Start listening for messages
+            receiveMessages()
+
+            await MainActor.run {
+                connectionState = .connected
+            }
+            print("✅ Connected to Gemini Live")
+
+        } catch {
+            let errorMsg = "Connection failed: \(error.localizedDescription)"
+            print("❌ \(errorMsg)")
+            await MainActor.run {
+                connectionState = .error(errorMsg)
+            }
+            throw error
         }
     }
     
@@ -148,16 +164,35 @@ class GeminiLiveService: NSObject, ObservableObject {
     private func receiveMessages() {
         webSocketTask?.receive { [weak self] result in
             guard let self = self else { return }
-            
+
             switch result {
             case .success(let message):
                 self.handleMessage(message)
                 // Continue listening
                 self.receiveMessages()
-                
+
             case .failure(let error):
+                let errorMsg: String
+                if let urlError = error as? URLError {
+                    switch urlError.code {
+                    case .notConnectedToInternet:
+                        errorMsg = "No internet connection"
+                    case .timedOut:
+                        errorMsg = "Connection timed out"
+                    case .cannotConnectToHost:
+                        errorMsg = "Cannot connect to server"
+                    case .networkConnectionLost:
+                        errorMsg = "Network connection lost"
+                    default:
+                        errorMsg = "Network error: \(urlError.localizedDescription)"
+                    }
+                } else {
+                    errorMsg = "WebSocket error: \(error.localizedDescription)"
+                }
+
+                print("❌ \(errorMsg)")
                 Task { @MainActor in
-                    self.connectionState = .error(error.localizedDescription)
+                    self.connectionState = .error(errorMsg)
                 }
             }
         }

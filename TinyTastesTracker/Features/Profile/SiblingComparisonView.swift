@@ -9,7 +9,6 @@ import SwiftUI
 import Charts
 
 struct SiblingComparisonView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
 
     @State private var selectedComparison: ComparisonType = .rainbow
@@ -63,27 +62,33 @@ struct SiblingComparisonView: View {
 // MARK: - Rainbow Comparison
 
 struct RainbowComparisonView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     
     private var nutritionData: [ProfileNutritionData] {
+        // TODO: Pass ALL children's meal logs here. Currently only passing active child's logs.
         appState.profileManager.getNutritionComparison(
-            context: modelContext,
+            measurements: appState.mealLogs,
             allKnownFoods: appState.recipeManager.allKnownFoods
         )
     }
 
     var body: some View {
-        if appState.profileManager.profiles.count < 2 {
-            EmptyComparisonView(message: "Add at least 2 children to compare their rainbow progress", appState: appState)
+        if appState.profileManager.profiles.count < 1 {
+            EmptyComparisonView(message: "Add children to compare rainbow progress", appState: appState)
         } else {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Rainbow Progress (This Week)")
                     .font(.headline)
 
+                if appState.mealLogs.isEmpty {
+                   Text("No meal data available for the active child.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
                 ForEach(nutritionData) { data in
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(data.profile.babyName)
+                        Text(data.profile.name)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
 
@@ -102,7 +107,7 @@ struct RainbowComparisonView: View {
                     .shadow(radius: 2)
                 }
 
-                Text("Note: Rainbow progress shows the variety of food colors eaten this week")
+                Text("Note: Currently comparing active child data only")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.top, 8)
@@ -132,19 +137,19 @@ struct RainbowBarSegment: View {
 // MARK: - Nutrient Comparison
 
 struct NutrientComparisonView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     
     private var nutritionData: [ProfileNutritionData] {
+        // TODO: Pass ALL children's meal logs here.
         appState.profileManager.getNutritionComparison(
-            context: modelContext,
+            measurements: appState.mealLogs,
             allKnownFoods: appState.recipeManager.allKnownFoods
         )
     }
 
     var body: some View {
-        if appState.profileManager.profiles.count < 2 {
-            EmptyComparisonView(message: "Add at least 2 children to compare their nutrition", appState: appState)
+        if appState.profileManager.profiles.isEmpty {
+            EmptyComparisonView(message: "Add children to compare nutrition", appState: appState)
         } else {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Key Nutrients (This Week)")
@@ -169,7 +174,7 @@ struct NutrientComparisonView: View {
                             let widthRatio = maxCount > 0 ? CGFloat(count) / CGFloat(maxCount) : 0
                             
                             HStack {
-                                Text(data.profile.babyName)
+                                Text(data.profile.name)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                     .frame(width: 80, alignment: .leading)
@@ -206,21 +211,21 @@ struct NutrientComparisonView: View {
 // MARK: - Growth Comparison
 
 struct GrowthComparisonView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
 
     @State private var selectedMetric: GrowthMetric = .weight
     
     private var growthData: [ProfileGrowthData] {
+        // TODO: Pass ALL children's growth logs here.
         appState.profileManager.getGrowthComparison(
             for: selectedMetric,
-            context: modelContext
+            growthStore: appState.growthMeasurements
         )
     }
 
     var body: some View {
-        if appState.profileManager.profiles.count < 2 {
-            EmptyComparisonView(message: "Add at least 2 children to compare their growth", appState: appState)
+        if appState.profileManager.profiles.isEmpty {
+            EmptyComparisonView(message: "Add children to compare growth", appState: appState)
         } else {
             VStack(alignment: .leading, spacing: 16) {
                 Picker("Metric", selection: $selectedMetric) {
@@ -240,8 +245,8 @@ struct GrowthComparisonView: View {
                                 x: .value("Date", point.date),
                                 y: .value("Value", point.value)
                             )
-                            .foregroundStyle(by: .value("Child", data.profile.babyName))
-                            .symbol(by: .value("Child", data.profile.babyName))
+                            .foregroundStyle(by: .value("Child", data.profile.name))
+                            .symbol(by: .value("Child", data.profile.name))
                         }
                     }
                 }
@@ -289,13 +294,5 @@ struct EmptyComparisonView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-// MARK: - Preview
-
-#Preview {
-    NavigationStack {
-        SiblingComparisonView(appState: AppState())
     }
 }

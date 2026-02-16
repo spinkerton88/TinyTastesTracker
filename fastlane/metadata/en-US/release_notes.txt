@@ -1,0 +1,9 @@
+Welcome to Tiny Tastes Tracker AI!
+
+This initial release brings the future of baby food tracking to your pocket:
+- ⚡️ Generate custom recipes instantly with our "Sage" AI Chef
+- 📸 Log meals by snapping a photo
+- 🔄 Sync data in real-time with family members via iCloud
+- 🛡️ Stay safe with intelligent allergen warnings
+
+We're just getting started. Happy tasting!

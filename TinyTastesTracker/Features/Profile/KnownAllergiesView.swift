@@ -108,7 +108,11 @@ struct KnownAllergiesView: View {
     }
     
     private func saveAllergies() {
-        appState.userProfile?.knownAllergies = Array(selectedAllergies).sorted()
+        guard let profile = appState.userProfile else { return }
+        
+        let newAllergies = Array(selectedAllergies).sorted()
+        appState.profileManager.updateProfile(profile, allergies: newAllergies)
+        
         dismiss()
     }
 }

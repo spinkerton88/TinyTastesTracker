@@ -9,18 +9,18 @@ import SwiftUI
 
 struct AddCustomFoodSheet: View {
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    
+    @Environment(\.errorPresenter) private var errorPresenter
+
     @State private var foodName = ""
     @State private var isAnalyzing = false
     @State private var analysisError: String?
     @State private var analyzedDetails: CustomFoodDetails?
     @State private var debounceTask: Task<Void, Never>?
-    
+
     @State private var generatedImage: UIImage?
     @State private var isGeneratingImage = false
-    
+
     // Editable fields (pre-filled by AI)
     @State private var emoji = "🍽️"
     @State private var category: FoodCategory = .vegetables
@@ -62,7 +62,7 @@ struct AddCustomFoodSheet: View {
                             ProgressView()
                                 .padding(.trailing)
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(isAnalyzing ? "Analyzing \"\(foodName)\"..." : "Generating AI Photo...")
+                                Text(isAnalyzing ? "Analyzing \"\(foodName)\"..." : "Generating Photo...")
                                     .font(.subheadline)
                                     .foregroundStyle(.primary)
                                 Text(isAnalyzing ? "Detecting allergens and nutrition info" : "Creating a studio-style photo for you")
@@ -114,7 +114,7 @@ struct AddCustomFoodSheet: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                     } header: {
-                        Text("AI Generated Photo")
+                        Text("Photo")
                     }
                 }
                 
@@ -160,7 +160,7 @@ struct AddCustomFoodSheet: View {
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 12, height: 12)
-                                    Text("AI Detected")
+                                    Text("Auto-detected")
                                         .font(.caption2)
                                 }
                                 .foregroundStyle(.secondary)
@@ -302,32 +302,46 @@ struct AddCustomFoodSheet: View {
     }
     
     private func saveFood() {
-        let id = foodName.uppercased().replacingOccurrences(of: " ", with: "_")
-        
-        var savedFileName: String? = nil
-        if let image = generatedImage {
-            savedFileName = saveImageToDocuments(image, name: "custom_food_\(id)")
+        Task {
+            do {
+                let id = foodName.uppercased().replacingOccurrences(of: " ", with: "_")
+                
+                var savedFileName: String? = nil
+                if let image = generatedImage {
+                    savedFileName = saveImageToDocuments(image, name: "custom_food_\(id)")
+                }
+                
+                let allergensList = allergyWarning.components(separatedBy: ",")
+                    .map { $0.trimmingCharacters(in: .whitespaces) }
+                    .filter { !$0.isEmpty }
+                
+                // Create new food
+                guard let ownerId = appState.currentOwnerId else {
+                    errorPresenter.present(FirebaseError.invalidData)
+                    return
+                }
+                
+                let newFood = CustomFood(
+                    id: id,
+                    ownerId: ownerId,
+                    name: foodName,
+                    emoji: emoji,
+                    category: category,
+                    allergens: allergensList,
+                    nutritionHighlights: nutritionHighlights,
+                    howToServe: servingTip,
+                    chokeHazard: isChokeHazard,
+                    color: color,
+                    imageFileName: savedFileName
+                )
+                
+                try await appState.saveCustomFood(newFood)
+                errorPresenter.showSuccess("Custom food added")
+                dismiss()
+            } catch {
+                errorPresenter.present(error)
+            }
         }
-        
-        let allergensList = allergyWarning.components(separatedBy: ",")
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { !$0.isEmpty }
-        
-        let newFood = CustomFood(
-            id: id,
-            name: foodName,
-            emoji: emoji,
-            category: category,
-            allergens: allergensList,
-            nutritionHighlights: nutritionHighlights,
-            howToServe: servingTip,
-            chokeHazard: isChokeHazard,
-            color: color,
-            imageFileName: savedFileName
-        )
-        
-        appState.saveCustomFood(newFood, context: modelContext)
-        dismiss()
     }
     
     private func saveImageToDocuments(_ image: UIImage, name: String) -> String? {

@@ -6,7 +6,8 @@
 //
 
 import Foundation
-import SwiftData
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 enum AllergyReaction: String, Codable {
     case none
@@ -15,6 +16,13 @@ enum AllergyReaction: String, Codable {
     case severe
 }
 
+// Ensure MealType is only defined once if it's shared. 
+// However, in the original file, MealType was defined inside TriedFoodLog.swift. 
+// MealLog also used it. It might be defined in multiple places or shared.
+// Given MealLog used MealType.lunch, and TriedFoodLog defined it,
+// I should keep the definition here or check if it conflicts. 
+// Assuming it was valid Swift code before, it's either shared or defined here.
+// I'll keep it here as it was in the original file.
 enum MealType: String, Codable {
     case breakfast
     case lunch
@@ -22,21 +30,30 @@ enum MealType: String, Codable {
     case snack
 }
 
-@Model
-final class TriedFoodLog: Codable {
-    @Attribute(.unique) var id: String  // Food name, matches Constants
-    var date: Date
-    var reaction: Int  // 1-7 scale
-    var meal: MealType
-    var allergyReaction: AllergyReaction
+struct TriedFoodLog: Identifiable, Codable {
+    @DocumentID var id: String?
+    var ownerId: String
+    var childId: String // Tried foods are specific to a child
+
+    var foodId: String // The food's unique ID (e.g., "AVOCADO")
+    var foodName: String // The food's display name (e.g., "Avocado")
+
+    var date: Date = Date()
+    var reaction: Int = 1 // 1-7 scale
+    var meal: MealType = MealType.lunch
+    var allergyReaction: AllergyReaction = AllergyReaction.none
     var messyFaceImage: Data?  // Compressed JPEG
-    var tryCount: Int
+    var tryCount: Int = 0
     var reactionSigns: [String] = []  // Specific reactions observed (hives, vomiting, etc.)
     var quantity: String = "bite"  // "taste", "bite", or "serving"
     var isMarkedAsTried: Bool = true
     var unmarkedAt: Date?
-    
-    init(id: String,
+
+    init(id: String? = nil,
+         ownerId: String,
+         childId: String,
+         foodId: String,
+         foodName: String,
          date: Date = Date(),
          reaction: Int,
          meal: MealType,
@@ -48,6 +65,10 @@ final class TriedFoodLog: Codable {
          isMarkedAsTried: Bool = true,
          unmarkedAt: Date? = nil) {
         self.id = id
+        self.ownerId = ownerId
+        self.childId = childId
+        self.foodId = foodId
+        self.foodName = foodName
         self.date = date
         self.reaction = reaction
         self.meal = meal
@@ -58,41 +79,5 @@ final class TriedFoodLog: Codable {
         self.quantity = quantity
         self.isMarkedAsTried = isMarkedAsTried
         self.unmarkedAt = unmarkedAt
-    }
-    
-    // MARK: - Codable Conformance
-    
-    enum CodingKeys: String, CodingKey {
-        case id, date, reaction, meal, allergyReaction, messyFaceImage, tryCount, reactionSigns, quantity, isMarkedAsTried, unmarkedAt
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(String.self, forKey: .id)
-        self.date = try container.decode(Date.self, forKey: .date)
-        self.reaction = try container.decode(Int.self, forKey: .reaction)
-        self.meal = try container.decode(MealType.self, forKey: .meal)
-        self.allergyReaction = try container.decode(AllergyReaction.self, forKey: .allergyReaction)
-        self.messyFaceImage = try container.decodeIfPresent(Data.self, forKey: .messyFaceImage)
-        self.tryCount = try container.decode(Int.self, forKey: .tryCount)
-        self.reactionSigns = try container.decodeIfPresent([String].self, forKey: .reactionSigns) ?? []
-        self.quantity = try container.decodeIfPresent(String.self, forKey: .quantity) ?? "bite"
-        self.isMarkedAsTried = try container.decodeIfPresent(Bool.self, forKey: .isMarkedAsTried) ?? true
-        self.unmarkedAt = try container.decodeIfPresent(Date.self, forKey: .unmarkedAt)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(date, forKey: .date)
-        try container.encode(reaction, forKey: .reaction)
-        try container.encode(meal, forKey: .meal)
-        try container.encode(allergyReaction, forKey: .allergyReaction)
-        try container.encodeIfPresent(messyFaceImage, forKey: .messyFaceImage)
-        try container.encode(tryCount, forKey: .tryCount)
-        try container.encode(reactionSigns, forKey: .reactionSigns)
-        try container.encode(quantity, forKey: .quantity)
-        try container.encode(isMarkedAsTried, forKey: .isMarkedAsTried)
-        try container.encodeIfPresent(unmarkedAt, forKey: .unmarkedAt)
     }
 }

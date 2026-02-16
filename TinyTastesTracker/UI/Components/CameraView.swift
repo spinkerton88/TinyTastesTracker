@@ -9,14 +9,100 @@ import SwiftUI
 import AVFoundation
 import UIKit
 
-struct CameraView: UIViewControllerRepresentable {
+//
+//  CameraView.swift
+//  TinyTastesTracker
+//
+//  AI Camera Capture for Food Identification
+//
+
+import SwiftUI
+import AVFoundation
+import UIKit
+
+// NEW: Main SwiftUI Camera View with standardized overlay
+struct CameraView: View {
     @Environment(\.dismiss) private var dismiss
+    
+    let title: String
+    let subtitle: String?
+    let iconName: String
+    var showsCancelButton: Bool = true // Kept for API compatibility, though handled by overlay
     let onCapture: (UIImage) -> Void
+    
+    // Default initializer for backward compatibility
+    init(
+        title: String = "Take Photo",
+        subtitle: String? = nil,
+        iconName: String = "camera.viewfinder",
+        showsCancelButton: Bool = true,
+        onCapture: @escaping (UIImage) -> Void
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.iconName = iconName
+        self.showsCancelButton = showsCancelButton
+        self.onCapture = onCapture
+    }
+    
+    // Internal state for triggering capture
+    @State private var shutterAction: (() -> Void)?
+    
+    var body: some View {
+        ZStack {
+            // Camera Preview (UIKit)
+            CameraPreviewView(onCapture: onCapture) { action in
+                shutterAction = action
+            }
+            .ignoresSafeArea()
+            
+            // Standard Unified Overlay
+            CameraOverlayView(
+                title: title,
+                subtitle: subtitle,
+                iconName: iconName,
+                onClose: { dismiss() }
+            )
+            
+            // Capture Button
+            VStack {
+                Spacer()
+                Button {
+                    HapticManager.impact(style: .medium)
+                    shutterAction?()
+                } label: {
+                    Circle()
+                        .strokeBorder(.white, lineWidth: 4)
+                        .background(Circle().fill(.white.opacity(0.2)))
+                        .frame(width: 80, height: 80)
+                        .overlay(
+                            Circle()
+                                .fill(.white)
+                                .frame(width: 64, height: 64)
+                        )
+                        .shadow(radius: 10)
+                }
+                .padding(.bottom, 160) // Position above the text card
+            }
+        }
+    }
+}
+
+// Renamed from CameraView to CameraPreviewView
+// Removed internal UI/Overlay logic to be pure preview + logic
+struct CameraPreviewView: UIViewControllerRepresentable {
+    let onCapture: (UIImage) -> Void
+    let registerShutter: (@escaping () -> Void) -> Void
     
     func makeUIViewController(context: Context) -> CameraViewController {
         let controller = CameraViewController()
         controller.onCapture = onCapture
-        controller.onDismiss = { dismiss() }
+        
+        // Pass the controller's capture method back to SwiftUI view
+        registerShutter { [weak controller] in
+            controller?.capturePhoto()
+        }
+        
         return controller
     }
     
@@ -27,33 +113,13 @@ class CameraViewController: UIViewController {
     var captureSession: AVCaptureSession?
     var photoOutput: AVCapturePhotoOutput?
     var previewLayer: AVCaptureVideoPreviewLayer?
-    
+
     var onCapture: ((UIImage) -> Void)?
-    var onDismiss: (() -> Void)?
-    
-    private let captureButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = .white
-        button.layer.cornerRadius = 35
-        button.layer.borderWidth = 5
-        button.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    private let cancelButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Cancel", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCamera()
-        setupUI()
+        // No UI setup here anymore - pure camera logic
     }
     
     override func viewDidLayoutSubviews() {
@@ -69,15 +135,12 @@ class CameraViewController: UIViewController {
         
         guard let backCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
               let input = try? AVCaptureDeviceInput(device: backCamera) else {
-            showCameraError()
+            // Error handling can optionally be propagated or handled gracefully
             return
         }
         
         photoOutput = AVCapturePhotoOutput()
-        guard let photoOutput = photoOutput else {
-            showCameraError()
-            return
-        }
+        guard let photoOutput = photoOutput else { return }
 
         if captureSession.canAddInput(input) && captureSession.canAddOutput(photoOutput) {
             captureSession.addInput(input)
@@ -94,54 +157,17 @@ class CameraViewController: UIViewController {
             DispatchQueue.global(qos: .userInitiated).async {
                 captureSession.startRunning()
             }
-        } else {
-            showCameraError()
         }
     }
     
-    private func setupUI() {
-        view.addSubview(captureButton)
-        view.addSubview(cancelButton)
-        
-        NSLayoutConstraint.activate([
-            captureButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            captureButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            captureButton.widthAnchor.constraint(equalToConstant: 70),
-            captureButton.heightAnchor.constraint(equalToConstant: 70),
-            
-            cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20)
-        ])
-        
-        captureButton.addTarget(self, action: #selector(capturePhoto), for: .touchUpInside)
-        cancelButton.addTarget(self, action: #selector(dismissCamera), for: .touchUpInside)
-    }
-    
-    @objc private func capturePhoto() {
+    func capturePhoto() {
         guard let photoOutput = photoOutput else { return }
         
         let settings = AVCapturePhotoSettings()
         photoOutput.capturePhoto(with: settings, delegate: self)
     }
     
-    @objc private func dismissCamera() {
-        captureSession?.stopRunning()
-        onDismiss?()
-    }
-    
-    private func showCameraError() {
-        DispatchQueue.main.async {
-            let alert = UIAlertController(
-                title: "Camera Unavailable",
-                message: "Unable to access the camera. Please check permissions in Settings.",
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
-                self?.onDismiss?()
-            })
-            self.present(alert, animated: true)
-        }
-    }
+    // Removed prompt logic, internal buttons, etc.
 }
 
 extension CameraViewController: AVCapturePhotoCaptureDelegate {
@@ -154,6 +180,5 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
         
         captureSession?.stopRunning()
         onCapture?(image)
-        onDismiss?()
     }
 }

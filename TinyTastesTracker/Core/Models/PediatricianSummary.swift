@@ -6,15 +6,19 @@
 //
 
 import Foundation
-import SwiftData
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
-@Model
-class PediatricianSummary {
-    @Attribute(.unique) var id: UUID
-    var childID: UUID
+struct PediatricianSummary: Identifiable, Codable {
+    @DocumentID var id: String?
+    var ownerId: String
+    var childId: String
     var startDate: Date
     var endDate: Date
     var generatedAt: Date
+    
+    // Relationship - Handled by ID referencing in Firestore if needed, but here we just store the summary data.
+    // var userProfile: UserProfile? // Removed direct relationship, rely on ownerId
 
     // Aggregated Metrics
     var sleepMetrics: SleepSummaryMetrics
@@ -37,7 +41,9 @@ class PediatricianSummary {
     var pdfURL: URL?
 
     init(
-        childID: UUID,
+        id: String? = nil,
+        ownerId: String,
+        childId: String,
         startDate: Date,
         endDate: Date,
         sleepMetrics: SleepSummaryMetrics,
@@ -51,8 +57,9 @@ class PediatricianSummary {
         concerns: [String],
         suggestedQuestions: [String]
     ) {
-        self.id = UUID()
-        self.childID = childID
+        self.id = id
+        self.ownerId = ownerId
+        self.childId = childId
         self.startDate = startDate
         self.endDate = endDate
         self.generatedAt = Date()

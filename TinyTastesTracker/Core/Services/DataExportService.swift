@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftData
 
 // MARK: - Export Metadata
 
@@ -14,10 +13,10 @@ struct DataExportMetadata: Codable {
     let appVersion: String
     let exportDate: Date
     let profileName: String
-    let profileID: UUID
+    let profileID: String
     let dataTypes: [String]
     
-    init(profileName: String, profileID: UUID, dataTypes: [String]) {
+    init(profileName: String, profileID: String, dataTypes: [String]) {
         self.appVersion = "1.0"
         self.exportDate = Date()
         self.profileName = profileName
@@ -30,7 +29,7 @@ struct DataExportMetadata: Codable {
 
 struct CompleteDataExport: Codable {
     let metadata: DataExportMetadata
-    let profile: UserProfile
+    let childProfile: ChildProfile
     let mealLogs: [MealLog]
     let triedFoods: [TriedFoodLog]
     let recipes: [Recipe]
@@ -40,6 +39,13 @@ struct CompleteDataExport: Codable {
     let diaperLogs: [DiaperLog]
     let bottleLogs: [BottleFeedLog]
     let growthMeasurements: [GrowthMeasurement]
+    // Add pumping and medication logs if missing in previous version but present in codebase
+    // Checking previous file content... Pumping and Medication were not in CompleteDataExport previously?
+    // Let's stick to what was there to minimize scope creep unless explicitly needed, 
+    // but the Managers have them. PumpingLog and MedicationLog exist in NewbornManager.
+    // I should probably add them for a "Complete" backup.
+    let pumpingLogs: [PumpingLog]
+    let medicationLogs: [MedicationLog]
 }
 
 // MARK: - Export Errors
@@ -49,6 +55,7 @@ enum ExportError: LocalizedError {
     case fileCreationFailed
     case encodingFailed(String)
     case invalidData
+    case missingProfile
     
     var errorDescription: String? {
         switch self {
@@ -60,6 +67,8 @@ enum ExportError: LocalizedError {
             return "Failed to encode data: \(detail)"
         case .invalidData:
             return "Invalid data format"
+        case .missingProfile:
+            return "User profile is missing"
         }
     }
 }
@@ -86,7 +95,7 @@ class DataExportService {
     
     /// Export all user data as a complete JSON file
     static func exportAllDataAsJSON(
-        profile: UserProfile,
+        profile: ChildProfile,
         mealLogs: [MealLog],
         triedFoods: [TriedFoodLog],
         recipes: [Recipe],
@@ -95,11 +104,17 @@ class DataExportService {
         sleepLogs: [SleepLog],
         diaperLogs: [DiaperLog],
         bottleLogs: [BottleFeedLog],
-        growthMeasurements: [GrowthMeasurement]
+        growthMeasurements: [GrowthMeasurement],
+        pumpingLogs: [PumpingLog],
+        medicationLogs: [MedicationLog]
     ) throws -> URL {
         
+        guard let profileId = profile.id else {
+            throw ExportError.missingProfile
+        }
+        
         let dataTypes = [
-            "UserProfile",
+            "ChildProfile",
             "MealLogs (\(mealLogs.count))",
             "TriedFoods (\(triedFoods.count))",
             "Recipes (\(recipes.count))",
@@ -108,18 +123,20 @@ class DataExportService {
             "SleepLogs (\(sleepLogs.count))",
             "DiaperLogs (\(diaperLogs.count))",
             "BottleLogs (\(bottleLogs.count))",
-            "GrowthMeasurements (\(growthMeasurements.count))"
+            "GrowthMeasurements (\(growthMeasurements.count))",
+            "PumpingLogs (\(pumpingLogs.count))",
+            "MedicationLogs (\(medicationLogs.count))"
         ]
         
         let metadata = DataExportMetadata(
-            profileName: profile.babyName,
-            profileID: profile.id,
+            profileName: profile.name,
+            profileID: profileId,
             dataTypes: dataTypes
         )
         
         let completeExport = CompleteDataExport(
             metadata: metadata,
-            profile: profile,
+            childProfile: profile,
             mealLogs: mealLogs,
             triedFoods: triedFoods,
             recipes: recipes,
@@ -128,7 +145,9 @@ class DataExportService {
             sleepLogs: sleepLogs,
             diaperLogs: diaperLogs,
             bottleLogs: bottleLogs,
-            growthMeasurements: growthMeasurements
+            growthMeasurements: growthMeasurements,
+            pumpingLogs: pumpingLogs,
+            medicationLogs: medicationLogs
         )
         
         let encoder = JSONEncoder()
@@ -355,8 +374,8 @@ class DataExportService {
         }
     }
     
-    private static func generateFilename(for profile: UserProfile, extension ext: String) -> String {
-        let sanitizedName = profile.babyName.replacingOccurrences(of: " ", with: "_")
+    private static func generateFilename(for profile: ChildProfile, extension ext: String) -> String {
+        let sanitizedName = profile.name.replacingOccurrences(of: " ", with: "_")
         return "\(sanitizedName)_TinyTastesBackup_\(formattedDate()).\(ext)"
     }
     
@@ -397,3 +416,4 @@ class DataExportService {
         }
     }
 }
+

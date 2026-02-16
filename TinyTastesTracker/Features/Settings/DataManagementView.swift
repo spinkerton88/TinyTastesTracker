@@ -6,15 +6,11 @@
 //
 
 import SwiftUI
-import SwiftData
 import UniformTypeIdentifiers
-
-
 
 @MainActor
 struct DataManagementView: View {
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
     
     @State private var selectedFormat: DataExportService.ExportFormat = .json
     @State private var isExporting = false
@@ -95,20 +91,7 @@ struct DataManagementView: View {
                     .font(.caption)
             }
             
-            // MARK: - iCloud Sync Section
-            Section {
-                NavigationLink {
-                    CloudKitSyncStatusView()
-                } label: {
-                    Label("iCloud Sync Settings", systemImage: "icloud.fill")
-                }
-            } header: {
-                Label("iCloud Backup", systemImage: "icloud.fill")
-            } footer: {
-                Text("Automatically backup your data to iCloud and sync across devices. Requires iCloud account.")
-                    .font(.caption)
-            }
-            
+
             // MARK: - Storage Section
             Section {
                 HStack {
@@ -136,7 +119,7 @@ struct DataManagementView: View {
             } header: {
                 Text("Danger Zone")
             } footer: {
-                Text("This will permanently delete all tracking data. This action cannot be undone. Make sure to export your data first.")
+                Text("This will permanently delete tracked data for the current child profile. This action cannot be undone.")
                     .font(.caption)
                     .foregroundStyle(.red)
             }
@@ -176,7 +159,7 @@ struct DataManagementView: View {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive, action: deleteAllData)
         } message: {
-            Text("This will permanently delete all tracking data for \(appState.userProfile?.babyName ?? "your child"). This action cannot be undone.")
+            Text("This will permanently delete all tracking data for \(appState.userProfile?.name ?? "your child"). This action cannot be undone.")
         }
         .alert("Data Management", isPresented: $showingAlert) {
             Button("OK", role: .cancel) { }
@@ -204,37 +187,37 @@ struct DataManagementView: View {
                 case .csvMeals:
                     url = try DataExportService.exportMealLogsAsCSV(
                         logs: appState.mealLogs,
-                        profileName: profile.babyName
+                        profileName: profile.name
                     )
                 case .csvSleep:
                     url = try DataExportService.exportSleepLogsAsCSV(
                         logs: appState.sleepLogs,
-                        profileName: profile.babyName
+                        profileName: profile.name
                     )
                 case .csvGrowth:
                     url = try DataExportService.exportGrowthDataAsCSV(
                         measurements: appState.growthMeasurements,
-                        profileName: profile.babyName
+                        profileName: profile.name
                     )
                 case .csvNursing:
                     url = try DataExportService.exportNursingLogsAsCSV(
                         logs: appState.nursingLogs,
-                        profileName: profile.babyName
+                        profileName: profile.name
                     )
                 case .csvBottle:
                     url = try DataExportService.exportBottleLogsAsCSV(
                         logs: appState.bottleLogs,
-                        profileName: profile.babyName
+                        profileName: profile.name
                     )
                 case .photoTimeline:
                     url = try DataExportService.exportPhotosWithTimeline(
                         logs: appState.foodLogs,
-                        profileName: profile.babyName
+                        profileName: profile.name
                     )
                 case .photosZIP:
                     url = try DataExportService.exportPhotosAsZIP(
                         logs: appState.foodLogs,
-                        profileName: profile.babyName
+                        profileName: profile.name
                     )
                 }
                 
@@ -250,7 +233,7 @@ struct DataManagementView: View {
         }
     }
     
-    private func exportCompleteBackup(profile: UserProfile) async throws -> URL {
+    private func exportCompleteBackup(profile: ChildProfile) async throws -> URL {
         return try DataExportService.exportAllDataAsJSON(
             profile: profile,
             mealLogs: appState.mealLogs,
@@ -261,7 +244,9 @@ struct DataManagementView: View {
             sleepLogs: appState.sleepLogs,
             diaperLogs: appState.diaperLogs,
             bottleLogs: appState.bottleLogs,
-            growthMeasurements: appState.growthMeasurements
+            growthMeasurements: appState.growthMeasurements,
+            pumpingLogs: appState.pumpingLogs,
+            medicationLogs: appState.medicationLogs
         )
     }
     
@@ -294,6 +279,12 @@ struct DataManagementView: View {
     }
     
     private func performImport(from url: URL) {
+        guard let ownerId = appState.currentOwnerId else {
+            alertMessage = "You must be signed in to import data."
+            showingAlert = true
+            return
+        }
+        
         isImporting = true
         
         Task {
@@ -301,13 +292,10 @@ struct DataManagementView: View {
                 let result = try await DataImportService.importFromJSON(
                     fileURL: url,
                     strategy: importStrategy,
-                    modelContext: modelContext
+                    ownerId: ownerId
                 )
                 
                 if result.success {
-                    // Reload app state
-                    await appState.loadData(context: modelContext)
-                    
                     alertMessage = result.summary
                     showingAlert = true
                 } else {
@@ -330,29 +318,48 @@ struct DataManagementView: View {
     // MARK: - Delete Function
     
     private func deleteAllData() {
+        guard appState.userProfile != nil else { return }
+        
         Task {
-            do {
-                try modelContext.delete(model: MealLog.self)
-                try modelContext.delete(model: TriedFoodLog.self)
-                try modelContext.delete(model: Recipe.self)
-                try modelContext.delete(model: CustomFood.self)
-                try modelContext.delete(model: NursingLog.self)
-                try modelContext.delete(model: SleepLog.self)
-                try modelContext.delete(model: DiaperLog.self)
-                try modelContext.delete(model: BottleFeedLog.self)
-                try modelContext.delete(model: GrowthMeasurement.self)
-                
-                try modelContext.save()
-                
-                await appState.loadData(context: modelContext)
-                
-                alertMessage = "All data has been deleted."
-                showingAlert = true
-                
-            } catch {
-                alertMessage = "Failed to delete data: \(error.localizedDescription)"
-                showingAlert = true
+            // Delete logs using managers
+            // This is client-side iteration, might be slow for huge datasets but safe.
+            
+            // Toddler Data
+            for log in appState.mealLogs {
+                appState.toddlerManager.deleteMealLog(log)
             }
+            for log in appState.foodLogs {
+                appState.toddlerManager.deleteFoodLog(log)
+            }
+            
+            // Newborn Data
+            for log in appState.nursingLogs {
+                appState.newbornManager.deleteNursingLog(log)
+            }
+            for log in appState.sleepLogs {
+                appState.newbornManager.deleteSleepLog(log)
+            }
+            for log in appState.diaperLogs {
+                appState.newbornManager.deleteDiaperLog(log)
+            }
+            for log in appState.bottleLogs {
+                appState.newbornManager.deleteBottleFeedLog(log)
+            }
+            for log in appState.growthMeasurements {
+                appState.newbornManager.deleteGrowthMeasurement(log)
+            }
+            for log in appState.pumpingLogs {
+                appState.newbornManager.deletePumpingLog(log)
+            }
+            for log in appState.medicationLogs {
+                appState.newbornManager.deleteMedicationLog(log)
+            }
+            
+            // Wait a bit for propagation?
+            // Deletions are async in managers (Task { ... }).
+            
+            alertMessage = "Deletion requests sent. Data will vanish shortly."
+            showingAlert = true
         }
     }
     
@@ -412,6 +419,7 @@ struct ImportPreviewSheet: View {
                     
                     HStack {
                         Text("Estimated Size")
+                            .foregroundStyle(.secondary)
                         Spacer()
                         Text(preview.estimatedSize)
                             .foregroundStyle(.secondary)
@@ -456,10 +464,10 @@ struct ImportPreviewSheet: View {
                     .pickerStyle(.segmented)
                 } footer: {
                     if strategy == .replace {
-                        Text("⚠️ This will delete all existing data and replace it with the imported data.")
+                        Text("⚠️ This will attempt to overwrite existing items if IDs match.")
                             .foregroundStyle(.red)
                     } else {
-                        Text("Duplicate items will be skipped. Existing data will be preserved.")
+                        Text("Items with matching IDs will be skipped or updated.")
                     }
                 }
             }

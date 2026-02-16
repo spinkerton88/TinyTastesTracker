@@ -8,7 +8,6 @@
 import Vision
 import UIKit
 import Foundation
-import SwiftData
 
 // MARK: - Models
 
@@ -97,7 +96,7 @@ class DaycareReportParser {
     }
     
     /// Check for duplicate logs in existing data
-    func detectDuplicates(in suggestedLogs: [SuggestedLog], modelContext: ModelContext) -> [SuggestedLog] {
+    func detectDuplicates(in suggestedLogs: [SuggestedLog], appState: AppState) -> [SuggestedLog] {
         var updatedLogs: [SuggestedLog] = []
         
         for log in suggestedLogs {
@@ -117,67 +116,51 @@ class DaycareReportParser {
                 timeTolerance = 10 * 60 // 10 minutes for activities
             }
             
+            // Start/End Range
+            let startRange = log.startTime.addingTimeInterval(-timeTolerance)
+            let endRange = log.startTime.addingTimeInterval(timeTolerance)
+
             // Check for duplicates based on log type
             switch log.type {
             case .sleep:
-                // Calculate time range for comparison
-                let startRange = log.startTime.addingTimeInterval(-timeTolerance)
-                let endRange = log.startTime.addingTimeInterval(timeTolerance)
-                
-                let descriptor = FetchDescriptor<SleepLog>(
-                    predicate: #Predicate<SleepLog> { sleepLog in
-                        sleepLog.startTime >= startRange && sleepLog.startTime <= endRange
-                    }
-                )
-                if let existingLogs = try? modelContext.fetch(descriptor), !existingLogs.isEmpty {
+                let overlaps = appState.sleepLogs.filter { sleepLog in
+                    sleepLog.startTime >= startRange && sleepLog.startTime <= endRange
+                }
+                if !overlaps.isEmpty {
                     isDuplicate = true
                     duplicateReason = "Similar sleep log found within 30 minutes"
                 }
                 
             case .feed:
-                // Calculate time range for comparison
-                let startRange = log.startTime.addingTimeInterval(-timeTolerance)
-                let endRange = log.startTime.addingTimeInterval(timeTolerance)
-                
                 // Check bottle feeds
-                let bottleDescriptor = FetchDescriptor<BottleFeedLog>(
-                    predicate: #Predicate<BottleFeedLog> { feedLog in
-                        feedLog.timestamp >= startRange && feedLog.timestamp <= endRange
-                    }
-                )
-                if let existingBottles = try? modelContext.fetch(bottleDescriptor), !existingBottles.isEmpty {
-                    isDuplicate = true
-                    duplicateReason = "Similar bottle feed found within 5 minutes"
+                let bottleOverlaps = appState.bottleFeedLogs.filter { feedLog in
+                    feedLog.timestamp >= startRange && feedLog.timestamp <= endRange
                 }
                 
                 // Check nursing logs
-                let nursingDescriptor = FetchDescriptor<NursingLog>(
-                    predicate: #Predicate<NursingLog> { feedLog in
-                        feedLog.timestamp >= startRange && feedLog.timestamp <= endRange
-                    }
-                )
-                if let existingNursing = try? modelContext.fetch(nursingDescriptor), !existingNursing.isEmpty {
+                let nursingOverlaps = appState.nursingLogs.filter { feedLog in
+                    feedLog.timestamp >= startRange && feedLog.timestamp <= endRange
+                }
+                
+                if !bottleOverlaps.isEmpty {
+                    isDuplicate = true
+                    duplicateReason = "Similar bottle feed found within 5 minutes"
+                } else if !nursingOverlaps.isEmpty {
                     isDuplicate = true
                     duplicateReason = "Similar nursing session found within 5 minutes"
                 }
                 
             case .diaper:
-                // Calculate time range for comparison
-                let startRange = log.startTime.addingTimeInterval(-timeTolerance)
-                let endRange = log.startTime.addingTimeInterval(timeTolerance)
-                
-                let descriptor = FetchDescriptor<DiaperLog>(
-                    predicate: #Predicate<DiaperLog> { diaperLog in
-                        diaperLog.timestamp >= startRange && diaperLog.timestamp <= endRange
-                    }
-                )
-                if let existingLogs = try? modelContext.fetch(descriptor), !existingLogs.isEmpty {
+                let overlaps = appState.diaperLogs.filter { diaperLog in
+                    diaperLog.timestamp >= startRange && diaperLog.timestamp <= endRange
+                }
+                if !overlaps.isEmpty {
                     isDuplicate = true
                     duplicateReason = "Similar diaper change found within 5 minutes"
                 }
                 
             case .activity, .other:
-                // No duplicate detection for activities yet (will add when ActivityLog model exists)
+                // No duplicate detection for activities yet
                 break
             }
             
@@ -217,6 +200,7 @@ class DaycareReportParser {
             - "diaper"
             - "activity" (play/mood)
             - "other"
+            - "feed" (generic)
         - "startTime": "HH:mm" (24-hour format). Best guess if implied.
         - "endTime": "HH:mm" (24-hour format) or null.
         - "quantity": String or null (e.g. "5 oz", "1 jar", "15 mins").

@@ -20,8 +20,16 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-    <key>NSSupportsLiveActivities</key>
-    <true/>
+	<key>NSCameraUsageDescription</key>
+	<string>We need camera access to identify foods using AI for easier food tracking.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Tiny Tastes Tracker needs access to save your food collages and memories to your photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Tiny Tastes Tracker needs access to your photos to create collages from your food logs.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>Tiny Tastes Tracker can export your shopping list to Reminders for easy grocery shopping.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -29,22 +37,15 @@
 		<key>UISceneConfigurations</key>
 		<dict/>
 	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>We need camera access to identify foods using AI for easier food tracking.</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>Tiny Tastes Tracker can export your shopping list to Reminders for easy grocery shopping.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Sage needs microphone access for voice conversations to help you with feeding questions and advice.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Tiny Tastes Tracker needs access to save your food collages and memories to your photos.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Tiny Tastes Tracker needs access to your photos to create collages from your food logs.</string>
-
 </dict>
 </plist>

@@ -10,12 +10,12 @@ import UserNotifications
 
 struct NotificationSettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var notificationManager = NotificationManager.shared
-    
+    @Bindable var notificationManager: NotificationManager
+
     // Settings
     @AppStorage("feed_notification_lead_time") private var feedLeadTime: Int = 30
     @AppStorage("allergen_checkin_duration") private var allergenCheckInDuration: Int = 2
-    
+
     // UI State
     @State private var showingPermissionAlert = false
     @State private var isRequestingPermission = false
@@ -283,12 +283,12 @@ struct NotificationSettingsView: View {
 // MARK: - Preview
 
 #Preview {
-    NotificationSettingsView()
+    NotificationSettingsView(notificationManager: NotificationManager())
 }
 
 #Preview("Authorized") {
-    let manager = NotificationManager.shared
-    return NotificationSettingsView()
+    let manager = NotificationManager()
+    return NotificationSettingsView(notificationManager: manager)
         .onAppear {
             // Simulate authorized state for preview
             Task {

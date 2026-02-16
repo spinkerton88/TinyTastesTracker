@@ -8,15 +8,16 @@
 import SwiftUI
 
 struct GrowthTrackingSheet: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
     @Bindable var appState: AppState
-    
+
     @State private var weightStr: String = ""
     @State private var heightStr: String = ""
     @State private var headCircStr: String = ""
     @State private var notes: String = ""
     @State private var measurementDate = Date()
+    @State private var isSaving = false
     
     var body: some View {
         NavigationStack {
@@ -104,7 +105,7 @@ struct GrowthTrackingSheet: View {
                         saveMeasurement()
                     }
                     .fontWeight(.semibold)
-                    .disabled(!hasAnyMeasurement)
+                    .disabled(!hasAnyMeasurement || isSaving)
                 }
             }
         }
@@ -115,19 +116,27 @@ struct GrowthTrackingSheet: View {
     }
     
     private func saveMeasurement() {
-        let weight = Double(weightStr)
-        let height = Double(heightStr)
-        let headCirc = Double(headCircStr)
-        
-        appState.saveGrowthMeasurement(
-            weight: weight,
-            height: height,
-            headCircumference: headCirc,
-            notes: notes.isEmpty ? nil : notes,
-            context: modelContext
-        )
-        
-        HapticManager.success()
-        dismiss()
+        Task {
+            isSaving = true
+            defer { isSaving = false }
+            
+            do {
+                let weight = Double(weightStr)
+                let height = Double(heightStr)
+                let headCirc = Double(headCircStr)
+                
+                try await appState.saveGrowthMeasurement(
+                    weight: weight,
+                    height: height,
+                    headCircumference: headCirc,
+                    notes: notes.isEmpty ? nil : notes
+                )
+                
+                errorPresenter.showSuccess("Growth measurement saved")
+                dismiss()
+            } catch {
+                errorPresenter.present(error)
+            }
+        }
     }
 }

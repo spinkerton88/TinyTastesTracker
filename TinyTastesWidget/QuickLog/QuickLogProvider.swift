@@ -20,24 +20,52 @@ struct QuickLogProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        // Fetch last log times from shared UserDefaults
-        let lastBottleTime = WidgetDataManager.lastLogTime(type: .bottle) ?? Date().addingTimeInterval(-3600)
-        let lastNursingTime = WidgetDataManager.lastLogTime(type: .nursing) ?? Date().addingTimeInterval(-7200)
-        let lastDiaperTime = WidgetDataManager.lastLogTime(type: .diaper) ?? Date().addingTimeInterval(-5400)
-        let lastSleepTime = WidgetDataManager.lastLogTime(type: .sleep) ?? Date().addingTimeInterval(-10800)
+        Task {
+            var lastBottleTime: Date?
+            var lastNursingTime: Date?
+            var lastDiaperTime: Date?
+            var lastSleepTime: Date?
 
-        let entry = QuickLogEntry(
-            date: Date(),
-            lastBottleTime: lastBottleTime,
-            lastNursingTime: lastNursingTime,
-            lastDiaperTime: lastDiaperTime,
-            lastSleepTime: lastSleepTime
-        )
+            // Try fetching from Firestore if authenticated and have active profile
+            if WidgetDataManager.isUserAuthenticated(),
+               let profileId = WidgetDataManager.getActiveProfileId() {
 
-        // Update every 15 minutes
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        completion(timeline)
+                // Fetch recent logs from Firestore
+                if let bottleFeeds = try? await WidgetDataManager.fetchRecentBottleFeeds(for: profileId, limit: 1),
+                   let latestBottle = bottleFeeds.first {
+                    lastBottleTime = latestBottle.timestamp
+                }
+
+                if let nursingLogs = try? await WidgetDataManager.fetchRecentNursingLogs(for: profileId, limit: 1),
+                   let latestNursing = nursingLogs.first {
+                    lastNursingTime = latestNursing.timestamp
+                }
+
+                if let diaperLogs = try? await WidgetDataManager.fetchRecentDiaperLogs(for: profileId, limit: 1),
+                   let latestDiaper = diaperLogs.first {
+                    lastDiaperTime = latestDiaper.timestamp
+                }
+
+                if let sleepLogs = try? await WidgetDataManager.fetchRecentSleepLogs(for: profileId, limit: 1),
+                   let latestSleep = sleepLogs.first {
+                    lastSleepTime = latestSleep.startTime
+                }
+            }
+
+            // Fallback to UserDefaults or default values
+            let entry = QuickLogEntry(
+                date: Date(),
+                lastBottleTime: lastBottleTime ?? WidgetDataManager.lastLogTime(type: .bottle) ?? Date().addingTimeInterval(-3600),
+                lastNursingTime: lastNursingTime ?? WidgetDataManager.lastLogTime(type: .nursing) ?? Date().addingTimeInterval(-7200),
+                lastDiaperTime: lastDiaperTime ?? WidgetDataManager.lastLogTime(type: .diaper) ?? Date().addingTimeInterval(-5400),
+                lastSleepTime: lastSleepTime ?? WidgetDataManager.lastLogTime(type: .sleep) ?? Date().addingTimeInterval(-10800)
+            )
+
+            // Update every 15 minutes
+            let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
+            let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+            completion(timeline)
+        }
     }
 }
 

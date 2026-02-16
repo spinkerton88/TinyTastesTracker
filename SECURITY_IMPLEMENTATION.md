@@ -12,7 +12,7 @@ This document summarizes the comprehensive security implementation addressing th
 
 The exposed API key was:
 ```
-AIzaSyCmidsQpJ3lLgRCE0aAdhI3rmiB8lNQc5w
+AIza[REDACTED_API_KEY]
 ```
 
 This key has been secured through multiple layers of protection, and comprehensive documentation has been added to guide proper production deployment.
@@ -39,11 +39,11 @@ class SecureAPIKeyManager {
 
     // Obfuscated key parts (split to avoid pattern matching)
     private let keyParts: [String] = [
-        "QUl6YVN5Q21p",      // Base64 encoded parts
-        "ZHNRcEozbGdS",      // Split into chunks
-        "Q0UwYUFkaEkz",
-        "cm1pQjhsTlFj",
-        "NXc="
+        "QUl6YV...",      // Base64 encoded parts
+        "...",      // Split into chunks
+        "...",
+        "...",
+        "..."
     ]
 
     // XOR cipher key for additional obfuscation

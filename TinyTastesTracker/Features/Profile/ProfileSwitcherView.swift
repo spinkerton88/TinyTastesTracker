@@ -6,15 +6,14 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct ProfileSwitcherView: View {
-    @Environment(\.modelContext) private var context
     @Bindable var appState: AppState
 
     @State private var showingAddProfile = false
-    @State private var showingEditProfile: UserProfile?
-    @State private var showingDeleteConfirm: UserProfile?
+    @State private var showingEditProfile: ChildProfile?
+    @State private var showingDeleteConfirm: ChildProfile?
+    @State private var showingManageSharing: ChildProfile?
 
     var body: some View {
         List {
@@ -31,21 +30,24 @@ struct ProfileSwitcherView: View {
                         },
                         onDelete: {
                             showingDeleteConfirm = profile
+                        },
+                        onManageSharing: {
+                            showingManageSharing = profile
                         }
                     )
                 }
             } header: {
-                Text("Children")
+                Text(NSLocalizedString("profile.section.children", comment: "Children section header"))
             }
 
             Section {
                 Button(action: { showingAddProfile = true }) {
-                    Label("Add Child", systemImage: "plus.circle.fill")
+                    Label(NSLocalizedString("profile.action.add", comment: "Add child button"), systemImage: "plus.circle.fill")
                         .foregroundColor(appState.themeColor)
                 }
             }
         }
-        .navigationTitle("Manage Profiles")
+        .navigationTitle(NSLocalizedString("profile.navigation.title", comment: "Navigation title"))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingAddProfile) {
             AddProfileSheet(appState: appState)
@@ -53,26 +55,28 @@ struct ProfileSwitcherView: View {
         .sheet(item: $showingEditProfile) { profile in
             EditProfileSheet(profile: profile, appState: appState)
         }
-        .alert("Delete Profile?", isPresented: Binding(
+        .sheet(item: $showingManageSharing) { profile in
+            NavigationStack {
+                ManageSharedAccessView(appState: appState, profile: profile)
+            }
+        }
+        .alert(NSLocalizedString("profile.alert.delete.title", comment: "Delete alert title"), isPresented: Binding(
             get: { showingDeleteConfirm != nil },
             set: { if !$0 { showingDeleteConfirm = nil } }
         )) {
-            Button("Cancel", role: .cancel) {
+            Button(NSLocalizedString("profile.alert.delete.cancel", comment: "Cancel button"), role: .cancel) {
                 showingDeleteConfirm = nil
             }
-            Button("Delete", role: .destructive) {
+            Button(NSLocalizedString("profile.alert.delete.confirm", comment: "Delete button"), role: .destructive) {
                 if let profile = showingDeleteConfirm {
-                    appState.profileManager.deleteProfile(profile, context: context)
+                    appState.profileManager.deleteProfile(profile)
                     showingDeleteConfirm = nil
                 }
             }
         } message: {
             if let profile = showingDeleteConfirm {
-                Text("Are you sure you want to delete \(profile.babyName)'s profile? This will delete all their data and cannot be undone.")
+                Text(String(format: NSLocalizedString("profile.alert.delete.message", comment: "Delete confirmation message"), profile.name))
             }
-        }
-        .onAppear {
-            appState.profileManager.loadProfiles(context: context)
         }
     }
 }
@@ -80,17 +84,18 @@ struct ProfileSwitcherView: View {
 // MARK: - Profile Row
 
 struct ProfileRow: View {
-    let profile: UserProfile
+    let profile: ChildProfile
     let isActive: Bool
     let onSelect: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
+    let onManageSharing: () -> Void
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text(profile.babyName)
+                    Text(profile.name)
                         .font(.headline)
 
                     if isActive {
@@ -98,9 +103,16 @@ struct ProfileRow: View {
                             .foregroundColor(.green)
                             .font(.caption)
                     }
+
+                    // Shared profile indicator
+                    if !profile.isOwner {
+                        Image(systemName: "person.2.fill")
+                            .foregroundStyle(.purple)
+                            .font(.caption)
+                    }
                 }
 
-                Text("\(profile.ageInMonths) months • \(profile.currentMode.rawValue)")
+                Text("\(profile.ageInMonths) \(NSLocalizedString("profile.row.months_suffix", comment: "Months suffix")) • \(profile.currentMode.rawValue)")
                     .font(.caption)
                     .foregroundColor(.secondary)
 
@@ -114,18 +126,24 @@ struct ProfileRow: View {
             Menu {
                 if !isActive {
                     Button(action: onSelect) {
-                        Label("Switch to \(profile.babyName)", systemImage: "arrow.left.arrow.right")
+                        Label(String(format: NSLocalizedString("profile.row.switch_to", comment: "Switch profile"), profile.name), systemImage: "arrow.left.arrow.right")
                     }
                 }
 
                 Button(action: onEdit) {
-                    Label("Edit", systemImage: "pencil")
+                    Label(NSLocalizedString("profile.row.edit", comment: "Edit button"), systemImage: "pencil")
+                }
+
+                if profile.isOwner {
+                    Button(action: onManageSharing) {
+                        Label("Manage Sharing", systemImage: "person.2.badge.gearshape")
+                    }
                 }
 
                 Divider()
 
                 Button(role: .destructive, action: onDelete) {
-                    Label("Delete", systemImage: "trash")
+                    Label(NSLocalizedString("profile.row.delete", comment: "Delete button"), systemImage: "trash")
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
@@ -145,7 +163,6 @@ struct ProfileRow: View {
 
 struct AddProfileSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var context
     @Bindable var appState: AppState
 
     @State private var name = ""
@@ -156,38 +173,38 @@ struct AddProfileSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Child Information") {
-                    TextField("Name", text: $name)
-                        .accessibilityLabel("Child Name")
+                Section(NSLocalizedString("profile.add.section.info", comment: "Section header")) {
+                    TextField(NSLocalizedString("profile.add.field.name", comment: "Name field"), text: $name)
+                        .accessibilityLabel(NSLocalizedString("profile.add.field.name.accessibility", comment: "Name accessibility"))
 
-                    DatePicker("Birth Date",
+                    DatePicker(NSLocalizedString("profile.add.field.birthdate", comment: "Birth date field"),
                              selection: $birthDate,
                              in: ...Date(),
                              displayedComponents: .date)
-                    .accessibilityLabel("Child's Birth Date")
+                    .accessibilityLabel(NSLocalizedString("profile.add.field.birthdate.accessibility", comment: "Birth date accessibility"))
 
-                    Picker("Gender", selection: $gender) {
-                        Text("Boy").tag(Gender.boy)
-                        Text("Girl").tag(Gender.girl)
-                        Text("Other").tag(Gender.other)
+                    Picker(NSLocalizedString("profile.add.field.gender", comment: "Gender field"), selection: $gender) {
+                        Text(NSLocalizedString("profile.add.field.gender.boy", comment: "Boy option")).tag(Gender.boy)
+                        Text(NSLocalizedString("profile.add.field.gender.girl", comment: "Girl option")).tag(Gender.girl)
+                        Text(NSLocalizedString("profile.add.field.gender.other", comment: "Other option")).tag(Gender.other)
                     }
-                    .accessibilityLabel("Gender Selection")
+                    .accessibilityLabel(NSLocalizedString("profile.add.field.gender.accessibility", comment: "Gender accessibility"))
                 }
 
-                Section("Known Allergies (Optional)") {
-                    TextField("Separate with commas", text: $allergies)
+                Section(NSLocalizedString("profile.add.section.allergies", comment: "Allergies section")) {
+                    TextField(NSLocalizedString("profile.add.field.allergies.placeholder", comment: "Allergies placeholder"), text: $allergies)
                 }
             }
-            .navigationTitle("Add Child")
+            .navigationTitle(NSLocalizedString("profile.add.title", comment: "Add child title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button(NSLocalizedString("profile.add.action.cancel", comment: "Cancel button")) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
+                    Button(NSLocalizedString("profile.add.action.add", comment: "Add button")) {
                         saveProfile()
                     }
                     .disabled(name.isEmpty)
@@ -197,6 +214,8 @@ struct AddProfileSheet: View {
     }
 
     private func saveProfile() {
+        guard let ownerId = appState.currentOwnerId else { return }
+        
         let allergyList = allergies.isEmpty ? nil : allergies.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
 
         appState.profileManager.createProfile(
@@ -204,7 +223,7 @@ struct AddProfileSheet: View {
             birthDate: birthDate,
             gender: gender,
             allergies: allergyList,
-            context: context
+            ownerId: ownerId
         )
 
         dismiss()
@@ -215,8 +234,7 @@ struct AddProfileSheet: View {
 
 struct EditProfileSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var context
-    let profile: UserProfile
+    let profile: ChildProfile
     @Bindable var appState: AppState
 
     @State private var name: String
@@ -225,10 +243,10 @@ struct EditProfileSheet: View {
     @State private var allergies: String
     @State private var preferredMode: AppMode?
 
-    init(profile: UserProfile, appState: AppState) {
+    init(profile: ChildProfile, appState: AppState) {
         self.profile = profile
         self.appState = appState
-        _name = State(initialValue: profile.babyName)
+        _name = State(initialValue: profile.name)
         _birthDate = State(initialValue: profile.birthDate)
         _gender = State(initialValue: profile.gender)
         _allergies = State(initialValue: profile.knownAllergies?.joined(separator: ", ") ?? "")
@@ -238,44 +256,44 @@ struct EditProfileSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Child Information") {
-                    TextField("Name", text: $name)
+                Section(NSLocalizedString("profile.add.section.info", comment: "Section header")) {
+                    TextField(NSLocalizedString("profile.add.field.name", comment: "Name field"), text: $name)
 
-                    DatePicker("Birth Date",
+                    DatePicker(NSLocalizedString("profile.add.field.birthdate", comment: "Birth date field"),
                              selection: $birthDate,
                              in: ...Date(),
                              displayedComponents: .date)
 
-                    Picker("Gender", selection: $gender) {
-                        Text("Boy").tag(Gender.boy)
-                        Text("Girl").tag(Gender.girl)
-                        Text("Other").tag(Gender.other)
+                    Picker(NSLocalizedString("profile.add.field.gender", comment: "Gender field"), selection: $gender) {
+                        Text(NSLocalizedString("profile.add.field.gender.boy", comment: "Boy option")).tag(Gender.boy)
+                        Text(NSLocalizedString("profile.add.field.gender.girl", comment: "Girl option")).tag(Gender.girl)
+                        Text(NSLocalizedString("profile.add.field.gender.other", comment: "Other option")).tag(Gender.other)
                     }
                 }
 
-                Section("Preferred Mode (Optional)") {
-                    Picker("Mode", selection: $preferredMode) {
-                        Text("Auto (Based on Age)").tag(nil as AppMode?)
-                        Text("Newborn").tag(AppMode.newborn as AppMode?)
-                        Text("Explorer").tag(AppMode.explorer as AppMode?)
-                        Text("Toddler").tag(AppMode.toddler as AppMode?)
+                Section(NSLocalizedString("profile.edit.section.mode", comment: "Mode section")) {
+                    Picker(NSLocalizedString("profile.edit.field.mode", comment: "Mode field"), selection: $preferredMode) {
+                        Text(NSLocalizedString("profile.edit.field.mode.auto", comment: "Auto mode")).tag(nil as AppMode?)
+                        Text(NSLocalizedString("profile.edit.field.mode.newborn", comment: "Newborn mode")).tag(AppMode.newborn as AppMode?)
+                        Text(NSLocalizedString("profile.edit.field.mode.explorer", comment: "Explorer mode")).tag(AppMode.explorer as AppMode?)
+                        Text(NSLocalizedString("profile.edit.field.mode.toddler", comment: "Toddler mode")).tag(AppMode.toddler as AppMode?)
                     }
                 }
 
-                Section("Known Allergies") {
-                    TextField("Separate with commas", text: $allergies)
+                Section(NSLocalizedString("profile.edit.section.allergies", comment: "Allergies section")) {
+                    TextField(NSLocalizedString("profile.add.field.allergies.placeholder", comment: "Allergies placeholder"), text: $allergies)
                 }
             }
-            .navigationTitle("Edit Profile")
+            .navigationTitle(NSLocalizedString("profile.edit.title", comment: "Edit profile title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button(NSLocalizedString("profile.add.action.cancel", comment: "Cancel button")) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button(NSLocalizedString("profile.edit.action.save", comment: "Save button")) {
                         saveChanges()
                     }
                     .disabled(name.isEmpty)
@@ -293,19 +311,9 @@ struct EditProfileSheet: View {
             birthDate: birthDate,
             gender: gender,
             allergies: allergyList,
-            preferredMode: preferredMode,
-            context: context
+            preferredMode: preferredMode
         )
 
         dismiss()
     }
-}
-
-// MARK: - Preview
-
-#Preview {
-    NavigationStack {
-        ProfileSwitcherView(appState: AppState())
-    }
-    .modelContainer(for: [UserProfile.self])
 }

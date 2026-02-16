@@ -2,12 +2,13 @@
 //  ProfileManager.swift
 //  TinyTastesTracker
 //
-//  Manages multiple child profiles with profile switching and comparison features
+//  Manages multiple child profiles via Firestore
 //
 
 import Foundation
-import SwiftData
 import SwiftUI
+import Combine
+import FirebaseFirestore
 
 @Observable
 class ProfileManager {
@@ -15,17 +16,27 @@ class ProfileManager {
     // MARK: - Properties
 
     /// All child profiles stored in the app
-    private(set) var profiles: [UserProfile] = []
+    private(set) var profiles: [ChildProfile] = []
 
-    /// The currently active profile
-    private(set) var activeProfileId: UUID?
+    /// The currently active profile ID
+    private(set) var activeProfileId: String?
 
     /// The active profile (computed from activeProfileId)
-    var activeProfile: UserProfile? {
+    var activeProfile: ChildProfile? {
         guard let activeProfileId = activeProfileId else { return nil }
         return profiles.first { $0.id == activeProfileId }
     }
 
+    // MARK: - Dependencies
+    private let db = Firestore.firestore()
+    private let profileService = FirestoreService<ChildProfile>(collectionName: "child_profiles")
+    private var ownedProfilesListener: ListenerRegistration?
+    private var sharedProfilesListener: ListenerRegistration?
+
+    // Cached profile arrays for merging
+    private var ownedProfiles: [ChildProfile] = []
+    private var sharedProfiles: [ChildProfile] = []
+    
     // MARK: - Persistence Key
     private let activeProfileKey = "ProfileManager.activeProfileId"
 
@@ -33,38 +44,95 @@ class ProfileManager {
 
     init() {
         // Load active profile ID from UserDefaults
-        if let savedId = UserDefaults.standard.string(forKey: activeProfileKey),
-           let uuid = UUID(uuidString: savedId) {
-            self.activeProfileId = uuid
+        if let savedId = UserDefaults.standard.string(forKey: activeProfileKey) {
+            self.activeProfileId = savedId
         }
+    }
+
+    deinit {
+        ownedProfilesListener?.remove()
+        sharedProfilesListener?.remove()
     }
 
     // MARK: - Profile Management
 
-    /// Load all profiles from SwiftData
-    func loadProfiles(context: ModelContext) {
-        let descriptor = FetchDescriptor<UserProfile>(
-            sortBy: [SortDescriptor(\.babyName)]
-        )
+    /// Load all profiles for a specific parent (owned + shared)
+    func loadProfiles(userId: String) {
+        // Remove existing listeners if any
+        ownedProfilesListener?.remove()
+        sharedProfilesListener?.remove()
 
-        do {
-            profiles = try context.fetch(descriptor)
+        // Listen for profiles owned by this user
+        ownedProfilesListener = db.collection("child_profiles")
+            .whereField("ownerId", isEqualTo: userId)
+            .addSnapshotListener { [weak self] snapshot, error in
+                guard let self = self else { return }
 
-            // If no active profile is set, use the first one
-            if activeProfileId == nil, let firstProfile = profiles.first {
-                setActiveProfile(firstProfile)
+                if let error = error {
+                    print("⚠️ Error loading owned profiles: \(error)")
+                    return
+                }
+
+                guard let documents = snapshot?.documents else { return }
+                self.ownedProfiles = documents.compactMap { try? $0.data(as: ChildProfile.self) }
+                self.mergeProfiles()
             }
 
-            // Validate active profile still exists
-            if let activeId = activeProfileId,
-               !profiles.contains(where: { $0.id == activeId }) {
-                // Active profile was deleted, switch to first available
-                activeProfileId = profiles.first?.id
+        // Listen for profiles shared with this user
+        sharedProfilesListener = db.collection("child_profiles")
+            .whereField("sharedWith", arrayContains: userId)
+            .addSnapshotListener { [weak self] snapshot, error in
+                guard let self = self else { return }
+
+                if let error = error {
+                    print("⚠️ Error loading shared profiles: \(error)")
+                    return
+                }
+
+                guard let documents = snapshot?.documents else { return }
+                self.sharedProfiles = documents.compactMap { try? $0.data(as: ChildProfile.self) }
+                self.mergeProfiles()
+            }
+    }
+
+    /// Merge owned and shared profiles into single array
+    private func mergeProfiles() {
+        var allProfiles = [ChildProfile]()
+
+        // Add owned profiles
+        allProfiles.append(contentsOf: ownedProfiles)
+
+        // Add shared profiles (deduplicate in case of any overlap)
+        for sharedProfile in sharedProfiles {
+            if !allProfiles.contains(where: { $0.id == sharedProfile.id }) {
+                allProfiles.append(sharedProfile)
+            }
+        }
+
+        // Sort by name
+        self.profiles = allProfiles.sorted { $0.name < $1.name }
+
+        // Validate active profile selection
+        validateActiveProfile()
+    }
+    
+    private func validateActiveProfile() {
+        // If no active profile is set, use the first one
+        if activeProfileId == nil, let firstProfile = profiles.first {
+            setActiveProfile(firstProfile)
+        }
+
+        // Validate active profile still exists
+        if let activeId = activeProfileId,
+           !profiles.contains(where: { $0.id == activeId }) {
+            // Active profile was deleted, switch to first available
+            if let first = profiles.first {
+                setActiveProfile(first)
+            } else {
+                activeProfileId = nil
                 saveActiveProfileId()
+                NotificationCenter.default.post(name: .activeProfileChanged, object: nil)
             }
-        } catch {
-            print("⚠️ Failed to load profiles: \(error)")
-            ErrorPresenter.shared.present(error)
         }
     }
 
@@ -74,136 +142,106 @@ class ProfileManager {
         birthDate: Date,
         gender: Gender,
         allergies: [String]? = nil,
-        context: ModelContext
+        ownerId: String
     ) {
-        let newProfile = UserProfile(
-            babyName: name,
+        var newProfile = ChildProfile(
+            ownerId: ownerId,
+            name: name,
             birthDate: birthDate,
-            gender: gender,
-            knownAllergies: allergies
+            gender: gender
         )
+        newProfile.knownAllergies = allergies
 
-        context.insert(newProfile)
-
-        do {
-            try context.save()
-            profiles.append(newProfile)
-
-            // If this is the first profile, make it active
-            if profiles.count == 1 {
-                setActiveProfile(newProfile)
+        Task {
+            do {
+                try await profileService.add(newProfile)
+                // Listener will update 'profiles'
+            } catch {
+                print("⚠️ Failed to save profile: \(error)")
+                // Error handling UI via AppState or binding?
             }
-        } catch {
-            print("⚠️ Failed to save profile: \(error)")
-            ErrorPresenter.shared.present(error)
         }
     }
 
     /// Update an existing profile
+    func updateProfile(_ profile: ChildProfile) {
+        Task {
+            do {
+                try await profileService.update(profile)
+            } catch {
+                print("⚠️ Failed to update profile: \(error)")
+            }
+        }
+    }
+    
+    /// Update profile with specific fields (convenience)
     func updateProfile(
-        _ profile: UserProfile,
+        _ profile: ChildProfile,
         name: String? = nil,
         birthDate: Date? = nil,
         gender: Gender? = nil,
         allergies: [String]? = nil,
-        preferredMode: AppMode? = nil,
-        context: ModelContext
+        preferredMode: AppMode? = nil
     ) {
-        if let name = name {
-            profile.babyName = name
-        }
-        if let birthDate = birthDate {
-            profile.birthDate = birthDate
-        }
-        if let gender = gender {
-            profile.gender = gender
-        }
-        if let allergies = allergies {
-            profile.knownAllergies = allergies
-        }
-        if let mode = preferredMode {
-            profile.preferredMode = mode
-        }
-
-        do {
-            try context.save()
-        } catch {
-            print("⚠️ Failed to update profile: \(error)")
-            ErrorPresenter.shared.present(error)
-        }
+        var updatedProfile = profile
+        
+        if let name = name { updatedProfile.name = name }
+        if let birthDate = birthDate { updatedProfile.birthDate = birthDate }
+        if let gender = gender { updatedProfile.gender = gender }
+        if let allergies = allergies { updatedProfile.knownAllergies = allergies }
+        if let mode = preferredMode { updatedProfile.preferredMode = mode }
+        
+        updateProfile(updatedProfile)
     }
 
     /// Delete a profile
-    func deleteProfile(_ profile: UserProfile, context: ModelContext) {
-        // Don't allow deleting the last profile
-        guard profiles.count > 1 else {
-            print("⚠️ Cannot delete the last profile")
-            return
-        }
+    func deleteProfile(_ profile: ChildProfile) {
+        guard let id = profile.id else { return }
+        
+        // Don't allow deleting the last profile logic is UI side, but good safety here too?
+        // Let's allow service to delete, validation in UI.
 
-        let wasActive = profile.id == activeProfileId
-
-        context.delete(profile)
-
-        do {
-            try context.save()
-            profiles.removeAll { $0.id == profile.id }
-
-            // If deleted profile was active, switch to first available
-            if wasActive, let firstProfile = profiles.first {
-                setActiveProfile(firstProfile)
+        Task {
+            do {
+                try await profileService.delete(id: id)
+            } catch {
+                print("⚠️ Failed to delete profile: \(error)")
             }
-        } catch {
-            print("⚠️ Failed to delete profile: \(error)")
-            ErrorPresenter.shared.present(error)
         }
+        
+        // Listener will handle list update and active profile validation
     }
 
     /// Switch to a different active profile
-    func setActiveProfile(_ profile: UserProfile) {
-        activeProfileId = profile.id
+    func setActiveProfile(_ profile: ChildProfile) {
+        guard let id = profile.id else { return }
+        
+        activeProfileId = id
         saveActiveProfileId()
 
         // Post notification for app-wide profile change
         NotificationCenter.default.post(name: .activeProfileChanged, object: profile)
     }
 
-    /// Switch to active profile by ID
-    func setActiveProfile(id: UUID) {
-        guard let profile = profiles.first(where: { $0.id == id }) else {
-            print("⚠️ Profile not found: \(id)")
-            return
-        }
-        setActiveProfile(profile)
-    }
-
-    // MARK: - Sibling Comparison
+    // MARK: - Sibling Comparison (In-Memory for now)
 
     /// Get growth data for all profiles for comparison
-    /// Note: Currently fetches ALL growth data since logs don't have profileId
-    /// In a multi-profile scenario, this would need profile-specific filtering
-    func getGrowthComparison(for metric: GrowthMetric, context: ModelContext) -> [ProfileGrowthData] {
-        // Fetch all growth measurements
-        let descriptor = FetchDescriptor<GrowthMeasurement>(
-            sortBy: [SortDescriptor(\.date)]
-        )
+    func getGrowthComparison(for metric: GrowthMetric, growthStore: [GrowthMeasurement]) -> [ProfileGrowthData] {
+        // ERROR: Growth logs are in NewbornManager. We need to pass them in or fetch them?
+        // Currently GrowthMeasurement has `babyId`. 
+        // We can filter the master list provided.
         
-        guard let measurements = try? context.fetch(descriptor) else {
-            return profiles.map { ProfileGrowthData(profile: $0, metric: metric, dataPoints: []) }
-        }
-        
-        // For single-profile apps, all data belongs to active profile
-        // For multi-profile, this would need profileId filtering
         return profiles.map { profile in
-            let dataPoints: [(date: Date, value: Double)] = measurements.compactMap { measurement in
+            guard let profileId = profile.id else { return ProfileGrowthData(profile: profile, metric: metric, dataPoints: []) }
+            
+            let profileMeasurements = growthStore.filter { $0.babyId == profileId }
+            
+            let dataPoints: [(date: Date, value: Double)] = profileMeasurements.compactMap { measurement in
                 let value: Double?
                 switch metric {
-                case .weight:
-                    value = measurement.weight
-                case .height:
-                    value = measurement.height
-                case .headCircumference:
-                    value = measurement.headCircumference
+                case .weight: value = measurement.weight
+                case .height: value = measurement.height
+                case .headCircumference: value = measurement.headCircumference
                 }
                 
                 guard let unwrappedValue = value else { return nil }
@@ -213,68 +251,57 @@ class ProfileManager {
             return ProfileGrowthData(
                 profile: profile,
                 metric: metric,
-                dataPoints: dataPoints
+                dataPoints: dataPoints.sorted(by: { $0.date < $1.date })
             )
         }
     }
-
-    /// Get nutrition summaries for all profiles
-    /// Note: Currently fetches ALL meal data since logs don't have profileId
-    /// In a multi-profile scenario, this would need profile-specific filtering
-    func getNutritionComparison(context: ModelContext, allKnownFoods: [FoodItem]) -> [ProfileNutritionData] {
-        // Fetch recent meal logs (last 7 days)
+    
+    /// Get nutrition summaries for all profiles (In-Memory)
+    func getNutritionComparison(measurements: [MealLog], allKnownFoods: [FoodItem]) -> [ProfileNutritionData] {
+        // Calculate rainbow progress and nutrient counts for all profiles
+        // Filter meals by last 7 days
         let last7Days = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
-        let mealDescriptor = FetchDescriptor<MealLog>(
-            predicate: #Predicate { $0.timestamp >= last7Days }
-        )
+        let recentMeals = measurements.filter { $0.timestamp >= last7Days }
         
-        guard let meals = try? context.fetch(mealDescriptor) else {
-            return profiles.map { ProfileNutritionData(profile: $0, rainbowProgress: [:], nutrientCounts: [:]) }
-        }
-        
-        // Calculate rainbow progress and nutrient counts
-        var rainbowProgress: [FoodColor: Int] = [:]
-        var nutrientCounts: [Nutrient: Int] = [:]
-        
-        let allFoodIds = meals.flatMap { $0.foods }
-        for foodId in allFoodIds {
-            if let food = allKnownFoods.first(where: { $0.id == foodId }) {
-                // Count colors
-                rainbowProgress[food.color, default: 0] += 1
-                
-                // Count nutrients
-                for nutrient in food.nutrients {
-                    nutrientCounts[nutrient, default: 0] += 1
+        return profiles.map { profile in
+            // Filter meals for this profile
+            let profileMeals = recentMeals.filter { $0.childId == profile.id } // logs must have babyId
+            
+            var rainbowProgress: [FoodColor: Int] = [:]
+            var nutrientCounts: [Nutrient: Int] = [:]
+            
+            let allFoodIds = profileMeals.flatMap { $0.foods }
+            for foodId in allFoodIds {
+                if let food = allKnownFoods.first(where: { $0.id == foodId }) {
+                    // Count colors
+                    rainbowProgress[food.color, default: 0] += 1
+                    
+                    // Count nutrients
+                    for nutrient in food.nutrients {
+                        nutrientCounts[nutrient, default: 0] += 1
+                    }
                 }
             }
-        }
-        
-        // For single-profile apps, all data belongs to active profile
-        // For multi-profile, this would need profileId filtering
-        return profiles.map { profile in
-            ProfileNutritionData(
+            
+            return ProfileNutritionData(
                 profile: profile,
                 rainbowProgress: rainbowProgress,
                 nutrientCounts: nutrientCounts
             )
         }
     }
-    
-    /// Get meal count for a specific profile
-    /// Note: Currently returns total count since logs don't have profileId
-    /// In a multi-profile scenario, this would filter by profileId
-    func getMealCount(for profileId: UUID, context: ModelContext) -> Int {
-        let descriptor = FetchDescriptor<MealLog>()
-        return (try? context.fetchCount(descriptor)) ?? 0
-    }
 
     // MARK: - Private Helpers
 
     private func saveActiveProfileId() {
         if let activeId = activeProfileId {
-            UserDefaults.standard.set(activeId.uuidString, forKey: activeProfileKey)
+            UserDefaults.standard.set(activeId, forKey: activeProfileKey)
+            // Also save to shared UserDefaults for widget access
+            WidgetDataManager.saveActiveProfileId(activeId)
         } else {
             UserDefaults.standard.removeObject(forKey: activeProfileKey)
+            // Remove from shared UserDefaults as well
+            WidgetDataManager.saveActiveProfileId(nil)
         }
     }
 }
@@ -287,17 +314,17 @@ enum GrowthMetric {
     case headCircumference
 }
 
-struct ProfileGrowthData {
-    let profile: UserProfile
-    let metric: GrowthMetric
-    let dataPoints: [(date: Date, value: Double)]
-}
-
 struct ProfileNutritionData: Identifiable {
-    var id: UUID { profile.id }
-    let profile: UserProfile
+    var id: String { profile.id ?? UUID().uuidString }
+    let profile: ChildProfile
     let rainbowProgress: [FoodColor: Int]
     let nutrientCounts: [Nutrient: Int]
+}
+
+struct ProfileGrowthData {
+    let profile: ChildProfile
+    let metric: GrowthMetric
+    let dataPoints: [(date: Date, value: Double)]
 }
 
 // MARK: - Notification Names

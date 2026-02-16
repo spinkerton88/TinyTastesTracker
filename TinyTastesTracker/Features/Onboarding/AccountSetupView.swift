@@ -2,125 +2,160 @@
 //  AccountSetupView.swift
 //  TinyTastesTracker
 //
-//  Created by Antigravity AI on 1/23/25.
 //
 
 import SwiftUI
-import SwiftData
-import CloudKit
+import FirebaseAuth
+import FirebaseFirestore
 
 struct AccountSetupView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
-    
-    @State private var cloudKitStatus: String = "Checking iCloud status..."
-    @State private var isChecking = true
-    @State private var accountName: String = ""
-    @State private var isCreatingAccount = false
+
+    @State private var isSigningIn = false
     @State private var errorMessage: String?
-    
-    // CloudKit container
-    private let container = CKContainer(identifier: "iCloud.tinytastestracker")
-    
+    @State private var authMode: AuthMode = .signIn
+    @State private var email = ""
+    @State private var password = ""
+    @State private var confirmPassword = ""
+
+    // Service for creating parent profile
+    private let profileService = FirestoreService<ParentProfile>(collectionName: "parent_profiles")
+
+    enum AuthMode {
+        case signIn
+        case createAccount
+    }
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 30) {
-                Spacer()
-                
-                // Header
-                VStack(spacing: 16) {
-                    Image(systemName: "icloud.circle.fill")
-                        .font(.system(size: 80))
-                        .foregroundStyle(Constants.explorerColor) // Teal color
-                        .symbolEffect(.bounce, value: isChecking)
-                    
-                    Text("Welcome Parents")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                    
-                    Text("Tiny Tastes Tracker syncs across your devices using iCloud. Let's get you set up.")
-                        .font(.body)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal)
-                }
-                
-                // Status Card
-                VStack(spacing: 16) {
-                    if isChecking {
-                        ProgressView()
-                            .scaleEffect(1.2)
-                            .tint(Constants.explorerColor)
-                    } else {
-                        HStack {
-                            Image(systemName: cloudKitStatus == "Available" ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                                .foregroundStyle(cloudKitStatus == "Available" ? .green : .orange)
-                            
-                            Text(cloudKitStatus == "Available" ? "iCloud Active" : "iCloud Issue Detected")
-                                .font(.headline)
-                        }
-                        
-                        if !accountName.isEmpty {
-                            Text("Signed in as \(accountName)")
+            ScrollView {
+                VStack(spacing: 30) {
+                    Spacer(minLength: 40)
+
+                    // Header
+                    VStack(spacing: 20) {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 80))
+                            .foregroundStyle(Constants.explorerColor)
+                            .symbolEffect(.bounce, value: isSigningIn)
+
+                        Text("Welcome to Tiny Tastes")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.center)
+
+                        Text("Your intelligent companion for tracking your baby's nutrition, growth, and development.")
+                            .font(.body)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal)
+                    }
+
+                    // Auth Mode Picker
+                    Picker("Auth Mode", selection: $authMode) {
+                        Text("Sign In").tag(AuthMode.signIn)
+                        Text("Create Account").tag(AuthMode.createAccount)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
+
+                    // Auth Form
+                    VStack(spacing: 16) {
+                        // Email Field
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Email")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
-                        } else if cloudKitStatus == "Available" {
-                            Text("Signed in (Name Hidden)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        } else {
-                            Text(cloudKitStatus)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .multilineTextAlignment(.center)
+                            TextField("email@example.com", text: $email)
+                                .textContentType(.emailAddress)
+                                .keyboardType(.emailAddress)
+                                .autocapitalization(.none)
+                                .padding()
+                                .background(Color(UIColor.secondarySystemBackground))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
-                    }
-                }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color(UIColor.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .padding(.horizontal)
-                
-                Spacer()
-                
-                // Actions
-                VStack(spacing: 16) {
-                    Button(action: createAccount) {
-                        HStack {
-                            if isCreatingAccount {
-                                ProgressView()
-                                    .tint(.white)
-                            } else {
-                                Text("Continue")
-                                    .fontWeight(.bold)
+
+                        // Password Field
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Password")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            SecureField("Password", text: $password)
+                                .textContentType(authMode == .createAccount ? .newPassword : .password)
+                                .padding()
+                                .background(Color(UIColor.secondarySystemBackground))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+
+                        // Confirm Password (only for create account)
+                        if authMode == .createAccount {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Confirm Password")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                SecureField("Confirm Password", text: $confirmPassword)
+                                    .textContentType(.newPassword)
+                                    .padding()
+                                    .background(Color(UIColor.secondarySystemBackground))
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
                             }
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(cloudKitStatus == "Available" ? Constants.explorerColor : Color.gray)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                    .disabled(isChecking || isCreatingAccount)
-                    
-                    if cloudKitStatus != "Available" && !isChecking {
-                        Button("Open iCloud Settings") {
-                            if let url = URL(string: UIApplication.openSettingsURLString) {
-                                UIApplication.shared.open(url)
+
+                        // Email/Password Button
+                        Button(action: handleEmailAuth) {
+                            HStack {
+                                if isSigningIn {
+                                    ProgressView()
+                                        .tint(.white)
+                                } else {
+                                    Text(authMode == .signIn ? "Sign In" : "Create Account")
+                                        .fontWeight(.bold)
+                                }
                             }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Constants.explorerColor)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
-                        .font(.subheadline)
-                        .foregroundStyle(.blue)
+                        .disabled(isSigningIn || !isFormValid)
+                        .opacity(isFormValid ? 1.0 : 0.6)
                     }
+                    .padding(.horizontal)
+
+                    // Divider
+                    HStack {
+                        Rectangle()
+                            .fill(Color.secondary.opacity(0.3))
+                            .frame(height: 1)
+                        Text("OR")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 8)
+                        Rectangle()
+                            .fill(Color.secondary.opacity(0.3))
+                            .frame(height: 1)
+                    }
+                    .padding(.horizontal)
+
+                    // Continue as Guest
+                    Button(action: handleAnonymousSignIn) {
+                        Text("Continue as Guest")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .disabled(isSigningIn)
+
+                    Text("By continuing, you verify that you are a parent or guardian.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+
+                    Spacer(minLength: 40)
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 30)
             }
             .navigationBarHidden(true)
-            .onAppear {
-                checkCloudKitStatus()
-            }
             .alert("Error", isPresented: .constant(errorMessage != nil)) {
                 Button("OK") { errorMessage = nil }
             } message: {
@@ -128,82 +163,70 @@ struct AccountSetupView: View {
             }
         }
     }
-    
-    private func checkCloudKitStatus() {
-        isChecking = true
-        
-        Task {
-            do {
-                let status = try await container.accountStatus()
-                
-                switch status {
-                case .available:
-                    cloudKitStatus = "Available"
-                    // Try to fetch user name
-                    do {
-                        let status = try await container.requestApplicationPermission(.userDiscoverability)
-                        if status == .granted {
-                            if let userID = try? await container.userRecordID() {
-                                // discoverUserIdentity might not have async overload in this context or SDK
-                                // using completion handler with continuation
-                                let identity: CKUserIdentity? = try await withCheckedThrowingContinuation { continuation in
-                                    container.discoverUserIdentity(withUserRecordID: userID) { identity, error in
-                                        if let error = error {
-                                            continuation.resume(throwing: error)
-                                        } else {
-                                            continuation.resume(returning: identity)
-                                        }
-                                    }
-                                }
-                                
-                                if let components = identity?.nameComponents {
-                                    accountName = PersonNameComponentsFormatter().string(from: components)
-                                }
-                            }
-                        }
-                    } catch {
-                        print("Permission error: \(error)")
-                    }
-                case .noAccount:
-                    cloudKitStatus = "No iCloud account found"
-                case .restricted:
-                    cloudKitStatus = "iCloud access restricted"
-                case .couldNotDetermine:
-                    cloudKitStatus = "Could not verify iCloud status"
-                case .temporarilyUnavailable:
-                    cloudKitStatus = "iCloud temporarily unavailable"
-                @unknown default:
-                    cloudKitStatus = "Unknown status"
-                }
-            } catch {
-                cloudKitStatus = "Error checking status"
-                print("CloudKit error: \(error)")
-            }
-            
-            isChecking = false
+
+    private var isFormValid: Bool {
+        if authMode == .signIn {
+            return !email.isEmpty && !password.isEmpty
+        } else {
+            return !email.isEmpty && !password.isEmpty && password == confirmPassword && password.count >= 6
         }
     }
-    
-    private func createAccount() {
-        isCreatingAccount = true
-        
-        // Create ParentProfile
-        let newAccount = ParentProfile(
-            parentName: accountName.isEmpty ? nil : accountName,
-            icloudStatus: cloudKitStatus
-        )
-        
-        modelContext.insert(newAccount)
-        
-        do {
-            try modelContext.save()
-            // Update AppState
-            withAnimation {
-                appState.userAccount = newAccount
+
+    private func handleEmailAuth() {
+        isSigningIn = true
+        errorMessage = nil
+
+        Task {
+            do {
+                if authMode == .signIn {
+                    try await appState.authenticationManager.signInWithEmail(email: email, password: password)
+                } else {
+                    try await appState.authenticationManager.createAccount(email: email, password: password)
+                }
+
+                // Create Parent Profile if needed
+                if let uid = appState.authenticationManager.userSession?.uid {
+                    await createParentProfileIfNeeded(uid: uid)
+                }
+                isSigningIn = false
+            } catch {
+                errorMessage = error.localizedDescription
+                isSigningIn = false
             }
+        }
+    }
+
+    private func handleAnonymousSignIn() {
+        isSigningIn = true
+        errorMessage = nil
+
+        Task {
+            do {
+                try await appState.authenticationManager.signInAnonymously()
+
+                // Create Parent Profile if needed
+                if let uid = appState.authenticationManager.userSession?.uid {
+                    await createParentProfileIfNeeded(uid: uid)
+                }
+                isSigningIn = false
+            } catch {
+                errorMessage = error.localizedDescription
+                isSigningIn = false
+            }
+        }
+    }
+
+    private func createParentProfileIfNeeded(uid: String) async {
+        let newProfile = ParentProfile(
+            ownerId: uid,
+            name: "Parent", // Default name
+            icloudStatus: "Firebase"
+        )
+
+        do {
+            try await profileService.add(newProfile)
         } catch {
-            errorMessage = "Failed to create account: \(error.localizedDescription)"
-            isCreatingAccount = false
+            print("Error creating parent profile: \(error)")
         }
     }
 }

@@ -131,3 +131,26 @@ docs/_build/
 *.tmp
 *.temp
 .scratch/
+
+# Node.js & NPM (for Firestore rules testing)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.npm
+.yarn-integrity
+
+# Firebase
+.firebase/
+*-debug.log
+.runtimeconfig.json
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+emulator-data/
+firebase-export-*/
+
+# Test Results
+test-results/
+*.log

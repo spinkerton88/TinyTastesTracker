@@ -6,13 +6,10 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct GrowthTrackerView: View {
     let mode: AppMode
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
-    
     @State private var showingGrowthSheet = false
     
     var lastMeasurement: GrowthMeasurement? {

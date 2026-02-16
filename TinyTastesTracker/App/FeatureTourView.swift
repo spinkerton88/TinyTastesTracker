@@ -17,8 +17,8 @@ struct FeatureTourView: View {
         FeaturePage(
             icon: "sage.leaf.sprig",
             iconColor: .purple,
-            title: "Meet Sage AI",
-            description: "Your personal feeding assistant powered by AI. Get instant answers to feeding questions, analyze food photos, and receive personalized recommendations.",
+            title: "Meet Sage",
+            description: "Your personal feeding assistant. Get instant answers to feeding questions, analyze food photos, and receive personalized recommendations.",
             gradient: [.purple, .pink],
             isSystemImage: false
         ),
@@ -40,7 +40,7 @@ struct FeatureTourView: View {
             icon: "book.fill",
             iconColor: .blue,
             title: "Discover Recipes",
-            description: "Scan recipes with your camera or create your own. Get AI-powered meal suggestions. Build a personalized recipe collection.",
+            description: "Scan recipes with your camera or create your own. Get personalized meal suggestions. Build a curated recipe collection.",
             gradient: [.blue, .cyan]
         ),
         FeaturePage(

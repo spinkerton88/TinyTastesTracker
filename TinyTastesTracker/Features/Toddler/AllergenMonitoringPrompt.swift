@@ -10,14 +10,36 @@ import SwiftUI
 struct AllergenMonitoringPrompt: View {
     let foodName: String
     let allergenName: String
+    let allergyRisk: AllergyRisk
     let childName: String
-    
+    let forceTimer: Bool
+    let notificationManager: NotificationManager
+
     @Environment(\.dismiss) private var dismiss
-    @State private var notificationManager = NotificationManager.shared
     @AppStorage("allergen_checkin_duration") private var checkInDuration: Int = 2
-    
+
     @State private var isSchedulingNotification = false
     @State private var showingSuccess = false
+    @State private var enableTimer: Bool
+
+    init(
+        foodName: String,
+        allergenName: String,
+        allergyRisk: AllergyRisk,
+        childName: String,
+        forceTimer: Bool = false,
+        notificationManager: NotificationManager
+    ) {
+        self.foodName = foodName
+        self.allergenName = allergenName
+        self.allergyRisk = allergyRisk
+        self.childName = childName
+        self.forceTimer = forceTimer
+        self.notificationManager = notificationManager
+
+        // Default timer to ON for high/medium risk OR if forced, OFF for low risk
+        _enableTimer = State(initialValue: forceTimer || allergyRisk != .low)
+    }
     
     var body: some View {
         NavigationStack {
@@ -25,13 +47,19 @@ struct AllergenMonitoringPrompt: View {
                 VStack(spacing: 24) {
                     // Header
                     headerSection
-                    
+
+                    // Risk level indicator
+                    riskLevelBadge
+
                     // Allergen info
                     allergenInfoCard
-                    
+
+                    // Timer settings
+                    timerSettingsCard
+
                     // Symptoms to watch
                     symptomsCard
-                    
+
                     // Actions
                     actionButtons
                 }
@@ -63,17 +91,35 @@ struct AllergenMonitoringPrompt: View {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 50))
                 .foregroundStyle(.orange)
-            
-            Text("High-Risk Allergen Logged")
+
+            Text("Allergen Logged")
                 .font(.title2)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
-            
+
             Text("You just logged **\(foodName)** which contains **\(allergenName)**")
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         }
+    }
+
+    // MARK: - Risk Level Badge
+
+    private var riskLevelBadge: some View {
+        HStack(spacing: 8) {
+            Circle()
+                .fill(allergyRisk.color)
+                .frame(width: 10, height: 10)
+
+            Text(allergyRisk.rawValue)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(allergyRisk.color.opacity(0.15))
+        .clipShape(Capsule())
     }
     
     // MARK: - Allergen Info Card
@@ -91,6 +137,65 @@ struct AllergenMonitoringPrompt: View {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.blue.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    // MARK: - Timer Settings Card
+
+    private var timerSettingsCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Label("Check-In Reminder", systemImage: "bell.fill")
+                .font(.headline)
+                .foregroundStyle(.orange)
+
+            if forceTimer {
+                HStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.shield.fill")
+                        .foregroundStyle(.orange)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Timer Required")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                        Text("This food contains a known allergy. A check-in reminder is required for safety.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 8)
+            } else {
+                Toggle(isOn: $enableTimer) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Set check-in timer")
+                            .font(.subheadline)
+                        Text("Get notified to check on your child after exposure")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .tint(.orange)
+            }
+
+            if enableTimer {
+                Divider()
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Reminder in:")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    Picker("Duration", selection: $checkInDuration) {
+                        Text("1 hour").tag(1)
+                        Text("2 hours").tag(2)
+                        Text("3 hours").tag(3)
+                        Text("4 hours").tag(4)
+                    }
+                    .pickerStyle(.segmented)
+                }
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.orange.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     
@@ -133,41 +238,46 @@ struct AllergenMonitoringPrompt: View {
     }
     
     // MARK: - Action Buttons
-    
+
     private var actionButtons: some View {
         VStack(spacing: 12) {
-            Button {
-                Task {
-                    await scheduleCheckInReminder()
-                }
-            } label: {
-                HStack {
-                    if isSchedulingNotification {
-                        ProgressView()
-                            .tint(.white)
-                    } else {
-                        Image(systemName: "bell.badge.fill")
-                        Text("Set \(checkInDuration)-Hour Check-In Reminder")
+            if enableTimer {
+                Button {
+                    Task {
+                        await scheduleCheckInReminder()
                     }
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.orange)
-                .foregroundStyle(.white)
-                .fontWeight(.semibold)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-            .disabled(isSchedulingNotification)
-            
-            Button {
-                dismiss()
-            } label: {
-                Text("No Thanks, I'll Monitor Manually")
+                } label: {
+                    HStack {
+                        if isSchedulingNotification {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Image(systemName: "bell.badge.fill")
+                            Text("Set \(checkInDuration)-Hour Check-In Reminder")
+                        }
+                    }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .foregroundStyle(.primary)
+                    .background(Color.orange)
+                    .foregroundStyle(.white)
+                    .fontWeight(.semibold)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .disabled(isSchedulingNotification)
+            }
+
+            // Only show cancel/done button if timer is not forced
+            if !forceTimer {
+                Button {
+                    dismiss()
+                } label: {
+                    Text(enableTimer ? "Cancel" : "Done")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.gray.opacity(0.2))
+                        .foregroundStyle(.primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
             }
         }
     }
@@ -273,7 +383,9 @@ struct SymptomRow: View {
     AllergenMonitoringPrompt(
         foodName: "Peanut Butter",
         allergenName: "Peanuts",
-        childName: "Emma"
+        allergyRisk: .high,
+        childName: "Emma",
+        notificationManager: NotificationManager()
     )
 }
 
@@ -281,7 +393,9 @@ struct SymptomRow: View {
     AllergenMonitoringPrompt(
         foodName: "Shrimp",
         allergenName: "Shellfish",
-        childName: "Oliver"
+        allergyRisk: .high,
+        childName: "Oliver",
+        notificationManager: NotificationManager()
     )
 }
 
@@ -289,6 +403,8 @@ struct SymptomRow: View {
     AllergenMonitoringPrompt(
         foodName: "Scrambled Eggs",
         allergenName: "Eggs",
-        childName: "Sophia"
+        allergyRisk: .medium,
+        childName: "Sophia",
+        notificationManager: NotificationManager()
     )
 }

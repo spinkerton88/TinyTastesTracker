@@ -14,7 +14,6 @@ struct PhotoViewerSheet: View {
     let allLogs: [TriedFoodLog]
     
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
     
     @State private var showDeleteConfirmation = false
     @State private var showFoodDetail = false
@@ -131,7 +130,7 @@ struct PhotoViewerSheet: View {
                 Text("This will permanently remove the photo from this food log.")
             }
             .sheet(isPresented: $showFoodDetail) {
-                if let food = appState.allKnownFoods.first(where: { $0.id == log.id }) {
+                if let food = appState.allKnownFoods.first(where: { $0.id == log.foodId }) {
                     FoodDetailModal(food: food, appState: appState)
                 }
             }
@@ -150,7 +149,7 @@ struct PhotoViewerSheet: View {
             Spacer()
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(log.id)
+                Text(log.foodName)
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
@@ -206,7 +205,7 @@ struct PhotoViewerSheet: View {
     private func createPhotoCaption() -> String {
         let dateStr = log.date.formatted(date: .abbreviated, time: .omitted)
         let reaction = reactionText(log.reaction)
-        return "\(log.id) - \(dateStr) - \(reaction)"
+        return "\(log.foodName) - \(dateStr) - \(reaction)"
     }
     
     private func sharePhoto() {
@@ -232,12 +231,15 @@ struct PhotoViewerSheet: View {
     }
     
     private func deletePhoto() {
-        // Remove photo from log
-        log.messyFaceImage = nil
-        
-        // Save context
-        try? modelContext.save()
-        
+        // Create a copy of the log with the photo removed
+        var updatedLog = log
+        updatedLog.messyFaceImage = nil
+
+        // Save via AppState
+        Task {
+            try? await appState.saveFoodLog(updatedLog)
+        }
+
         // Dismiss viewer
         dismiss()
     }

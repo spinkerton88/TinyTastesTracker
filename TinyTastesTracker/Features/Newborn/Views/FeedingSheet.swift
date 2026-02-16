@@ -1,9 +1,14 @@
+//
+//  FeedingSheet.swift
+//  TinyTastesTracker
+//
+//
+
 import SwiftUI
-import SwiftData
 
 struct FeedingSheet: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
     @Bindable var appState: AppState
     
     @State private var selectedMode: Int = 0 // 0 = Nursing, 1 = Bottle, 2 = Pumping
@@ -32,6 +37,9 @@ struct FeedingSheet: View {
     @State private var leftBreastOz: Double = 0.0
     @State private var rightBreastOz: Double = 0.0
     @State private var pumpingNotes: String = ""
+    
+    // Loading state
+    @State private var isSaving = false
     
     var body: some View {
         NavigationStack {
@@ -76,10 +84,16 @@ struct FeedingSheet: View {
                                             },
                                             onStop: {
                                                 if let start = leftTimerStart {
-                                                    let duration = Date().timeIntervalSince(start)
-                                                    appState.saveNursingLog(startTime: start, duration: duration, side: .left, context: modelContext)
-                                                    leftTimerStart = nil
-                                                    HapticManager.success()
+                                                    Task {
+                                                        let duration = Date().timeIntervalSince(start)
+                                                        do {
+                                                            try await appState.saveNursingLog(startTime: start, duration: duration, side: .left)
+                                                            leftTimerStart = nil
+                                                            errorPresenter.showSuccess("Nursing logged")
+                                                        } catch {
+                                                            errorPresenter.present(error)
+                                                        }
+                                                    }
                                                 }
                                             }
                                         )
@@ -95,10 +109,16 @@ struct FeedingSheet: View {
                                             },
                                             onStop: {
                                                 if let start = rightTimerStart {
-                                                    let duration = Date().timeIntervalSince(start)
-                                                    appState.saveNursingLog(startTime: start, duration: duration, side: .right, context: modelContext)
-                                                    rightTimerStart = nil
-                                                    HapticManager.success()
+                                                    Task {
+                                                        let duration = Date().timeIntervalSince(start)
+                                                        do {
+                                                            try await appState.saveNursingLog(startTime: start, duration: duration, side: .right)
+                                                            rightTimerStart = nil
+                                                            errorPresenter.showSuccess("Nursing logged")
+                                                        } catch {
+                                                            errorPresenter.present(error)
+                                                        }
+                                                    }
                                                 }
                                             }
                                         )
@@ -150,7 +170,7 @@ struct FeedingSheet: View {
                                     .frame(maxWidth: .infinity)
                                     .foregroundStyle(.white)
                                     .listRowBackground(appState.themeColor)
-                                    .disabled(leftDurationMinutes == 0 && rightDurationMinutes == 0)
+                                    .disabled(leftDurationMinutes == 0 && rightDurationMinutes == 0 || isSaving)
                                 }
                             }
                         }
@@ -198,7 +218,7 @@ struct FeedingSheet: View {
                             .frame(maxWidth: .infinity)
                             .foregroundStyle(.white)
                             .listRowBackground(appState.themeColor)
-                            .disabled(leftBreastOz == 0 && rightBreastOz == 0)
+                            .disabled(leftBreastOz == 0 && rightBreastOz == 0 || isSaving)
                         }
                     }
                     
@@ -259,6 +279,7 @@ struct FeedingSheet: View {
                             .frame(maxWidth: .infinity)
                             .foregroundStyle(.white)
                             .listRowBackground(appState.themeColor)
+                            .disabled(isSaving)
                         }
                     }
                 }
@@ -277,48 +298,73 @@ struct FeedingSheet: View {
     }
     
     private func saveBottleFeed() {
-        let finalAmount = useCustomAmount ? (Double(customAmount) ?? amount) : amount
-        appState.saveBottleFeedLog(
-            amount: finalAmount,
-            feedType: feedType,
-            notes: notes.isEmpty ? nil : notes,
-            context: modelContext
-        )
-        HapticManager.success()
-        dismiss()
+        Task {
+            isSaving = true
+            defer { isSaving = false }
+            
+            do {
+                let finalAmount = useCustomAmount ? (Double(customAmount) ?? amount) : amount
+                try await appState.saveBottleFeedLog(
+                    amount: finalAmount,
+                    feedType: feedType,
+                    notes: notes.isEmpty ? nil : notes
+                )
+                errorPresenter.showSuccess("Bottle feed logged")
+                dismiss()
+            } catch {
+                errorPresenter.present(error)
+            }
+        }
     }
     
     private func saveManualNursing() {
-        // Save left side if duration > 0
-        if leftDurationMinutes > 0 {
-            let duration = TimeInterval(leftDurationMinutes * 60)
-            appState.saveNursingLog(startTime: manualDate, duration: duration, side: .left, context: modelContext)
+        Task {
+            isSaving = true
+            defer { isSaving = false }
+            
+            do {
+                // Save left side if duration > 0
+                if leftDurationMinutes > 0 {
+                    let duration = TimeInterval(leftDurationMinutes * 60)
+                    try await appState.saveNursingLog(startTime: manualDate, duration: duration, side: .left)
+                }
+                
+                // Save right side if duration > 0
+                if rightDurationMinutes > 0 {
+                    let duration = TimeInterval(rightDurationMinutes * 60)
+                    try await appState.saveNursingLog(startTime: manualDate, duration: duration, side: .right)
+                }
+                
+                errorPresenter.showSuccess("Nursing logged")
+                
+                // Reset manual entry fields
+                leftDurationMinutes = 0
+                rightDurationMinutes = 0
+                manualDate = Date()
+                
+                dismiss()
+            } catch {
+                errorPresenter.present(error)
+            }
         }
-        
-        // Save right side if duration > 0
-        if rightDurationMinutes > 0 {
-            let duration = TimeInterval(rightDurationMinutes * 60)
-            appState.saveNursingLog(startTime: manualDate, duration: duration, side: .right, context: modelContext)
-        }
-        
-        HapticManager.success()
-        
-        // Reset manual entry fields
-        leftDurationMinutes = 0
-        rightDurationMinutes = 0
-        manualDate = Date()
-        
-        dismiss()
     }
     
     private func savePumping() {
-        appState.savePumpingLog(
-            leftBreastOz: leftBreastOz,
-            rightBreastOz: rightBreastOz,
-            notes: pumpingNotes.isEmpty ? nil : pumpingNotes,
-            context: modelContext
-        )
-        HapticManager.success()
-        dismiss()
+        Task {
+            isSaving = true
+            defer { isSaving = false }
+            
+            do {
+                try await appState.savePumpingLog(
+                    leftBreastOz: leftBreastOz,
+                    rightBreastOz: rightBreastOz,
+                    notes: pumpingNotes.isEmpty ? nil : pumpingNotes
+                )
+                errorPresenter.showSuccess("Pumping session logged")
+                dismiss()
+            } catch {
+                errorPresenter.present(error)
+            }
+        }
     }
 }

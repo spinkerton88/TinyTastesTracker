@@ -146,7 +146,7 @@ struct PrivacySettingsView: View {
             if isExporting {
                 ZStack {
                     Color.black.opacity(0.3)
-                        .ignoresSafeArea()
+                    .ignoresSafeArea()
                     
                     VStack(spacing: 16) {
                         ProgressView()
@@ -185,7 +185,9 @@ struct PrivacySettingsView: View {
                 sleepLogs: appState.sleepLogs,
                 diaperLogs: appState.diaperLogs,
                 bottleLogs: appState.bottleLogs,
-                growthMeasurements: appState.growthMeasurements
+                growthMeasurements: appState.growthMeasurements,
+                pumpingLogs: appState.pumpingLogs,
+                medicationLogs: appState.medicationLogs
             )
             exportedFileURL = url
         } catch {

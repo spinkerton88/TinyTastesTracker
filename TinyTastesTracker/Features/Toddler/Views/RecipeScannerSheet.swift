@@ -6,11 +6,10 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct RecipeScannerSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.errorPresenter) private var errorPresenter
     @Bindable var appState: AppState
 
     @State private var scanningState: ScanningState = .camera
@@ -60,11 +59,13 @@ struct RecipeScannerSheet: View {
     // MARK: - Camera View
 
     private var cameraView: some View {
-        VStack {
-            CameraView { image in
-                capturedImage = image
-                processImage(image)
-            }
+        CameraView(
+            title: "Scan Recipe",
+            subtitle: "Ensure title and ingredients are visible",
+            iconName: "doc.text.viewfinder"
+        ) { image in
+            capturedImage = image
+            processImage(image)
         }
     }
 
@@ -202,30 +203,38 @@ struct RecipeScannerSheet: View {
     private func saveRecipe() {
         guard !editedTitle.isEmpty else { return }
         
-        // Process image with compression service
-        var imageData: Data?
-        var thumbnailData: Data?
-        
-        if let image = capturedImage {
-            let processed = ImageCompressionService.processRecipeImage(image)
-            imageData = processed.full
-            thumbnailData = processed.thumbnail
+        Task {
+            do {
+                // Process image with compression service
+                var imageData: Data?
+                var thumbnailData: Data?
+                
+                if let image = capturedImage {
+                    let processed = ImageCompressionService.processRecipeImage(image)
+                    imageData = processed.full
+                    thumbnailData = processed.thumbnail
+                }
+
+                let recipe = Recipe(
+                    ownerId: appState.currentOwnerId ?? "",
+                    title: editedTitle,
+                    ingredients: editedIngredients,
+                    instructions: editedInstructions,
+                    imageData: imageData,
+                    thumbnailData: thumbnailData
+                )
+
+                try await appState.saveRecipe(recipe)
+
+                // Create custom food from recipe
+                _ = appState.createCustomFoodFromRecipe(recipe)
+
+                errorPresenter.showSuccess("Recipe saved")
+                dismiss()
+            } catch {
+                errorPresenter.present(error)
+            }
         }
-
-        let recipe = Recipe(
-            title: editedTitle,
-            ingredients: editedIngredients,
-            instructions: editedInstructions,
-            imageData: imageData,
-            thumbnailData: thumbnailData
-        )
-
-        appState.saveRecipe(recipe, context: modelContext)
-
-        // Create custom food from recipe
-        _ = appState.createCustomFoodFromRecipe(recipe, context: modelContext)
-
-        dismiss()
     }
 
     private func resetToCamera() {

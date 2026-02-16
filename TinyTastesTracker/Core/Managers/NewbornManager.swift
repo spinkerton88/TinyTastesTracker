@@ -2,15 +2,18 @@
 //  NewbornManager.swift
 //  TinyTastesTracker
 //
+//
 
 import Foundation
 import SwiftUI
-import SwiftData
+import FirebaseFirestore
+import FirebaseAnalytics
 import ActivityKit
 import WidgetKit
 
 @Observable
 class NewbornManager {
+    // Data Arrays (Updated via Firestore Listeners)
     var nursingLogs: [NursingLog] = []
     var sleepLogs: [SleepLog] = []
     var diaperLogs: [DiaperLog] = []
@@ -18,130 +21,427 @@ class NewbornManager {
     var pumpingLogs: [PumpingLog] = []
     var medicationLogs: [MedicationLog] = []
     var growthMeasurements: [GrowthMeasurement] = []
+    var savedMedications: [SavedMedication] = []
+
+    // Dependencies
+    private let notificationManager: NotificationManager
+    private let errorPresenter: ErrorPresenter
+
+    // Firestore Services
+    private let nursingService = FirestoreService<NursingLog>(collectionName: "nursing_logs")
+    private let sleepService = FirestoreService<SleepLog>(collectionName: "sleep_logs")
+    private let diaperService = FirestoreService<DiaperLog>(collectionName: "diaper_logs")
+    private let bottleService = FirestoreService<BottleFeedLog>(collectionName: "bottle_feed_logs")
+    private let pumpingService = FirestoreService<PumpingLog>(collectionName: "pumping_logs")
+    private let medsService = FirestoreService<MedicationLog>(collectionName: "medication_logs")
+    private let growthService = FirestoreService<GrowthMeasurement>(collectionName: "growth_measurements")
+    private let savedMedsService = FirestoreService<SavedMedication>(collectionName: "saved_medications")
+
+    // Listener Registrations
+    private var listeners: [ListenerRegistration] = []
+
+    // MARK: - Initialization
+
+    init(notificationManager: NotificationManager, errorPresenter: ErrorPresenter) {
+        self.notificationManager = notificationManager
+        self.errorPresenter = errorPresenter
+    }
+
+    deinit {
+        listeners.forEach { $0.remove() }
+    }
 
     // MARK: - Save Methods
 
-    func saveNursingLog(startTime: Date, duration: TimeInterval, side: NursingSide, context: ModelContext, userProfile: UserProfile? = nil) {
-        let log = NursingLog(timestamp: startTime, duration: duration, side: side)
-        nursingLogs.append(log)
-        context.insert(log)
-        try? context.save()
+    func saveNursingLog(startTime: Date, duration: TimeInterval, side: NursingSide, ownerId: String, babyId: String) async throws {
+        // Generate ID locally
+        let newId = UUID().uuidString
+        let log = NursingLog(id: newId, ownerId: ownerId, babyId: babyId, timestamp: startTime, duration: duration, side: side)
+        
+        // Optimistic Update
+        self.nursingLogs.append(log)
+        self.nursingLogs.sort { $0.timestamp > $1.timestamp }
+        
+        // Check network connectivity
+        guard NetworkMonitor.shared.isConnected else {
+            // Queue for later sync
+            if let encoded = try? JSONEncoder().encode(log) {
+                let operation = QueuedOperation(
+                    type: .nursingLog,
+                    payload: encoded,
+                    priority: .high
+                )
+                OfflineQueue.shared.enqueue(operation)
+            }
+            // Return success for optimistic UI
+            return
+        }
+        
+        // Attempt save with retry logic
+        do {
+            try await withRetry(maxAttempts: 3) {
+                try await withTimeout(seconds: 10) {
+                    try await self.nursingService.add(log, withId: newId)
+                }
+            }
 
+            // Track analytics event
+            Analytics.logEvent("nursing_log_created", parameters: [
+                "duration_minutes": Int(duration / 60),
+                "side": side.rawValue
+            ])
+        } catch {
+            // Rollback on failure
+            if let index = self.nursingLogs.firstIndex(where: { $0.id == newId }) {
+                self.nursingLogs.remove(at: index)
+            }
+            throw error
+        }
+        
         // Update Widget
         WidgetDataManager.saveLastLogTime(type: .nursing, time: startTime)
         
-        // Schedule feed reminder notification
-        if let profile = userProfile {
-            Task {
-                await scheduleFeedReminderIfEnabled(childName: profile.babyName)
-            }
+        // Schedule feed reminder (fire and forget)
+        Task {
+            await scheduleFeedReminderIfEnabled(childName: "Baby")
         }
     }
 
-    func saveSleepLog(start: Date, end: Date, quality: SleepQuality, context: ModelContext) {
-        let log = SleepLog(startTime: start, endTime: end, quality: quality)
-        sleepLogs.append(log)
-        context.insert(log)
-        try? context.save()
+    func saveSleepLog(start: Date, end: Date, quality: SleepQuality, ownerId: String, babyId: String) async throws {
+        let newId = UUID().uuidString
+        let log = SleepLog(id: newId, ownerId: ownerId, babyId: babyId, startTime: start, endTime: end, quality: quality)
+        
+        // Optimistic Update
+        self.sleepLogs.append(log)
+        self.sleepLogs.sort { $0.startTime > $1.startTime }
+        
+        guard NetworkMonitor.shared.isConnected else {
+            if let encoded = try? JSONEncoder().encode(log) {
+                let operation = QueuedOperation(
+                    type: .sleepLog,
+                    payload: encoded,
+                    priority: .high
+                )
+                OfflineQueue.shared.enqueue(operation)
+            }
+            return
+        }
+        
+        do {
+            try await withRetry(maxAttempts: 3) {
+                try await withTimeout(seconds: 10) {
+                    try await self.sleepService.add(log, withId: newId)
+                }
+            }
 
+            // Track analytics event
+            let durationHours = (end.timeIntervalSince(start)) / 3600
+            Analytics.logEvent("sleep_log_created", parameters: [
+                "duration_hours": Int(durationHours),
+                "quality": quality.rawValue
+            ])
+        } catch {
+            if let index = self.sleepLogs.firstIndex(where: { $0.id == newId }) {
+                self.sleepLogs.remove(at: index)
+            }
+            throw error
+        }
+        
         // Update Widget
         WidgetDataManager.saveLastLogTime(type: .sleep, time: end)
     }
 
-    func saveDiaperLog(type: DiaperType, context: ModelContext) {
-        let log = DiaperLog(timestamp: Date(), type: type)
-        diaperLogs.append(log)
-        context.insert(log)
-        try? context.save()
-
+    func saveDiaperLog(type: DiaperType, ownerId: String, babyId: String) async throws {
+        let newId = UUID().uuidString
+        let log = DiaperLog(id: newId, ownerId: ownerId, babyId: babyId, timestamp: Date(), type: type)
+        
+        // Optimistic Update
+        self.diaperLogs.append(log)
+        self.diaperLogs.sort { $0.timestamp > $1.timestamp }
+        
+        guard NetworkMonitor.shared.isConnected else {
+            if let encoded = try? JSONEncoder().encode(log) {
+                let operation = QueuedOperation(
+                    type: .diaperLog,
+                    payload: encoded,
+                    priority: .normal
+                )
+                OfflineQueue.shared.enqueue(operation)
+            }
+            return
+        }
+        
+        do {
+            try await withRetry(maxAttempts: 3) {
+                try await withTimeout(seconds: 10) {
+                    try await self.diaperService.add(log, withId: newId)
+                }
+            }
+        } catch {
+            if let index = self.diaperLogs.firstIndex(where: { $0.id == newId }) {
+                self.diaperLogs.remove(at: index)
+            }
+            throw error
+        }
+        
         // Update Widget
         WidgetDataManager.saveLastLogTime(type: .diaper, time: log.timestamp)
     }
 
-    func saveBottleFeedLog(amount: Double, feedType: FeedingType, notes: String? = nil, context: ModelContext, userProfile: UserProfile? = nil) {
-        let log = BottleFeedLog(timestamp: Date(), amount: amount, feedType: feedType, notes: notes)
-        bottleFeedLogs.append(log)
-        context.insert(log)
-        try? context.save()
-
-        // Update Widgets
-        updateWidgetData(lastFeed: log.timestamp, type: feedType.rawValue) // For existing LastFeedWidget
-        WidgetDataManager.saveLastLogTime(type: .bottle, time: log.timestamp) // For new QuickLogWidget
+    func saveBottleFeedLog(amount: Double, feedType: FeedingType, notes: String? = nil, ownerId: String, babyId: String) async throws {
+        let newId = UUID().uuidString
+        let log = BottleFeedLog(id: newId, ownerId: ownerId, babyId: babyId, timestamp: Date(), amount: amount, feedType: feedType, notes: notes)
         
-        // Schedule feed reminder notification
-        if let profile = userProfile {
-            Task {
-                await scheduleFeedReminderIfEnabled(childName: profile.babyName)
+        // Optimistic Update
+        self.bottleFeedLogs.append(log)
+        self.bottleFeedLogs.sort { $0.timestamp > $1.timestamp }
+        
+        guard NetworkMonitor.shared.isConnected else {
+            if let encoded = try? JSONEncoder().encode(log) {
+                let operation = QueuedOperation(
+                    type: .bottleFeedLog,
+                    payload: encoded,
+                    priority: .high
+                )
+                OfflineQueue.shared.enqueue(operation)
+            }
+            return
+        }
+        
+        do {
+            try await withRetry(maxAttempts: 3) {
+                try await withTimeout(seconds: 10) {
+                    try await self.bottleService.add(log, withId: newId)
+                }
+            }
+        } catch {
+            if let index = self.bottleFeedLogs.firstIndex(where: { $0.id == newId }) {
+                self.bottleFeedLogs.remove(at: index)
+            }
+            throw error
+        }
+        
+        // Update Widgets
+        updateWidgetData(lastFeed: log.timestamp, type: feedType.rawValue)
+        WidgetDataManager.saveLastLogTime(type: .bottle, time: log.timestamp)
+        
+        Task {
+            await scheduleFeedReminderIfEnabled(childName: "Baby")
+        }
+    }
+    
+    func savePumpingLog(leftBreastOz: Double, rightBreastOz: Double, notes: String? = nil, ownerId: String, babyId: String) async throws {
+        let newId = UUID().uuidString
+        let log = PumpingLog(id: newId, ownerId: ownerId, babyId: babyId, timestamp: Date(), leftBreastOz: leftBreastOz, rightBreastOz: rightBreastOz, notes: notes)
+        
+        // Optimistic Update
+        self.pumpingLogs.append(log)
+        self.pumpingLogs.sort { $0.timestamp > $1.timestamp }
+        
+        guard NetworkMonitor.shared.isConnected else {
+            if let encoded = try? JSONEncoder().encode(log) {
+                let operation = QueuedOperation(
+                    type: .pumpingLog,
+                    payload: encoded,
+                    priority: .normal
+                )
+                OfflineQueue.shared.enqueue(operation)
+            }
+            return
+        }
+        
+        do {
+            try await withRetry(maxAttempts: 3) {
+                try await withTimeout(seconds: 10) {
+                    try await self.pumpingService.add(log, withId: newId)
+                }
+            }
+        } catch {
+            if let index = self.pumpingLogs.firstIndex(where: { $0.id == newId }) {
+                self.pumpingLogs.remove(at: index)
+            }
+            throw error
+        }
+        
+        // Update Widget
+        WidgetDataManager.saveLastLogTime(type: .bottle, time: log.timestamp)
+    }
+    
+    func saveMedicationLog(medicineName: String, babyWeight: Double, dosage: String, safetyInfo: String? = nil, notes: String? = nil, ownerId: String, babyId: String) async throws {
+        let newId = UUID().uuidString
+        let log = MedicationLog(id: newId, ownerId: ownerId, babyId: babyId, timestamp: Date(), medicineName: medicineName, babyWeight: babyWeight, dosage: dosage, safetyInfo: safetyInfo, notes: notes)
+        
+        // Optimistic Update
+        self.medicationLogs.append(log)
+        self.medicationLogs.sort { $0.timestamp > $1.timestamp }
+        
+        guard NetworkMonitor.shared.isConnected else {
+            if let encoded = try? JSONEncoder().encode(log) {
+                let operation = QueuedOperation(
+                    type: .medicationLog,
+                    payload: encoded,
+                    priority: .critical
+                )
+                OfflineQueue.shared.enqueue(operation)
+            }
+            return
+        }
+        
+        do {
+            try await withRetry(maxAttempts: 3) {
+                try await withTimeout(seconds: 10) {
+                    try await self.medsService.add(log, withId: newId)
+                }
+            }
+        } catch {
+            if let index = self.medicationLogs.firstIndex(where: { $0.id == newId }) {
+                self.medicationLogs.remove(at: index)
+            }
+            throw error
+        }
+    }
+
+    func saveGrowthMeasurement(weight: Double?, height: Double?, headCircumference: Double?, notes: String? = nil, ownerId: String, babyId: String) async throws {
+        let newId = UUID().uuidString
+        let measurement = GrowthMeasurement(id: newId, ownerId: ownerId, babyId: babyId, date: Date(), weight: weight, height: height, headCircumference: headCircumference, notes: notes)
+        
+        // Optimistic Update
+        self.growthMeasurements.append(measurement)
+        self.growthMeasurements.sort { $0.date > $1.date }
+        
+        guard NetworkMonitor.shared.isConnected else {
+            if let encoded = try? JSONEncoder().encode(measurement) {
+                let operation = QueuedOperation(
+                    type: .growthMeasurement,
+                    payload: encoded,
+                    priority: .high
+                )
+                OfflineQueue.shared.enqueue(operation)
+            }
+            return
+        }
+        
+        do {
+            try await withRetry(maxAttempts: 3) {
+                try await withTimeout(seconds: 10) {
+                    try await self.growthService.add(measurement, withId: newId)
+                }
+            }
+        } catch {
+            if let index = self.growthMeasurements.firstIndex(where: { $0.id == newId }) {
+                self.growthMeasurements.remove(at: index)
+            }
+            throw error
+        }
+    }
+
+    // MARK: - Update Methods
+    
+    func updateNursingLog(_ log: NursingLog) {
+        Task {
+            do {
+                try await nursingService.update(log)
+            } catch {
+                print("Error updating nursing log: \(error)")
             }
         }
     }
     
-    func savePumpingLog(leftBreastOz: Double, rightBreastOz: Double, notes: String? = nil, context: ModelContext) {
-        let log = PumpingLog(timestamp: Date(), leftBreastOz: leftBreastOz, rightBreastOz: rightBreastOz, notes: notes)
-        pumpingLogs.append(log)
-        context.insert(log)
-        try? context.save()
-        
-        // Update Widget
-        WidgetDataManager.saveLastLogTime(type: .bottle, time: log.timestamp) // Treat as bottle for widget purposes
+    func updateSleepLog(_ log: SleepLog) {
+        Task {
+            do {
+                try await sleepService.update(log)
+            } catch {
+                print("Error updating sleep log: \(error)")
+            }
+        }
     }
     
-    func saveMedicationLog(medicineName: String, babyWeight: Double, dosage: String, safetyInfo: String? = nil, notes: String? = nil, context: ModelContext) {
-        let log = MedicationLog(timestamp: Date(), medicineName: medicineName, babyWeight: babyWeight, dosage: dosage, safetyInfo: safetyInfo, notes: notes)
-        medicationLogs.append(log)
-        context.insert(log)
-        try? context.save()
+    func updateDiaperLog(_ log: DiaperLog) {
+        Task {
+            do {
+                try await diaperService.update(log)
+            } catch {
+                print("Error updating diaper log: \(error)")
+            }
+        }
     }
-
-    func saveGrowthMeasurement(weight: Double?, height: Double?, headCircumference: Double?, notes: String? = nil, context: ModelContext) {
-        let measurement = GrowthMeasurement(date: Date(), weight: weight, height: height, headCircumference: headCircumference, notes: notes)
-        growthMeasurements.append(measurement)
-        context.insert(measurement)
-        try? context.save()
+    
+    func updateBottleFeedLog(_ log: BottleFeedLog) {
+        Task {
+            do {
+                try await bottleService.update(log)
+            } catch {
+                print("Error updating bottle log: \(error)")
+            }
+        }
+    }
+    
+    func updatePumpingLog(_ log: PumpingLog) {
+        Task {
+            do {
+                try await pumpingService.update(log)
+            } catch {
+                print("Error updating pumping log: \(error)")
+            }
+        }
+    }
+    
+    func updateMedicationLog(_ log: MedicationLog) {
+        Task {
+            do {
+                try await medsService.update(log)
+            } catch {
+                print("Error updating medication log: \(error)")
+            }
+        }
+    }
+    
+    func updateGrowthMeasurement(_ measurement: GrowthMeasurement) {
+        Task {
+            do {
+                try await growthService.update(measurement)
+            } catch {
+                print("Error updating growth measurement: \(error)")
+            }
+        }
     }
 
     // MARK: - Delete Methods
     
-    func deleteNursingLog(_ log: NursingLog, context: ModelContext) {
-        context.delete(log)
-        nursingLogs.removeAll { $0.id == log.id }
-        try? context.save()
+    func deleteNursingLog(_ log: NursingLog) {
+        guard let id = log.id else { return }
+        Task { try? await nursingService.delete(id: id) }
     }
     
-    func deleteSleepLog(_ log: SleepLog, context: ModelContext) {
-        context.delete(log)
-        sleepLogs.removeAll { $0.id == log.id }
-        try? context.save()
+    func deleteSleepLog(_ log: SleepLog) {
+        guard let id = log.id else { return }
+        Task { try? await sleepService.delete(id: id) }
     }
     
-    func deleteDiaperLog(_ log: DiaperLog, context: ModelContext) {
-        context.delete(log)
-        diaperLogs.removeAll { $0.id == log.id }
-        try? context.save()
+    func deleteDiaperLog(_ log: DiaperLog) {
+        guard let id = log.id else { return }
+        Task { try? await diaperService.delete(id: id) }
     }
     
-    func deleteBottleFeedLog(_ log: BottleFeedLog, context: ModelContext) {
-        context.delete(log)
-        bottleFeedLogs.removeAll { $0.id == log.id }
-        try? context.save()
+    func deleteBottleFeedLog(_ log: BottleFeedLog) {
+        guard let id = log.id else { return }
+        Task { try? await bottleService.delete(id: id) }
     }
     
-    func deletePumpingLog(_ log: PumpingLog, context: ModelContext) {
-        context.delete(log)
-        pumpingLogs.removeAll { $0.id == log.id }
-        try? context.save()
+    func deletePumpingLog(_ log: PumpingLog) {
+        guard let id = log.id else { return }
+        Task { try? await pumpingService.delete(id: id) }
     }
     
-    func deleteMedicationLog(_ log: MedicationLog, context: ModelContext) {
-        context.delete(log)
-        medicationLogs.removeAll { $0.id == log.id }
-        try? context.save()
+    func deleteMedicationLog(_ log: MedicationLog) {
+        guard let id = log.id else { return }
+        Task { try? await medsService.delete(id: id) }
     }
     
-    func deleteGrowthMeasurement(_ measurement: GrowthMeasurement, context: ModelContext) {
-        context.delete(measurement)
-        growthMeasurements.removeAll { $0.id == measurement.id }
-        try? context.save()
+    func deleteGrowthMeasurement(_ measurement: GrowthMeasurement) {
+        guard let id = measurement.id else { return }
+        Task { try? await growthService.delete(id: id) }
     }
 
     // MARK: - Statistics
@@ -159,6 +459,28 @@ class NewbornManager {
         let totalSleepHours = recentSleepLogs.reduce(0.0) { $0 + $1.duration / 3600.0 }
 
         return (feedingCount, diaperCount, totalSleepHours)
+    }
+    
+    var todayStats: (wetDiapers: Int, dirtyDiapers: Int, feedingCount: Int, sleepHours: Double) {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        
+        let wet = diaperLogs.filter {
+            calendar.isDate($0.timestamp, inSameDayAs: today) && ($0.type == .wet || $0.type == .both)
+        }.count
+        
+        let dirty = diaperLogs.filter {
+            calendar.isDate($0.timestamp, inSameDayAs: today) && ($0.type == .dirty || $0.type == .both)
+        }.count
+        
+        let nursing = nursingLogs.filter { calendar.isDate($0.timestamp, inSameDayAs: today) }.count
+        let bottle = bottleFeedLogs.filter { calendar.isDate($0.timestamp, inSameDayAs: today) }.count
+        let feedingCount = nursing + bottle
+        
+        let todaySleep = sleepLogs.filter { calendar.isDate($0.startTime, inSameDayAs: today) }
+        let sleepHours = todaySleep.reduce(0.0) { $0 + $1.duration } / 3600.0
+        
+        return (wet, dirty, feedingCount, sleepHours)
     }
 
     // MARK: - Chart Data
@@ -308,7 +630,7 @@ class NewbornManager {
             print("Started Sleep Activity")
         } catch {
             print("Error launching activity: \(error.localizedDescription)")
-            ErrorPresenter.shared.present(error)
+            errorPresenter.present(error)
         }
     }
 
@@ -349,37 +671,29 @@ class NewbornManager {
         // 1. Check for manual user preference override
         let manualInterval = UserDefaults.standard.double(forKey: "feed_interval_hours")
         if manualInterval > 0 {
-            // Default logic if no feed exists yet: start from now? Or just return distantPast?
-            // If distantPast, we can't schedule.
-            // If we have a last feed, add interval.
             if lastFeedTime > .distantPast {
                 return lastFeedTime.addingTimeInterval(manualInterval * 3600)
             } else {
-                // If no feeds, maybe assume "now" is the baseline?
-                // Or better, just don't schedule if we don't know when the last feed was.
                 return Date().addingTimeInterval(manualInterval * 3600)
             }
         }
         
         // 2. Fallback to historical average logic
-        
-        // Combine and sort all feeds
         let allFeeds = (recentNursing.map { $0.timestamp } + recentBottle.map { $0.timestamp })
             .sorted()
         
-        // Calculate average interval between feeds
         var intervals: [TimeInterval] = []
-        for i in 1..<allFeeds.count {
-            let interval = allFeeds[i].timeIntervalSince(allFeeds[i-1])
-            intervals.append(interval)
+        if allFeeds.count > 1 {
+            for i in 1..<allFeeds.count {
+                let interval = allFeeds[i].timeIntervalSince(allFeeds[i-1])
+                intervals.append(interval)
+            }
         }
         
-        // Use average interval, or default to 3 hours if no pattern
         let averageInterval: TimeInterval
         if !intervals.isEmpty {
             averageInterval = intervals.reduce(0, +) / Double(intervals.count)
         } else {
-            // Default to 3 hours for newborns
             averageInterval = 3 * 3600
         }
         
@@ -392,28 +706,14 @@ class NewbornManager {
     
     /// Schedule a feed reminder notification if enabled
     func scheduleFeedReminderIfEnabled(childName: String) async {
-        // Calculate next feed time
         let nextFeedTime = calculateNextFeedTime()
-        
-        // Get lead time from settings
         let leadTime = UserDefaults.standard.integer(forKey: "feed_notification_lead_time")
-        let leadTimeMinutes = leadTime > 0 ? leadTime : 30 // Default to 30 minutes
-        
-        // Schedule the notification on main actor
+        let leadTimeMinutes = leadTime > 0 ? leadTime : 30
+
         await MainActor.run {
-            let notificationManager = NotificationManager.shared
-            
-            // Check if feed notifications are enabled
-            guard notificationManager.feedNotificationsEnabled else {
-                return
-            }
-            
-            // Check if permissions are granted
-            guard notificationManager.permissionStatus == .authorized else {
-                return
-            }
-            
-            // Schedule the notification
+            guard notificationManager.feedNotificationsEnabled else { return }
+            guard notificationManager.permissionStatus == .authorized else { return }
+
             Task {
                 do {
                     try await notificationManager.scheduleFeedReminder(
@@ -430,106 +730,115 @@ class NewbornManager {
     
     // MARK: - Data Loading
 
-    func loadData(context: ModelContext) {
+    func loadData(ownerId: String) {
+        listeners.forEach { $0.remove() }
+        listeners.removeAll()
+
+        listeners.append(nursingService.addListener(forUserId: ownerId) { [weak self] logs in
+            self?.nursingLogs = logs.sorted { $0.timestamp > $1.timestamp }
+        })
+
+        listeners.append(sleepService.addListener(forUserId: ownerId) { [weak self] logs in
+            self?.sleepLogs = logs.sorted { $0.startTime > $1.startTime }
+        })
+
+        listeners.append(diaperService.addListener(forUserId: ownerId) { [weak self] logs in
+            self?.diaperLogs = logs.sorted { $0.timestamp > $1.timestamp }
+        })
+
+        listeners.append(bottleService.addListener(forUserId: ownerId) { [weak self] logs in
+            self?.bottleFeedLogs = logs.sorted { $0.timestamp > $1.timestamp }
+        })
+
+        listeners.append(pumpingService.addListener(forUserId: ownerId) { [weak self] logs in
+            self?.pumpingLogs = logs.sorted { $0.timestamp > $1.timestamp }
+        })
+
+        listeners.append(medsService.addListener(forUserId: ownerId) { [weak self] logs in
+            self?.medicationLogs = logs.sorted { $0.timestamp > $1.timestamp }
+        })
+
+        listeners.append(growthService.addListener(forUserId: ownerId) { [weak self] logs in
+            self?.growthMeasurements = logs.sorted { $0.date > $1.date }
+        })
+
+        listeners.append(savedMedsService.addListener(forUserId: ownerId) { [weak self] meds in
+            self?.savedMedications = meds.sorted { $0.lastUsed > $1.lastUsed }
+        })
+    }
+
+    // MARK: - Saved Medications
+
+    func saveSavedMedication(medicineName: String, defaultDosage: String, notes: String? = nil, ownerId: String) async throws {
+        let newId = UUID().uuidString
+        let medication = SavedMedication(
+            id: newId,
+            ownerId: ownerId,
+            medicineName: medicineName,
+            defaultDosage: defaultDosage,
+            notes: notes
+        )
+
+        // Optimistic Update
+        self.savedMedications.append(medication)
+        self.savedMedications.sort { $0.lastUsed > $1.lastUsed }
+
+        guard NetworkMonitor.shared.isConnected else {
+            if let encoded = try? JSONEncoder().encode(medication) {
+                let operation = QueuedOperation(
+                    type: .savedMedication,
+                    payload: encoded,
+                    priority: .normal
+                )
+                OfflineQueue.shared.enqueue(operation)
+            }
+            return
+        }
+
         do {
-            // Performance optimization: Load only last 30 days of data initially
-            let cutoffDate = Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date()
-            
-            let nursingDescriptor = FetchDescriptor<NursingLog>(
-                predicate: #Predicate { $0.timestamp >= cutoffDate },
-                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-            )
-            nursingLogs = try context.fetch(nursingDescriptor)
-
-            let sleepDescriptor = FetchDescriptor<SleepLog>(
-                predicate: #Predicate { $0.startTime >= cutoffDate },
-                sortBy: [SortDescriptor(\.startTime, order: .reverse)]
-            )
-            sleepLogs = try context.fetch(sleepDescriptor)
-
-            let diaperDescriptor = FetchDescriptor<DiaperLog>(
-                predicate: #Predicate { $0.timestamp >= cutoffDate },
-                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-            )
-            diaperLogs = try context.fetch(diaperDescriptor)
-
-            let bottleDescriptor = FetchDescriptor<BottleFeedLog>(
-                predicate: #Predicate { $0.timestamp >= cutoffDate },
-                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-            )
-            bottleFeedLogs = try context.fetch(bottleDescriptor)
-            
-            let pumpingDescriptor = FetchDescriptor<PumpingLog>(
-                predicate: #Predicate { $0.timestamp >= cutoffDate },
-                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-            )
-            pumpingLogs = try context.fetch(pumpingDescriptor)
-            
-            let medicationDescriptor = FetchDescriptor<MedicationLog>(
-                predicate: #Predicate { $0.timestamp >= cutoffDate },
-                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-            )
-            medicationLogs = try context.fetch(medicationDescriptor)
-
-            let growthDescriptor = FetchDescriptor<GrowthMeasurement>(
-                predicate: #Predicate { $0.date >= cutoffDate },
-                sortBy: [SortDescriptor(\.date, order: .reverse)]
-            )
-            growthMeasurements = try context.fetch(growthDescriptor)
+            try await withRetry(maxAttempts: 3) {
+                try await withTimeout(seconds: 10) {
+                    try await self.savedMedsService.add(medication, withId: newId)
+                }
+            }
         } catch {
-            print("Error loading newborn data: \(error)")
-            ErrorPresenter.shared.present(error)
+            if let index = self.savedMedications.firstIndex(where: { $0.id == newId }) {
+                self.savedMedications.remove(at: index)
+            }
+            throw error
         }
     }
-    
-    /// Load historical data beyond the initial 30-day window
-    /// - Parameters:
-    ///   - context: SwiftData ModelContext
-    ///   - beforeDate: Load data before this date
-    func loadHistoricalData(context: ModelContext, beforeDate: Date) {
-        do {
-            // Load older nursing logs
-            let nursingDescriptor = FetchDescriptor<NursingLog>(
-                predicate: #Predicate { $0.timestamp < beforeDate },
-                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-            )
-            let olderNursing = try context.fetch(nursingDescriptor)
-            nursingLogs.append(contentsOf: olderNursing)
-            
-            // Load older sleep logs
-            let sleepDescriptor = FetchDescriptor<SleepLog>(
-                predicate: #Predicate { $0.startTime < beforeDate },
-                sortBy: [SortDescriptor(\.startTime, order: .reverse)]
-            )
-            let olderSleep = try context.fetch(sleepDescriptor)
-            sleepLogs.append(contentsOf: olderSleep)
-            
-            // Load older diaper logs
-            let diaperDescriptor = FetchDescriptor<DiaperLog>(
-                predicate: #Predicate { $0.timestamp < beforeDate },
-                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-            )
-            let olderDiaper = try context.fetch(diaperDescriptor)
-            diaperLogs.append(contentsOf: olderDiaper)
-            
-            // Load older bottle logs
-            let bottleDescriptor = FetchDescriptor<BottleFeedLog>(
-                predicate: #Predicate { $0.timestamp < beforeDate },
-                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-            )
-            let olderBottle = try context.fetch(bottleDescriptor)
-            bottleFeedLogs.append(contentsOf: olderBottle)
-            
-            // Load older growth measurements
-            let growthDescriptor = FetchDescriptor<GrowthMeasurement>(
-                predicate: #Predicate { $0.date < beforeDate },
-                sortBy: [SortDescriptor(\.date, order: .reverse)]
-            )
-            let olderGrowth = try context.fetch(growthDescriptor)
-            growthMeasurements.append(contentsOf: olderGrowth)
-        } catch {
-            print("Error loading historical newborn data: \(error)")
-            ErrorPresenter.shared.present(error)
+
+    func updateSavedMedicationUsage(_ medication: SavedMedication) {
+        guard let id = medication.id else { return }
+
+        var updated = medication
+        updated.lastUsed = Date()
+        updated.usageCount += 1
+
+        // Optimistic update
+        if let index = savedMedications.firstIndex(where: { $0.id == id }) {
+            savedMedications[index] = updated
+            savedMedications.sort { $0.lastUsed > $1.lastUsed }
+        }
+
+        // Save to Firestore (fire and forget)
+        Task {
+            guard NetworkMonitor.shared.isConnected else { return }
+            try? await savedMedsService.update(updated)
+        }
+    }
+
+    func deleteSavedMedication(_ medication: SavedMedication) {
+        guard let id = medication.id else { return }
+
+        // Optimistic update
+        savedMedications.removeAll { $0.id == id }
+
+        // Delete from Firestore (fire and forget)
+        Task {
+            guard NetworkMonitor.shared.isConnected else { return }
+            try? await savedMedsService.delete(id: id)
         }
     }
 }

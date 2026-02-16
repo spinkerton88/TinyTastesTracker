@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct BottleFeedSheet: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
     @Bindable var appState: AppState
     
     @State private var amount: Double = 4.0
@@ -17,6 +17,7 @@ struct BottleFeedSheet: View {
     @State private var notes: String = ""
     @State private var customAmount: String = ""
     @State private var useCustomAmount = false
+    @State private var isSaving = false
     
     let presetAmounts: [Double] = [2, 3, 4, 5, 6, 7, 8]
     
@@ -84,26 +85,47 @@ struct BottleFeedSheet: View {
                         HapticManager.selection()
                         dismiss()
                     }
+                    .disabled(isSaving)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         saveBottleFeed()
                     }
                     .fontWeight(.semibold)
+                    .disabled(isSaving)
+                }
+            }
+            .overlay {
+                if isSaving {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black.opacity(0.2))
                 }
             }
         }
     }
     
     private func saveBottleFeed() {
-        let finalAmount = useCustomAmount ? (Double(customAmount) ?? amount) : amount
-        appState.saveBottleFeedLog(
-            amount: finalAmount,
-            feedType: feedType,
-            notes: notes.isEmpty ? nil : notes,
-            context: modelContext
-        )
-        HapticManager.success()
-        dismiss()
+        Task {
+            isSaving = true
+            defer { isSaving = false }
+            
+            do {
+                let finalAmount = useCustomAmount ? (Double(customAmount) ?? amount) : amount
+                try await appState.saveBottleFeedLog(
+                    amount: finalAmount,
+                    feedType: feedType,
+                    notes: notes.isEmpty ? nil : notes
+                )
+                
+                // Success feedback
+                errorPresenter.showSuccess("Bottle feed logged")
+                dismiss()
+            } catch {
+                // Error automatically presented via ErrorPresenter
+                errorPresenter.present(error)
+            }
+        }
     }
 }

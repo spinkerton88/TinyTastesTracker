@@ -18,7 +18,10 @@ struct BalancePage: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
+            ZStack {
+                GradientBackground(color: appState.themeColor)
+                
+                ScrollView {
                 VStack(spacing: 24) {
                     // weekly meal count chart
                     weeklyPlateSection
@@ -31,21 +34,12 @@ struct BalancePage: View {
                 }
                 .padding()
             }
-            .background(Color(.systemGroupedBackground))
+            }
+            // .background(Color(.systemGroupedBackground)) // Removed in favor of gradient
             .navigationTitle("Nutrition Balance")
             .withSage(context: "User is viewing Nutrition Balance. Weekly goals and rainbow progress.", appState: appState)
         }
-        .sheet(item: $selectedNutrientForAi) { nutrient in
-            NutrientSuggestionsSheet(
-                appState: appState,
-                originalNutrient: nutrient, // Pass the original bound value if needed, or just use the item
-                nutrient: nutrient,
-                suggestions: aiSuggestions,
-                isLoading: isLoadingSuggestions,
-                onClose: { selectedNutrientForAi = nil }
-            )
-            .presentationDetents([.medium, .large])
-        }
+
         .onChange(of: selectedNutrientForAi) { oldValue, newValue in
             if let nutrient = newValue {
                 fetchSuggestions(for: nutrient)
@@ -137,42 +131,33 @@ struct BalancePage: View {
                 .fontWeight(.bold)
             
             LazyVStack(spacing: 12) {
-                NutrientProgressBar(
-                    nutrient: .iron,
-                    count: appState.weeklyNutritionSummary[.iron] ?? 0,
-                    target: 5,
-                    onAskSage: { selectedNutrientForAi = .iron }
-                )
-                
-                NutrientProgressBar(
-                    nutrient: .calcium,
-                    count: appState.weeklyNutritionSummary[.calcium] ?? 0,
-                    target: 7,
-                    onAskSage: { selectedNutrientForAi = .calcium }
-                )
-                
-                NutrientProgressBar(
-                    nutrient: .vitaminC,
-                    count: appState.weeklyNutritionSummary[.vitaminC] ?? 0,
-                    target: 7,
-                    onAskSage: { selectedNutrientForAi = .vitaminC }
-                )
-                
-                NutrientProgressBar(
-                    nutrient: .omega3,
-                    count: appState.weeklyNutritionSummary[.omega3] ?? 0,
-                    target: 3,
-                    onAskSage: { selectedNutrientForAi = .omega3 }
-                )
-                
-                NutrientProgressBar(
-                    nutrient: .protein,
-                    count: appState.weeklyNutritionSummary[.protein] ?? 0,
-                    target: 14,
-                    onAskSage: { selectedNutrientForAi = .protein }
-                )
+                nutrientBar(.iron, target: 5)
+                nutrientBar(.calcium, target: 7)
+                nutrientBar(.vitaminC, target: 7)
+                nutrientBar(.omega3, target: 3)
+                nutrientBar(.protein, target: 14)
             }
         }
+    }
+    
+    private func nutrientBar(_ nutrient: Nutrient, target: Int) -> some View {
+        NutrientProgressBar(
+            nutrient: nutrient,
+            count: appState.weeklyNutritionSummary[nutrient] ?? 0,
+            target: target,
+            isExpanded: selectedNutrientForAi == nutrient,
+            isLoading: isLoadingSuggestions && selectedNutrientForAi == nutrient,
+            suggestions: selectedNutrientForAi == nutrient ? aiSuggestions : [],
+            onToggleExpand: {
+                withAnimation {
+                    if selectedNutrientForAi == nutrient {
+                        selectedNutrientForAi = nil
+                    } else {
+                        selectedNutrientForAi = nutrient
+                    }
+                }
+            }
+        )
     }
     
     // MARK: - Helpers
@@ -226,71 +211,4 @@ struct BalancePage: View {
     }
 }
 
-// MARK: - Suggestions Sheet extension for Identifiable
 
-extension Nutrient: Identifiable {
-    public var id: String { self.rawValue }
-}
-
-struct NutrientSuggestionsSheet: View {
-    @Bindable var appState: AppState
-    let originalNutrient: Nutrient?
-    let nutrient: Nutrient
-    let suggestions: [NutrientFoodSuggestion]
-    let isLoading: Bool
-    let onClose: () -> Void
-    
-    var body: some View {
-        NavigationStack {
-            Group {
-                if isLoading {
-                    ProgressView("Asking Sage...")
-                } else if suggestions.isEmpty {
-                    ContentUnavailableView {
-                        Label {
-                            Text("No Suggestions")
-                        } icon: {
-                            Image("sage.leaf.sprig")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 60, height: 60)
-                        }
-                    } description: {
-                        Text("Sage couldn't find any specific suggestions right now.")
-                    }
-                } else {
-                    List(suggestions, id: \.foodName) { item in
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text(item.foodEmoji ?? "🍽️")
-                                    .font(.title2)
-                                Text(item.foodName)
-                                    .font(.headline)
-                            }
-                            
-                            Text(item.reasoning)
-                                .font(.subheadline)
-                                .foregroundStyle(nutrient.color)
-                            
-                            Text("💡 " + item.servingTip)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .padding(8)
-                                .background(Color(.secondarySystemBackground))
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                        }
-                        .padding(.vertical, 4)
-                    }
-                }
-            }
-            .navigationTitle("\(nutrient.rawValue) Ideas")
-            .withSage(context: "Sage suggested foods rich in \(nutrient.rawValue).", appState: appState)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", action: onClose)
-                }
-            }
-        }
-    }
-}

@@ -27,23 +27,20 @@ class ImageGenerationService {
     /// 2. `imagen-4.0-fast-generate-001` (Fast - Backup)
     /// 3. Placeholder (Final Fallback)
     func generateFoodImage(for foodName: String) async throws -> UIImage {
-        // Obfuscated Key Retrieval
-        guard let apiKey = SecureAPIKeyManager.shared.getAPIKey() else {
-            print("❌ No API Key found.")
-            return createStyledPlaceholder(for: foodName)
-        }
+        // Construct Proxy prediction endpoint
+        // The worker will handle the key insertion
+        let backendURLStr = SecureAPIKeyManager.shared.getBackendURL()
         
         // 1. Try Standard Model
         do {
-            return try await generateViaGoogle(model: "imagen-4.0-generate-001", foodName: foodName, apiKey: apiKey)
+            return try await generateViaProxy(model: "imagen-4.0-generate-001", foodName: foodName, baseURL: backendURLStr)
         } catch {
             print("⚠️ Standard model failed: \(error). Retrying with Fast model...")
         }
         
         // 2. Try Fast Model (Backup)
         do {
-            // Use a slightly simplified prompt for the 'fast' model to avoid hallucinations
-            return try await generateViaGoogle(model: "imagen-4.0-fast-generate-001", foodName: foodName, apiKey: apiKey, simplified: true)
+            return try await generateViaProxy(model: "imagen-4.0-fast-generate-001", foodName: foodName, baseURL: backendURLStr, simplified: true)
         } catch {
             print("❌ Fast model also failed: \(error). Returning placeholder.")
         }
@@ -52,20 +49,19 @@ class ImageGenerationService {
         return createStyledPlaceholder(for: foodName)
     }
     
-    private func generateViaGoogle(model: String, foodName: String, apiKey: String, simplified: Bool = false) async throws -> UIImage {
-        let endpoint = "https://generativelanguage.googleapis.com/v1beta/models/\(model):predict?key=\(apiKey)"
+    private func generateViaProxy(model: String, foodName: String, baseURL: String, simplified: Bool = false) async throws -> UIImage {
+        // Construct the standard path the worker expects for predict
+        let endpoint = baseURL + "/v1beta/models/\(model):predict"
         
         guard let url = URL(string: endpoint) else {
             throw ImageGenerationError.invalidURL
         }
         
-        // Dynamic Prompting
+        // Dynamic Prompting (keep existing logic)
         let prompt: String
         if simplified {
-            // Simplified prompt for Fast model / Backup
             prompt = "Object photo of fresh \(foodName), isolated on a solid middle gray background, sharp focus, natural lighting"
         } else {
-            // High-quality prompt for Standard model
             prompt = """
             Professional gourmet studio photography of a whole raw \(foodName), isolated on a solid middle gray background, \
             cinematic lighting, rim light to separate from background, \
@@ -108,7 +104,7 @@ class ImageGenerationService {
             throw ImageGenerationError.decodingError
         }
         
-        print("✅ Generated image for '\(foodName)' using \(model)")
+        print("✅ Generated image for '\(foodName)' using \(model) via Proxy")
         return image
     }
 

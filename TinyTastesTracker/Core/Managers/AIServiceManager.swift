@@ -5,6 +5,7 @@
 
 import Foundation
 import SwiftUI
+import FirebaseAnalytics
 
 @Observable
 class AIServiceManager {
@@ -80,6 +81,12 @@ class AIServiceManager {
             context += recentNames.joined(separator: ", ") // Just a simple list for context
         }
 
+        // Track analytics event
+        Analytics.logEvent("sage_question_asked", parameters: [
+            "baby_age_months": ageInMonths,
+            "has_problem_foods": !problematicLogs.isEmpty
+        ])
+
         return try await geminiService.askSageAssistant(question: question, context: context)
     }
 
@@ -139,8 +146,9 @@ class AIServiceManager {
 
     func generateFlavorPairings(
         triedFoods: [TriedFoodLog],
-        childName: String
+        childName: String,
+        ageInMonths: Int
     ) async throws -> FlavorPairingResponse {
-        try await geminiService.generateFlavorPairings(triedFoods: triedFoods, childName: childName)
+        try await geminiService.generateFlavorPairings(triedFoods: triedFoods, childName: childName, ageInMonths: ageInMonths)
     }
 }

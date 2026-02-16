@@ -1,23 +1,22 @@
-//
-//  ParentProfile.swift
-//  TinyTastesTracker
-//
-//  Created by Antigravity AI on 1/23/25.
-//
-
 import Foundation
-import SwiftData
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
-@Model
-final class ParentProfile {
-    @Attribute(.unique) var id: UUID = UUID()
-    var parentName: String? = nil
-    var joinedDate: Date = Date()
-    var icloudStatus: String? = nil
+struct ParentProfile: Identifiable, Codable {
+    @DocumentID var id: String?
+    var ownerId: String
+    var name: String?
+    var joinedDate: Date
+    var icloudStatus: String? // Keeping for legacy/migration context if needed, otherwise could be removed
     
-    init(id: UUID = UUID(), parentName: String? = nil, joinedDate: Date = Date(), icloudStatus: String? = nil) {
+    init(id: String? = nil,
+         ownerId: String,
+         name: String? = nil,
+         joinedDate: Date = Date(),
+         icloudStatus: String? = nil) {
         self.id = id
-        self.parentName = parentName
+        self.ownerId = ownerId
+        self.name = name
         self.joinedDate = joinedDate
         self.icloudStatus = icloudStatus
     }

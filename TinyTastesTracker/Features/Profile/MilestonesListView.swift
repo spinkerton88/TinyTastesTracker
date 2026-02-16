@@ -6,11 +6,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct MilestonesListView: View {
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
     
     // Default to the user's current mode, but allow switching
     @State private var selectedMode: AppMode
@@ -70,9 +68,10 @@ struct MilestonesListView: View {
         guard let profile = appState.userProfile else { return }
         
         if profile.milestones == nil || profile.milestones?.isEmpty == true {
+            var updatedProfile = profile
             let defaults = Milestone.defaults()
-            profile.milestones = defaults
-            try? modelContext.save()
+            updatedProfile.milestones = defaults
+            appState.profileManager.updateProfile(updatedProfile)
         }
     }
     
@@ -81,15 +80,26 @@ struct MilestonesListView: View {
         
         return allMilestones
             .filter { $0.category == selectedMode }
+            .sorted { $0.isCompleted && !$1.isCompleted } // Sort completed to bottom? Or keep default order?
+            // Actually, usually users want list in logic order. Let's keep original order for now.
     }
     
     private func toggleMilestone(_ milestone: Milestone) {
+        guard let profile = appState.userProfile,
+              var milestones = profile.milestones,
+              let index = milestones.firstIndex(where: { $0.id == milestone.id }) else { return }
+        
+        var updatedMilestone = milestones[index]
+        updatedMilestone.isCompleted.toggle()
+        updatedMilestone.dateCompleted = updatedMilestone.isCompleted ? Date() : nil
+        
+        var updatedProfile = profile
+        var newMilestones = milestones
+        newMilestones[index] = updatedMilestone
+        updatedProfile.milestones = newMilestones
+        
         withAnimation {
-            milestone.isCompleted.toggle()
-            milestone.dateCompleted = milestone.isCompleted ? Date() : nil
-            
-            // Save context
-            try? modelContext.save()
+            appState.profileManager.updateProfile(updatedProfile)
         }
     }
 }

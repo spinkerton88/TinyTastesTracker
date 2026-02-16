@@ -6,12 +6,10 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct PhotoCollageView: View {
     @Bindable var appState: AppState
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
     
     // Available photos
     let availablePhotos: [TriedFoodLog]
@@ -32,7 +30,10 @@ struct PhotoCollageView: View {
     @State private var saveError: Error?
     
     var selectedLogs: [TriedFoodLog] {
-        availablePhotos.filter { selectedPhotos.contains($0.id) }
+        availablePhotos.filter { 
+            guard let id = $0.id else { return false }
+            return selectedPhotos.contains(id) 
+        }
     }
     
     var canCreateCollage: Bool {
@@ -168,13 +169,15 @@ struct PhotoCollageView: View {
                 GridItem(.flexible(), spacing: 8),
                 GridItem(.flexible(), spacing: 8)
             ], spacing: 8) {
-                ForEach(availablePhotos, id: \.id) { log in
-                    SelectablePhotoCard(
-                        log: log,
-                        isSelected: selectedPhotos.contains(log.id),
-                        isDisabled: !selectedPhotos.contains(log.id) && selectedPhotos.count >= selectedTemplate.maxPhotos
-                    ) {
-                        togglePhotoSelection(log)
+                ForEach(availablePhotos) { log in
+                    if let id = log.id {
+                        SelectablePhotoCard(
+                            log: log,
+                            isSelected: selectedPhotos.contains(id),
+                            isDisabled: !selectedPhotos.contains(id) && selectedPhotos.count >= selectedTemplate.maxPhotos
+                        ) {
+                            togglePhotoSelection(log)
+                        }
                     }
                 }
             }
@@ -302,10 +305,12 @@ struct PhotoCollageView: View {
     // MARK: - Actions
     
     private func togglePhotoSelection(_ log: TriedFoodLog) {
-        if selectedPhotos.contains(log.id) {
-            selectedPhotos.remove(log.id)
+        guard let id = log.id else { return }
+        
+        if selectedPhotos.contains(id) {
+            selectedPhotos.remove(id)
         } else if selectedPhotos.count < selectedTemplate.maxPhotos {
-            selectedPhotos.insert(log.id)
+            selectedPhotos.insert(id)
         }
         
         // Clear preview when selection changes
@@ -317,8 +322,8 @@ struct PhotoCollageView: View {
         
         // Prepare Sendable data on MainActor
         let assets = selectedLogs.compactMap { log -> PhotoAssetData? in
-            guard let data = log.messyFaceImage else { return nil }
-            return PhotoAssetData(id: log.id, date: log.date, imageData: data)
+            guard let data = log.messyFaceImage, let id = log.id else { return nil }
+            return PhotoAssetData(id: id, date: log.date, imageData: data)
         }
         let template = selectedTemplate
         let options = collageOptions
@@ -431,8 +436,8 @@ struct SelectablePhotoCard: View {
                         .opacity(isDisabled ? 0.4 : 1.0)
                 } else {
                     Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(height: 100)
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(height: 100)
                 }
                 
                 // Selection indicator

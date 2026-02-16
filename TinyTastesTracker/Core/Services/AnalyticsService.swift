@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseAnalytics
 
 /// Analytics service for tracking user behavior and onboarding metrics
 /// Note: This is a local-only implementation. For production, integrate with
@@ -26,18 +27,22 @@ class AnalyticsService {
             "timestamp": timestamp.ISO8601Format(),
             "properties": properties ?? [:]
         ]
-        
+
         // Log to console for debugging
         print("📊 Analytics: \(event.rawValue)")
         if let props = properties {
             print("   Properties: \(props)")
         }
-        
-        // Store locally
+
+        // Store locally for metrics
         storeEvent(eventData)
-        
-        // TODO: Send to analytics service (TelemetryDeck, Firebase, etc.)
-        // Example: TelemetryDeck.signal(event.rawValue, parameters: properties)
+
+        // Send to Firebase Analytics
+        if let props = properties {
+            Analytics.logEvent(event.rawValue, parameters: props)
+        } else {
+            Analytics.logEvent(event.rawValue, parameters: nil)
+        }
     }
     
     // MARK: - Onboarding Events

@@ -6,10 +6,8 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct ToddlerPage: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     
     var body: some View {
@@ -30,7 +28,6 @@ struct ToddlerPage: View {
 // MARK: - Meal Builder View
 
 struct MealBuilderView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     
     @State private var selectedFoods: Set<String> = []
@@ -79,178 +76,167 @@ struct MealBuilderView: View {
         GridItem(.adaptive(minimum: 70), spacing: 8)
     ]
     
+    private var searchBar: some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+            TextField("Search foods...", text: $searchText)
+                .textFieldStyle(.plain)
+            if !searchText.isEmpty {
+                Button {
+                    searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .padding(10)
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    private var categoryFilters: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                CategoryChip(
+                    title: "All",
+                    isSelected: selectedCategory == nil,
+                    color: appState.themeColor
+                ) {
+                    selectedCategory = nil
+                }
+
+                ForEach(FoodCategory.allCases, id: \.self) { category in
+                    CategoryChip(
+                        title: category.rawValue.capitalized,
+                        isSelected: selectedCategory == category,
+                        color: appState.themeColor
+                    ) {
+                        selectedCategory = category
+                    }
+                }
+            }
+        }
+    }
+
+    private var selectedFoodsView: some View {
+        Group {
+            if !selectedFoods.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Selected (\(selectedFoods.count))")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.secondary)
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(Array(selectedFoods), id: \.self) { foodId in
+                                if let food = appState.allKnownFoods.first(where: { $0.id == foodId }) {
+                                    SelectedFoodChip(food: food, themeColor: appState.themeColor) {
+                                        selectedFoods.remove(foodId)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private var foodGrid: some View {
+        LazyVStack(alignment: .leading, spacing: 20, pinnedViews: [.sectionHeaders]) {
+            ForEach(foodsByCategory, id: \.category) { section in
+                Section {
+                    LazyVGrid(columns: gridColumns, spacing: 12) {
+                        ForEach(section.foods) { food in
+                            CompactFoodItem(
+                                food: food,
+                                isSelected: selectedFoods.contains(food.id),
+                                themeColor: appState.themeColor
+                            ) {
+                                HapticManager.selection()
+                                if selectedFoods.contains(food.id) {
+                                    selectedFoods.remove(food.id)
+                                } else {
+                                    selectedFoods.insert(food.id)
+                                }
+                            }
+                        }
+                    }
+                } header: {
+                    HStack {
+                        Text(section.category.rawValue.capitalized)
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundStyle(appState.themeColor)
+
+                        Spacer()
+
+                        Text("\(section.foods.count)")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(.ultraThinMaterial)
+                            .clipShape(Capsule())
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(.ultraThinMaterial)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isHeader)
+                }
+            }
+        }
+    }
+
+    private var foodTraySection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            FoodTrayHeader(
+                appState: appState,
+                scanMode: $scanMode,
+                showingCamera: $showingCamera,
+                showingRecipePicker: $showingRecipePicker,
+                showingBarcodeScanner: $showingBarcodeScanner
+            )
+
+            searchBar
+            categoryFilters
+            selectedFoodsView
+
+            Text("\(filteredFoods.count) foods")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            foodGrid
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Today's Plate Section
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Build Today's Plate")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        
-                        if selectedFoods.isEmpty {
-                            Text("Select foods from the tray below to build a balanced meal")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 40)
-                        } else {
-                            PlateView(selectedFoods: Array(selectedFoods), themeColor: appState.themeColor, appState: appState)
-                        }
-                        
-                        if !selectedFoods.isEmpty {
-                            Button {
-                                showingSaveSheet = true
-                            } label: {
-                                Label("Review & Save Meal", systemImage: "checkmark.circle.fill")
-                                    .fontWeight(.semibold)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(appState.themeColor)
-                                    .foregroundStyle(.white)
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    
-                    // Food Tray Section
-                    VStack(alignment: .leading, spacing: 16) {
-                        // Header with Actions
-                        FoodTrayHeader(
-                            appState: appState,
-                            scanMode: $scanMode,
-                            showingCamera: $showingCamera,
-                            showingRecipePicker: $showingRecipePicker,
-                            showingBarcodeScanner: $showingBarcodeScanner
+            ZStack {
+                GradientBackground(color: appState.themeColor)
+
+                ScrollView {
+                    VStack(spacing: 24) {
+                        TodaysPlateSection(
+                            selectedFoods: $selectedFoods,
+                            showingSaveSheet: $showingSaveSheet,
+                            appState: appState
                         )
-                        
-                        // Search Bar
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundStyle(.secondary)
-                            TextField("Search foods...", text: $searchText)
-                                .textFieldStyle(.plain)
-                            if !searchText.isEmpty {
-                                Button {
-                                    searchText = ""
-                                } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
-                        .padding(10)
-                        .background(Color(.systemGray6))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        
-                        // Category Filter Chips
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                CategoryChip(
-                                    title: "All",
-                                    isSelected: selectedCategory == nil,
-                                    color: appState.themeColor
-                                ) {
-                                    selectedCategory = nil
-                                }
-                                
-                                ForEach(FoodCategory.allCases, id: \.self) { category in
-                                    CategoryChip(
-                                        title: category.rawValue.capitalized,
-                                        isSelected: selectedCategory == category,
-                                        color: appState.themeColor
-                                    ) {
-                                        selectedCategory = category
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // Selected Foods Quick Access
-                        if !selectedFoods.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Selected (\(selectedFoods.count))")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.secondary)
-                                
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack(spacing: 8) {
-                                        ForEach(Array(selectedFoods), id: \.self) { foodId in
-                                            if let food = appState.allKnownFoods.first(where: { $0.id == foodId }) {
-                                                SelectedFoodChip(food: food, themeColor: appState.themeColor) {
-                                                    selectedFoods.remove(foodId)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // Results Count
-                        Text("\(filteredFoods.count) foods")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
 
-                        // Food Grid with Category Sections
-                        LazyVStack(alignment: .leading, spacing: 20, pinnedViews: [.sectionHeaders]) {
-                            ForEach(foodsByCategory, id: \.category) { section in
-                                Section {
-                                    LazyVGrid(columns: gridColumns, spacing: 12) {
-                                        ForEach(section.foods) { food in
-                                            CompactFoodItem(
-                                                food: food,
-                                                isSelected: selectedFoods.contains(food.id),
-                                                themeColor: appState.themeColor
-                                            ) {
-                                                HapticManager.selection()
-                                                if selectedFoods.contains(food.id) {
-                                                    selectedFoods.remove(food.id)
-                                                } else {
-                                                    selectedFoods.insert(food.id)
-                                                }
-                                            }
-                                        }
-                                    }
-                                } header: {
-                                    HStack {
-                                        Text(section.category.rawValue.capitalized)
-                                            .font(.headline)
-                                            .fontWeight(.bold)
-                                            .foregroundStyle(appState.themeColor)
-
-                                        Spacer()
-
-                                        Text("\(section.foods.count)")
-                                            .font(.subheadline)
-                                            .foregroundStyle(.secondary)
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 4)
-                                            .background(.ultraThinMaterial)
-                                            .clipShape(Capsule())
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 12)
-                                    .background(.ultraThinMaterial)
-                                    .accessibilityElement(children: .combine)
-                                    .accessibilityAddTraits(.isHeader)
-                                }
-                            }
-                        }
+                        foodTraySection
                     }
                     .padding()
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
-                .padding()
             }
             .navigationTitle("Meal Planner")
-            .withSage(context: "User is planning a meal in Toddler Mode. Selected foods: \(selectedFoods.joined(separator: ", ")).", appState: appState)
+            .withSage(context: "User is planning a meal in Toddler Mode. Selected foods: \(Array(selectedFoods).joined(separator: ", ")).", appState: appState)
             .sheet(isPresented: $showingSaveSheet) {
                 SaveMealSheet(
                     selectedFoods: Array(selectedFoods),
@@ -262,8 +248,10 @@ struct MealBuilderView: View {
             }
             .sheet(isPresented: $showingRecipePicker) {
                 GenericRecipePickerSheet(appState: appState) { recipe in
-                    let customFood = appState.createCustomFoodFromRecipe(recipe, context: modelContext)
-                    selectedFoods.insert(customFood.id)
+                    let customFood = appState.createCustomFoodFromRecipe(recipe)
+                    if let foodId = customFood.id {
+                        selectedFoods.insert(foodId)
+                    }
                     HapticManager.success()
                 }
             }
@@ -291,7 +279,7 @@ struct MealBuilderView: View {
                 if let error = identificationError {
                     Text(error)
                 } else {
-                    Text("AI identified: \(aiIdentifiedFoodName)\n\nMake sure you've logged this food in Explorer mode first before adding to meals.")
+                    Text("Identified: \(aiIdentifiedFoodName)\n\nMake sure you've logged this food in Explorer mode first before adding to meals.")
                 }
             }
             .overlay {
@@ -299,7 +287,7 @@ struct MealBuilderView: View {
                     ZStack {
                         Color.black.opacity(0.4)
                             .ignoresSafeArea()
-                        
+
                         VStack(spacing: 16) {
                             ProgressView()
                                 .scaleEffect(1.5)
@@ -370,7 +358,8 @@ struct MealBuilderView: View {
                 
                 let newFood = CustomFood(
                     id: id,
-                    name: "Scanned Item", 
+                    ownerId: appState.currentOwnerId ?? "",
+                    name: "Scanned Item",
                     emoji: details.emoji,
                     category: cat,
                     allergens: details.allergens,
@@ -379,9 +368,18 @@ struct MealBuilderView: View {
                     chokeHazard: details.chokeHazard,
                     color: col
                 )
-                appState.saveCustomFood(newFood, context: modelContext)
-                selectedFoods.insert(newFood.id)
-                HapticManager.success()
+                
+                Task {
+                    do {
+                        try await appState.saveCustomFood(newFood)
+                        if let foodId = newFood.id {
+                            selectedFoods.insert(foodId)
+                        }
+                        errorPresenter.showSuccess("Food added")
+                    } catch {
+                        errorPresenter.present(error)
+                    }
+                }
                 
                 isIdentifyingFood = false
             }
@@ -411,8 +409,9 @@ struct MealBuilderView: View {
                     
                     let newFood = CustomFood(
                         id: id,
+                        ownerId: appState.currentOwnerId ?? "",
                         name: product.productName,
-                        emoji: "📦", 
+                        emoji: "📦",
                         category: cat,
                         allergens: product.allergens,
                         nutritionHighlights: product.nutrients?.summary ?? "",
@@ -420,9 +419,18 @@ struct MealBuilderView: View {
                         chokeHazard: false,
                         color: .brown
                     )
-                    appState.saveCustomFood(newFood, context: modelContext)
-                    selectedFoods.insert(newFood.id)
-                    HapticManager.success()
+                    
+                    Task {
+                        do {
+                            try await appState.saveCustomFood(newFood)
+                            if let foodId = newFood.id {
+                                selectedFoods.insert(foodId)
+                            }
+                            errorPresenter.showSuccess("Food added")
+                        } catch {
+                            errorPresenter.present(error)
+                        }
+                    }
                 }
                 isIdentifyingFood = false
             }
@@ -541,8 +549,6 @@ struct SelectedFoodChip: View {
     
     var body: some View {
         HStack(spacing: 4) {
-            Text(food.emoji)
-                .font(.body) // Was .system(size: 16)
             Text(food.name)
                 .font(.caption)
                 .fontWeight(.medium)
@@ -1026,8 +1032,8 @@ struct BounceButtonStyle: ButtonStyle {
 // MARK: - Save Meal Sheet (Enhanced)
 
 struct SaveMealSheet: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
     
     let selectedFoods: [String]
     @Bindable var appState: AppState
@@ -1115,16 +1121,68 @@ struct SaveMealSheet: View {
     }
     
     private func saveMeal() {
-        // Create full meal log
-        let log = MealLog(
-            foods: selectedFoods,
-            feedingStrategy: selectedStrategy,
-            notes: notes,
-            timestamp: mealTime,
-            mealType: mealType
-        )
-        
-        // Save via AppState (which also updates individual food history)
-        appState.saveMealLog(log, context: modelContext)
+        Task {
+            do {
+                // Create full meal log
+                let log = MealLog(
+                    ownerId: appState.currentOwnerId ?? "",
+                    childId: appState.currentChildId ?? "",
+                    foods: selectedFoods,
+                    feedingStrategy: selectedStrategy,
+                    notes: notes,
+                    timestamp: mealTime,
+                    mealType: mealType
+                )
+                
+                // Save via AppState (which also updates individual food history)
+                try await appState.saveMealLog(log)
+                errorPresenter.showSuccess("Meal logged")
+            } catch {
+                errorPresenter.present(error)
+            }
+        }
+    }
+}
+
+// MARK: - Today's Plate Section Component
+
+struct TodaysPlateSection: View {
+    @Binding var selectedFoods: Set<String>
+    @Binding var showingSaveSheet: Bool
+    let appState: AppState
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Build Today's Plate")
+                .font(.title2)
+                .fontWeight(.bold)
+            
+            if selectedFoods.isEmpty {
+                Text("Select foods from the tray below to build a balanced meal")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
+            } else {
+                PlateView(selectedFoods: Array(selectedFoods), themeColor: appState.themeColor, appState: appState)
+            }
+            
+            if !selectedFoods.isEmpty {
+                Button {
+                    showingSaveSheet = true
+                } label: {
+                    Label("Review & Save Meal", systemImage: "checkmark.circle.fill")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(appState.themeColor)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+            }
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }

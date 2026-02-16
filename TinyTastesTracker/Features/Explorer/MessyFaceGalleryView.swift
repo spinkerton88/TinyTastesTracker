@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 enum PhotoSortOption: String, CaseIterable {
     case newest = "Newest First"
@@ -15,14 +14,13 @@ enum PhotoSortOption: String, CaseIterable {
 }
 
 struct MessyFaceGalleryView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     
-    // Query all food logs with photos
-    @Query(filter: #Predicate<TriedFoodLog> { log in
-        log.messyFaceImage != nil && log.isMarkedAsTried == true
-    }, sort: \TriedFoodLog.date, order: .reverse)
-    private var logsWithPhotos: [TriedFoodLog]
+    // Derived from appState instead of @Query
+    private var logsWithPhotos: [TriedFoodLog] {
+        appState.foodLogs.filter { $0.messyFaceImage != nil && $0.isMarkedAsTried == true }
+            .sorted { $0.date > $1.date }
+    }
     
     // Filter and sort state
     @State private var searchText = ""
@@ -45,7 +43,7 @@ struct MessyFaceGalleryView: View {
         
         // Filter by search text
         if !searchText.isEmpty {
-            logs = logs.filter { $0.id.localizedCaseInsensitiveContains(searchText) }
+            logs = logs.filter { ($0.id ?? "").localizedCaseInsensitiveContains(searchText) }
         }
         
         // Filter by meal type
@@ -60,7 +58,7 @@ struct MessyFaceGalleryView: View {
         case .oldest:
             logs.sort { $0.date < $1.date }
         case .foodName:
-            logs.sort { $0.id < $1.id }
+            logs.sort { ($0.id ?? "") < ($1.id ?? "") }
         }
         
         return logs
@@ -132,7 +130,7 @@ struct MessyFaceGalleryView: View {
                 TimelineExportView(
                     appState: appState,
                     availablePhotos: logsWithPhotos,
-                    profileName: appState.userProfile?.babyName ?? "Baby"
+                    profileName: appState.userProfile?.name ?? "Baby"
                 )
             }
         }
@@ -282,7 +280,7 @@ struct PhotoThumbnailCard: View {
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(log.id)
+                Text(log.foodName)
                     .font(.caption)
                     .fontWeight(.semibold)
                     .lineLimit(1)
@@ -298,7 +296,7 @@ struct PhotoThumbnailCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Photo of \(log.id) from \(log.date.formatted(date: .abbreviated, time: .omitted))")
+        .accessibilityLabel("Photo of \(log.foodName) from \(log.date.formatted(date: .abbreviated, time: .omitted))")
         .accessibilityHint("Double tap to view photo")
         .accessibilityAddTraits(.isImage)
         .accessibilityAddTraits(.isButton)

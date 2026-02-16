@@ -11,7 +11,6 @@ import PhotosUI
 struct FoodDetailModal: View {
     let food: FoodItem
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
     // Logging State
@@ -25,10 +24,12 @@ struct FoodDetailModal: View {
     @State private var messyFaceData: Data?
     @State private var selectedExistingPhoto: TriedFoodLog?
     @State private var showExistingPhotoViewer = false
+    @State private var isProcessingImage = false
     
     // Allergen Monitoring State
     @State private var showAllergenPrompt = false
-    @State private var allergenInfo: (foodName: String, allergenName: String)?
+    @State private var allergenInfo: (foodName: String, allergenName: String, allergyRisk: AllergyRisk)?
+    @State private var isKnownAllergy = false
     
     let reactionOptions = ["Hives", "Vomiting", "Gas/Fussy", "Rash", "Diarrhea", "Other"]
     let quantityOptions = [
@@ -37,322 +38,348 @@ struct FoodDetailModal: View {
         ("serving", "Full serving")
     ]
     
+    private var headerSection: some View {
+        HStack(spacing: 16) {
+            FoodImageView(food: food, size: 80)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(food.name)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                Text(food.category.rawValue.capitalized)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private var safetySection: some View {
+        VStack(spacing: 12) {
+            // Allergy Risk Badge
+            HStack {
+                Label("Allergy Risk", systemImage: "shield.fill")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text(food.allergyRisk.rawValue)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(food.allergyRisk.color)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(food.allergyRisk.color.opacity(0.15))
+                    .clipShape(Capsule())
+            }
+            .padding()
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+
+            if !food.allergens.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Label("Allergen Warning", systemImage: "exclamationmark.triangle.fill")
+                        .font(.headline)
+                        .foregroundStyle(.red)
+
+                    Text("Contains: \(food.allergens.joined(separator: ", ").capitalized)")
+                        .font(.subheadline)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.red.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+
+            if food.chokeHazard {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                        .font(.title3)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Choking Hazard")
+                            .font(.headline)
+                            .foregroundStyle(.orange)
+                        Text("Modify texture appropriately for age.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.orange.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    private var nutritionSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Nutrition", systemImage: "leaf.fill")
+                .font(.headline)
+                .foregroundStyle(appState.themeColor)
+            Text(food.nutritionHighlights.isEmpty ? "Complete nutrition information coming soon" : food.nutritionHighlights)
+                .font(.body)
+                .foregroundStyle(food.nutritionHighlights.isEmpty ? .secondary : .primary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(appState.themeColor.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal)
+    }
+
+    private var preparationSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("How to Serve", systemImage: "fork.knife")
+                .font(.headline)
+            Text(food.howToServe.isEmpty ? "Serving instructions coming soon" : food.howToServe)
+                .font(.body)
+                .foregroundStyle(food.howToServe.isEmpty ? .secondary : .primary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal)
+    }
+
+    private var existingPhotosSection: some View {
+        Group {
+            if !existingPhotosForFood.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    Label("Previous Photos", systemImage: "photo.on.rectangle.angled")
+                        .font(.headline)
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(existingPhotosForFood, id: \.id) { log in
+                                if let imageData = log.messyFaceImage,
+                                   let uiImage = UIImage(data: imageData) {
+                                    Button {
+                                        selectedExistingPhoto = log
+                                        showExistingPhotoViewer = true
+                                    } label: {
+                                        VStack(spacing: 4) {
+                                            Image(uiImage: uiImage)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 100, height: 100)
+                                                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                                            Text(log.date.formatted(date: .abbreviated, time: .omitted))
+                                                .font(.caption2)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+                .padding(.vertical, 12)
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal)
+            }
+        }
+    }
+
+    private var loggingForm: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Log This Food")
+                .font(.title2)
+                .fontWeight(.bold)
+
+            // 1. Food Preference Reaction Slider
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Reaction")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                HStack {
+                    Text("😖").font(.title2)
+                    Slider(value: Binding(
+                        get: { Double(reaction) },
+                        set: { reaction = Int($0) }
+                    ), in: 1...7, step: 1)
+                    .tint(appState.themeColor)
+                    Text("😍").font(.title2)
+                }
+                Text(reactionText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            // 2. Signs of Reaction
+            VStack(alignment: .leading, spacing: 8) {
+                Label("Signs of Reaction", systemImage: "exclamationmark.triangle")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 10) {
+                    ForEach(reactionOptions, id: \.self) { sign in
+                        Button(action: { toggleReaction(sign) }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: reactionSigns.contains(sign) ? "checkmark.circle.fill" : "circle")
+                                Text(sign)
+                            }
+                            .font(.subheadline)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 10)
+                            .frame(maxWidth: .infinity)
+                            .background(reactionSigns.contains(sign) ? Color.red.opacity(0.15) : Color.gray.opacity(0.1))
+                            .foregroundStyle(reactionSigns.contains(sign) ? .red : .primary)
+                            .clipShape(Capsule())
+                        }
+                    }
+                }
+
+                if !reactionSigns.isEmpty {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundStyle(.orange)
+                            .font(.caption)
+                        Text("If symptoms are severe or persist, consult a pediatrician immediately.")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 12)
+                    .background(Color.orange.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            }
+
+            // 3. Meal Type
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Meal")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Picker("Meal", selection: $mealType) {
+                    Text("Breakfast").tag(MealType.breakfast)
+                    Text("Lunch").tag(MealType.lunch)
+                    Text("Dinner").tag(MealType.dinner)
+                    Text("Snack").tag(MealType.snack)
+                }
+                .pickerStyle(.segmented)
+            }
+
+            // 4. Amount Eaten
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Amount Eaten")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                HStack(spacing: 0) {
+                    ForEach(quantityOptions, id: \.0) { option in
+                        Button(action: { quantity = option.0 }) {
+                            Text(option.1)
+                                .font(.caption)
+                                .fontWeight(quantity == option.0 ? .semibold : .regular)
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity)
+                                .background(quantity == option.0 ? appState.themeColor : Color.clear)
+                                .foregroundStyle(quantity == option.0 ? .white : .primary)
+                        }
+
+                        if option.0 != quantityOptions.last?.0 {
+                            Divider()
+                                .frame(height: 20)
+                        }
+                    }
+                }
+                .background(Color(.tertiarySystemFill))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+
+            // 6. Photo Upload
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Messy Face Photo")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                if let data = messyFaceData, let uiImage = UIImage(data: data) {
+                    ZStack(alignment: .topTrailing) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(height: 200)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                        Button(action: { messyFaceData = nil }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.white)
+                                .background(Color.black.opacity(0.5))
+                                .clipShape(Circle())
+                        }
+                        .padding(8)
+                    }
+                } else if isProcessingImage {
+                    VStack {
+                        ProgressView()
+                        Text("Processing...")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 100)
+                    .background(Color.gray.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                } else {
+                    PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                            Text("Add Photo")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .foregroundStyle(appState.themeColor)
+                    }
+                }
+            }
+
+            // Unmark Button
+            if isAlreadyTried {
+                Button(role: .destructive) {
+                    showUnmarkConfirmation = true
+                } label: {
+                    Label("Unmark as Tried", systemImage: "xmark.circle")
+                        .fontWeight(.medium)
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.red.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .padding(.top, 8)
+                .padding(.bottom, 20)
+            }
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 40)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    // MARK: - Header Section
-                    HStack(spacing: 16) {
-                        FoodImageView(food: food, size: 80)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(food.name)
-                                .font(.title2)
-                                .fontWeight(.bold)
-                            Text(food.category.rawValue.capitalized)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                    }
-                    .padding()
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    
-                    // MARK: - Safety Section
-                    VStack(spacing: 12) {
-                        // Allergy Risk Badge
-                        HStack {
-                            Label("Allergy Risk", systemImage: "shield.fill")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                            Text(food.allergyRisk.rawValue)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(food.allergyRisk.color)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(food.allergyRisk.color.opacity(0.15))
-                                .clipShape(Capsule())
-                        }
-                        .padding()
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    headerSection
+                    safetySection
+                    nutritionSection
+                    preparationSection
+                    existingPhotosSection
 
-                        if !food.allergens.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Label("Allergen Warning", systemImage: "exclamationmark.triangle.fill")
-                                    .font(.headline)
-                                    .foregroundStyle(.red)
-                                
-                                Text("Contains: \(food.allergens.joined(separator: ", ").capitalized)")
-                                    .font(.subheadline)
-                            }
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.red.opacity(0.1))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
-                        
-                        if food.chokeHazard {
-                            HStack(alignment: .top, spacing: 12) {
-                                Image(systemName: "exclamationmark.circle.fill")
-                                    .foregroundStyle(.orange)
-                                    .font(.title3)
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Choking Hazard")
-                                        .font(.headline)
-                                        .foregroundStyle(.orange)
-                                    Text("Modify texture appropriately for age.")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.orange.opacity(0.1))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
-                    }
-                    .padding(.horizontal)
-
-                    // MARK: - Nutrition Section (Always visible)
-                    VStack(alignment: .leading, spacing: 8) {
-                        Label("Nutrition", systemImage: "leaf.fill")
-                            .font(.headline)
-                            .foregroundStyle(appState.themeColor)
-                        Text(food.nutritionHighlights.isEmpty ? "Complete nutrition information coming soon" : food.nutritionHighlights)
-                            .font(.body)
-                            .foregroundStyle(food.nutritionHighlights.isEmpty ? .secondary : .primary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                    .background(appState.themeColor.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.horizontal)
-
-                    // MARK: - Preparation Guide (Always visible)
-                    VStack(alignment: .leading, spacing: 8) {
-                        Label("How to Serve", systemImage: "fork.knife")
-                            .font(.headline)
-                        Text(food.howToServe.isEmpty ? "Serving instructions coming soon" : food.howToServe)
-                            .font(.body)
-                            .foregroundStyle(food.howToServe.isEmpty ? .secondary : .primary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.horizontal)
-                    
-                    // MARK: - Existing Photos Section
-                    if !existingPhotosForFood.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Label("Previous Photos", systemImage: "photo.on.rectangle.angled")
-                                .font(.headline)
-                            
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 12) {
-                                    ForEach(existingPhotosForFood, id: \.id) { log in
-                                        if let imageData = log.messyFaceImage,
-                                           let uiImage = UIImage(data: imageData) {
-                                            Button {
-                                                selectedExistingPhoto = log
-                                                showExistingPhotoViewer = true
-                                            } label: {
-                                                VStack(spacing: 4) {
-                                                    Image(uiImage: uiImage)
-                                                        .resizable()
-                                                        .scaledToFill()
-                                                        .frame(width: 100, height: 100)
-                                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                                    
-                                                    Text(log.date.formatted(date: .abbreviated, time: .omitted))
-                                                        .font(.caption2)
-                                                        .foregroundStyle(.secondary)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                .padding(.horizontal)
-                            }
-                        }
-                        .padding(.vertical, 12)
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .padding(.horizontal)
-                    }
-                    
                     Divider()
                         .padding(.horizontal)
-                    
-                    // MARK: - Logging Form
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text("Log This Food")
-                            .font(.title2)
-                            .fontWeight(.bold)
 
-                        // 1. Food Preference Reaction Slider
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Reaction")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                            HStack {
-                                Text("😖").font(.title2)
-                                Slider(value: Binding(
-                                    get: { Double(reaction) },
-                                    set: { reaction = Int($0) }
-                                ), in: 1...7, step: 1)
-                                .tint(appState.themeColor)
-                                Text("😍").font(.title2)
-                            }
-                            Text(reactionText)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        
-                        // 2. Signs of Reaction (Allergies/Sensitivities)
-                        VStack(alignment: .leading, spacing: 8) {
-                            Label("Signs of Reaction", systemImage: "exclamationmark.triangle")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-
-                            // Display all buttons in a wrapping grid (no scrolling)
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 10) {
-                                ForEach(reactionOptions, id: \.self) { sign in
-                                    Button(action: { toggleReaction(sign) }) {
-                                        HStack(spacing: 6) {
-                                            Image(systemName: reactionSigns.contains(sign) ? "checkmark.circle.fill" : "circle")
-                                            Text(sign)
-                                        }
-                                        .font(.subheadline)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 10)
-                                        .frame(maxWidth: .infinity)
-                                        .background(reactionSigns.contains(sign) ? Color.red.opacity(0.15) : Color.gray.opacity(0.1))
-                                        .foregroundStyle(reactionSigns.contains(sign) ? .red : .primary)
-                                        .clipShape(Capsule())
-                                    }
-                                }
-                            }
-
-                            if !reactionSigns.isEmpty {
-                                HStack(alignment: .top, spacing: 8) {
-                                    Image(systemName: "info.circle.fill")
-                                        .foregroundStyle(.orange)
-                                        .font(.caption)
-                                    Text("If symptoms are severe or persist, consult a pediatrician immediately.")
-                                        .font(.caption2)
-                                        .foregroundStyle(.secondary)
-                                }
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 12)
-                                .background(Color.orange.opacity(0.1))
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                            }
-                        }
-                        
-                        // 3. Meal Type
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Meal")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-
-                            Picker("Meal", selection: $mealType) {
-                                Text("Breakfast").tag(MealType.breakfast)
-                                Text("Lunch").tag(MealType.lunch)
-                                Text("Dinner").tag(MealType.dinner)
-                                Text("Snack").tag(MealType.snack)
-                            }
-                            .pickerStyle(.segmented)
-                        }
-
-                        // 4. Amount Eaten
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Amount Eaten")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-
-                            HStack(spacing: 0) {
-                                ForEach(quantityOptions, id: \.0) { option in
-                                    Button(action: { quantity = option.0 }) {
-                                        Text(option.1)
-                                            .font(.caption)
-                                            .fontWeight(quantity == option.0 ? .semibold : .regular)
-                                            .padding(.vertical, 8)
-                                            .frame(maxWidth: .infinity)
-                                            .background(quantity == option.0 ? appState.themeColor : Color.clear)
-                                            .foregroundStyle(quantity == option.0 ? .white : .primary)
-                                    }
-
-                                    if option.0 != quantityOptions.last?.0 {
-                                        Divider()
-                                            .frame(height: 20)
-                                    }
-                                }
-                            }
-                            .background(Color(.tertiarySystemFill))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                        }
-
-                        // 6. Photo Upload
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Messy Face Photo")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                            
-                            if let data = messyFaceData, let uiImage = UIImage(data: data) {
-                                ZStack(alignment: .topTrailing) {
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(height: 200)
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                                    
-                                    Button(action: { messyFaceData = nil }) {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundStyle(.white)
-                                            .background(Color.black.opacity(0.5))
-                                            .clipShape(Circle())
-                                    }
-                                    .padding(8)
-                                }
-                            } else {
-                                PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-                                    HStack {
-                                        Image(systemName: "plus.circle.fill")
-                                        Text("Add Photo")
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.gray.opacity(0.1))
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                                    .foregroundStyle(appState.themeColor)
-                                }
-                            }
-                        }
-                        
-                        // Unmark Button
-                        if isAlreadyTried {
-                            Button(role: .destructive) {
-                                showUnmarkConfirmation = true
-                            } label: {
-                                Label("Unmark as Tried", systemImage: "xmark.circle")
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(.red)
-                                    .frame(maxWidth: .infinity) // increased touch target
-                                    .padding()
-                                    .background(Color.red.opacity(0.1))
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                            }
-                            .padding(.top, 8)
-                            .padding(.bottom, 20)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 40)
+                    loggingForm
                 }
             }
             .background(Color(uiColor: .systemGroupedBackground))
@@ -370,19 +397,37 @@ struct FoodDetailModal: View {
                 }
             }
             .onChange(of: selectedPhotoItem) { _, newItem in
+                guard let newItem else { return }
+                isProcessingImage = true
+                
                 Task {
-                    if let data = try? await newItem?.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data) {
-                        messyFaceData = ImageCompression.compressImage(image)
+                    if let data = try? await newItem.loadTransferable(type: Data.self) {
+                        let compressed = await Task.detached(priority: .userInitiated) {
+                            if let image = UIImage(data: data) {
+                                return ImageCompression.compressImage(image)
+                            }
+                            return nil
+                        }.value
+                        
+                        await MainActor.run {
+                            messyFaceData = compressed
+                            isProcessingImage = false
+                        }
+                    } else {
+                        isProcessingImage = false
                     }
                 }
             }
-            .sheet(isPresented: $showAllergenPrompt) {
+            .sheet(isPresented: $showAllergenPrompt, onDismiss: {
+                dismiss()
+            }) {
                 if let info = allergenInfo, let profile = appState.userProfile {
                     AllergenMonitoringPrompt(
                         foodName: info.foodName,
                         allergenName: info.allergenName,
-                        childName: profile.babyName
+                        allergyRisk: info.allergyRisk,
+                        childName: profile.name,
+                        forceTimer: isKnownAllergy
                     )
                 }
             }
@@ -397,7 +442,7 @@ struct FoodDetailModal: View {
                 titleVisibility: .visible
             ) {
                 Button("Unmark", role: .destructive) {
-                    appState.unmarkFoodAsTried(food.id, context: modelContext)
+                    appState.unmarkFoodAsTried(food.id)
                     dismiss()
                 }
                 Button("Cancel", role: .cancel) { }
@@ -430,7 +475,11 @@ struct FoodDetailModal: View {
     
     private func saveLog() {
         let log = TriedFoodLog(
-            id: food.id,
+            id: nil, // Generate new ID for every log entry
+            ownerId: appState.currentOwnerId ?? "",
+            childId: appState.currentChildId ?? "",
+            foodId: food.id,
+            foodName: food.name,
             date: Date(),
             reaction: reaction,
             meal: mealType,
@@ -438,11 +487,14 @@ struct FoodDetailModal: View {
             reactionSigns: Array(reactionSigns),
             quantity: quantity
         )
-        appState.saveFoodLog(log, context: modelContext)
-        
-        // Check if this is a high-risk allergen food
-        if let allergenData = appState.checkForHighRiskAllergen(foodId: food.id) {
+        Task {
+            try? await appState.saveFoodLog(log)
+        }
+
+        // Check if this food contains any allergens
+        if let allergenData = appState.shouldShowAllergenMonitoring(for: food.id) {
             allergenInfo = allergenData
+            isKnownAllergy = hasKnownAllergy(for: food)
             showAllergenPrompt = true
         } else {
             dismiss()
@@ -454,6 +506,19 @@ struct FoodDetailModal: View {
     
     private var isAlreadyTried: Bool {
         appState.isFoodTried(food.id)
+    }
+
+    private func hasKnownAllergy(for food: FoodItem) -> Bool {
+        guard let knownAllergies = appState.userProfile?.knownAllergies else {
+            return false
+        }
+
+        return food.allergens.contains { foodAllergen in
+            knownAllergies.contains { knownAllergy in
+                foodAllergen.localizedCaseInsensitiveContains(knownAllergy) ||
+                knownAllergy.localizedCaseInsensitiveContains(foodAllergen)
+            }
+        }
     }
     
     // Computed property to get all photos for this food

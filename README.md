@@ -487,9 +487,13 @@ FoodItem(
 - [Vision Framework Guide](https://developer.apple.com/documentation/vision)
 
 ### Project References
+- `FEATURE_TASKS.md` - Feature implementation checklist
 - `ASSESSMENT.md` - Technical assessment and enhancement roadmap
-- `COMPETITOR_ANALYSIS.md` - Competitive landscape analysis
 - `project.yml` - XcodeGen project configuration
+- **Developer Guides (Internal)**:
+    - [App Store Privacy Guide](dev_guides/APP_STORE_PRIVACY_GUIDE.md)
+    - [App Store Metadata](dev_guides/APP_STORE_METADATA.md)
+    - [Custom Domain Setup](dev_guides/DOMAIN_SETUP.md)
 
 ---
 

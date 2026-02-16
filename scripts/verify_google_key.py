@@ -3,7 +3,7 @@ import json
 import base64
 import os
 
-API_KEY = "AIzaSyDzyKA_uYVtRszxZRkx_FMKgg79ZGvt3cY" 
+API_KEY = "AIza[REDACTED_API_KEY]" 
 
 # Target Model: Imagen 4.0 (Upgrade from 3!)
 # Endpoint matches what the ListModels call showed for 'predict' method

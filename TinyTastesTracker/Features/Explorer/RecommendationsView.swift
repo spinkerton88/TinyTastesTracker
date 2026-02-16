@@ -17,7 +17,10 @@ struct RecommendationsView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
+            ZStack {
+                GradientBackground(color: appState.themeColor)
+                
+                ScrollView {
                 VStack(spacing: 20) {
                     // Header
                     VStack(spacing: 8) {
@@ -30,10 +33,8 @@ struct RecommendationsView: View {
                     // Header
 
                     // Categories
-                    
-                    // Categories
                     LazyVStack(spacing: 16) {
-                        ForEach(RecommendationsData.categories) { category in
+                        ForEach(RecommendationsData.categories, id: \.id) { category in
                             RecommendationSectionView(
                                 category: category,
                                 isExpanded: expandedCategories.contains(category.id),
@@ -57,7 +58,8 @@ struct RecommendationsView: View {
                 }
                 .padding(.bottom, 100)
             }
-            .background(Color(UIColor.systemGroupedBackground))
+            }
+            // .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle("Food Recommendations")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(item: $selectedFood) { food in
@@ -111,16 +113,13 @@ struct FoodSubstitutionSheet: View {
     @Binding var isLoading: Bool
     let onRequestSubstitution: () -> Void
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
-    
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     // Food Header
                     HStack(spacing: 16) {
-                        Text(food.emoji)
-                            .font(.system(size: 60)) // Large decorative icon
+                        FoodImageView(food: food, size: 60)
                         VStack(alignment: .leading, spacing: 4) {
                             Text(food.name)
                                 .font(.title2)
@@ -137,7 +136,7 @@ struct FoodSubstitutionSheet: View {
                     
                     // Allergen Warning
                     VStack(alignment: .leading, spacing: 8) {
-                        Label("⚠️ Known Allergens", systemImage: "exclamationmark.triangle.fill")
+                        Label("Known Allergens", systemImage: "exclamationmark.triangle.fill")
                             .font(.headline)
                             .foregroundStyle(.red)
                         
@@ -215,6 +214,9 @@ struct FoodSubstitutionSheet: View {
                         Button(action: onRequestSubstitution) {
                             HStack {
                                 Image("sage.leaf.sprig")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 24, height: 24)
                                 Text("Find Safe Whole Food Alternatives")
                             }
                             .font(.headline)
@@ -254,27 +256,34 @@ struct FoodSubstitutionSheet: View {
             finalFood = existing
         } else {
             // 2. If not found, create a placeholder custom food
+            guard let ownerId = appState.currentOwnerId else { return }
+            
             // Note: In a real app we might want to use AI to get full details for the custom food first
             // For now, we create a basic entry so it works immediately
             let customFood = CustomFood(
                 id: UUID().uuidString,
+                ownerId: ownerId, // Add ownerId
                 name: foodName,
                 emoji: "🥗", // Generic healthy food emoji
                 category: food.category, // Inherit category from substituted food
                 allergens: [] // Assuming safe since user selected it as alternative
             )
-            appState.saveCustomFood(customFood, context: modelContext)
+            Task {
+                try? await appState.saveCustomFood(customFood)
+            }
             finalFood = customFood.toFoodItem
         }
         
         // 3. Persist the substitution mapping
-        if appState.userProfile?.substitutedFoods == nil {
-            appState.userProfile?.substitutedFoods = [:]
-        }
-        appState.userProfile?.substitutedFoods?[food.id] = finalFood.id
+        guard var profile = appState.userProfile else { return }
         
-        // Save user profile changes (assuming context handles it automatically via SwiftData)
-        // If explicit save needed: try? modelContext.save()
+        if profile.substitutedFoods == nil {
+            profile.substitutedFoods = [:]
+        }
+        profile.substitutedFoods?[food.id] = finalFood.id
+        
+        // Save user profile changes via ProfileManager
+        appState.profileManager.updateProfile(profile)
         
         HapticManager.success()
         dismiss()
@@ -412,7 +421,9 @@ struct RecommendationSectionView: View {
                                         }
                                         
                                         Button(role: .destructive, action: {
-                                            appState.userProfile?.substitutedFoods?.removeValue(forKey: originalFood.id)
+                                            guard var profile = appState.userProfile else { return }
+                                            profile.substitutedFoods?.removeValue(forKey: originalFood.id)
+                                            appState.profileManager.updateProfile(profile)
                                         }) {
                                             Label("Remove Substitution", systemImage: "trash")
                                         }

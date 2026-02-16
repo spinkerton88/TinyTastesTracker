@@ -13,6 +13,39 @@ env:
   DEVICE: iPhone 15 Pro
 
 jobs:
+  # NEW: Firestore Rules Testing Job
+  firestore-rules:
+    name: Test Firestore Security Rules
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      working-directory: TinyTastesTracker
+      run: npm ci
+
+    - name: Install Firebase Tools
+      run: npm install -g firebase-tools
+
+    - name: Run Firestore Rules Tests
+      working-directory: TinyTastesTracker
+      run: npm run test:rules
+
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: firestore-rules-test-results
+        path: TinyTastesTracker/test-results/
+
   test:
     name: Run Tests
     runs-on: macos-14
@@ -51,7 +84,6 @@ jobs:
     - name: Run SwiftLint
       working-directory: TinyTastesTracker
       run: swiftlint lint --reporter github-actions-logging
-      continue-on-error: true
 
     - name: Build App
       working-directory: TinyTastesTracker
@@ -151,6 +183,7 @@ jobs:
   security:
     name: Security Scan
     runs-on: macos-14
+    needs: firestore-rules  # Wait for Firestore rules tests
 
     steps:
     - name: Checkout code
@@ -158,7 +191,7 @@ jobs:
 
     - name: Check for hardcoded secrets
       run: |
-        if grep -r "AIza[0-9A-Za-z\-_]{35}" TinyTastesTracker/ --exclude-dir=DerivedData --exclude-dir=.build; then
+        if grep -r "AIza[0-9A-Za-z\-_]{35}" TinyTastesTracker/ --exclude-dir=DerivedData --exclude-dir=.build --exclude-dir=node_modules; then
           echo "⚠️ WARNING: Potential API key found in code!"
           exit 1
         else
@@ -173,3 +206,9 @@ jobs:
           echo "⚠️ WARNING: Force unwraps detected in production code"
           grep -r "!" TinyTastesTracker/TinyTastesTracker --include="*.swift" --exclude-dir=Tests | grep -v "// swiftlint:disable:next force_unwrapping" || true
         fi
+
+    - name: Security Summary
+      run: |
+        echo "🔒 Security Scan Complete"
+        echo "✅ Firestore rules tests passed"
+        echo "✅ No hardcoded secrets detected"

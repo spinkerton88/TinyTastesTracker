@@ -15,13 +15,13 @@ struct ChatMessage: Identifiable, Equatable {
     var followUps: [String] = []
     var confidence: Confidence? = .high
     var userFeedback: Feedback? = nil
-    
+
     enum Confidence: String {
         case high = "High Confidence"
         case medium = "Likely accurate"
         case low = "Uncertain"
     }
-    
+
     enum Feedback {
         case thumbsUp, thumbsDown
     }
@@ -30,10 +30,11 @@ struct ChatMessage: Identifiable, Equatable {
 struct SageChatView: View {
     @Bindable var appState: AppState
     var initialContext: String? = nil
-    
+
     @State private var messages: [ChatMessage] = []
     @State private var inputText = ""
     @State private var isLoading = false
+
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -54,6 +55,7 @@ struct SageChatView: View {
                                         .padding()
                                         .background(appState.themeColor.opacity(0.1))
                                         .clipShape(Circle())
+                                        .accessibilityHidden(true) // Decorative
                                     
                                     Text("Hi, I'm Sage! 👋")
                                         .font(.title2)
@@ -97,6 +99,8 @@ struct SageChatView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.leading)
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel("Sage is verifying sources")
                             }
                         }
                         .padding()
@@ -117,7 +121,9 @@ struct SageChatView: View {
                         .background(Color.gray.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                         .lineLimit(1...5)
-                    
+                        .accessibilityLabel("Message input")
+                        .accessibilityHint("Type your question for Sage")
+
                     Button {
                         sendMessage(inputText)
                     } label: {
@@ -126,6 +132,8 @@ struct SageChatView: View {
                             .foregroundStyle(inputText.isEmpty || isLoading ? Color.gray : appState.themeColor)
                     }
                     .disabled(inputText.isEmpty || isLoading)
+                    .accessibilityLabel("Send message")
+                    .accessibilityHint(inputText.isEmpty ? "Enter a message first" : "Double tap to send your question to Sage")
                 }
                 .padding()
                 .background(.ultraThinMaterial)
@@ -236,7 +244,7 @@ struct SageChatView: View {
             }
         }
     }
-    
+
     private func parseResponse(_ text: String) -> (content: String, followUps: [String]) {
         var content = text
         var followUps: [String] = []
@@ -299,6 +307,8 @@ struct MessageBubble: View {
                             .foregroundStyle(.blue)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
+                        .accessibilityLabel("Follow-up question: \(followUp)")
+                        .accessibilityHint("Double tap to ask this question")
                     }
                 }
                 .padding(.top, 4)
@@ -326,6 +336,8 @@ struct MessageBubble: View {
                             .font(.caption)
                             .foregroundStyle(message.userFeedback == .thumbsUp ? themeColor : .secondary)
                     }
+                    .accessibilityLabel("Thumbs up")
+                    .accessibilityHint("Mark this response as helpful")
                     
                     Button {
                         
@@ -334,6 +346,8 @@ struct MessageBubble: View {
                             .font(.caption)
                             .foregroundStyle(message.userFeedback == .thumbsDown ? .orange : .secondary)
                     }
+                    .accessibilityLabel("Thumbs down")
+                    .accessibilityHint("Mark this response as not helpful")
                 }
             }
             .padding(.horizontal, 16)
@@ -364,5 +378,7 @@ struct SuggestionButton: View {
             .background(Color.gray.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
+        .accessibilityLabel("Suggested question: \(text)")
+        .accessibilityHint("Double tap to ask this question")
     }
 }

@@ -5,22 +5,28 @@
 
 import SwiftUI
 import PhotosUI
-import SwiftData
 
 struct RecipesPage: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
-    
+
     @State private var selectedTab: RecipeTab = .plan
-    
+    @State private var showingShoppingList = false
+
     enum RecipeTab: String, CaseIterable {
         case plan = "Plan"
         case recipes = "Recipes"
     }
-    
+
+    private var uncompletedShoppingCount: Int {
+        appState.shoppingListItems.filter { !$0.isCompleted }.count
+    }
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
+            ZStack {
+                GradientBackground(color: appState.themeColor)
+
+                VStack(spacing: 0) {
                 // Tab Selector
                 Picker("View", selection: $selectedTab) {
                     ForEach(RecipeTab.allCases, id: \.self) { tab in
@@ -31,16 +37,46 @@ struct RecipesPage: View {
                 .pickerStyle(.segmented)
                 .accessibilityLabel("Recipe View Selection")
                 .padding()
-                
+
                 // Content
                 if selectedTab == .plan {
                     WeeklyMealPlanView(appState: appState)
                 } else {
                     RecipeBoxView(appState: appState)
                 }
+                }
             }
             .navigationTitle("Recipes")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                if selectedTab == .plan {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showingShoppingList = true
+                        } label: {
+                            ZStack(alignment: .topTrailing) {
+                                Image(systemName: "cart")
+                                    .font(.title3)
+
+                                if uncompletedShoppingCount > 0 {
+                                    Text("\(uncompletedShoppingCount)")
+                                        .font(.caption2.bold())
+                                        .foregroundStyle(.white)
+                                        .frame(minWidth: 16, minHeight: 16)
+                                        .background(Color.red)
+                                        .clipShape(Circle())
+                                        .offset(x: 8, y: -8)
+                                }
+                            }
+                        }
+                        .accessibilityLabel("Shopping List")
+                        .accessibilityValue("\(uncompletedShoppingCount) items")
+                    }
+                }
+            }
+            .sheet(isPresented: $showingShoppingList) {
+                ShoppingListView(appState: appState)
+            }
             .withSage(context: "User is managing recipes. Recipe count: \(appState.recipes.count).", appState: appState)
         }
     }
@@ -49,7 +85,6 @@ struct RecipesPage: View {
 // MARK: - Weekly Meal Plan View
 
 struct WeeklyMealPlanView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     @State private var weekStart = Calendar.current.startOfWeek(for: Date())
     
@@ -92,16 +127,15 @@ struct WeeklyMealPlanView: View {
 struct DayMealCard: View {
     let date: Date
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
-    
-    @State private var showingRecipePicker = false
+
+    @State private var showingItemPicker = false
     @State private var selectedMealType: MealType?
-    
+
     private var isToday: Bool {
         Calendar.current.isDateInToday(date)
     }
-    
-    private var mealEntries: [MealType: MealPlanEntry] {
+
+    private var mealEntries: [MealType: [MealPlanEntry]] {
         appState.getMealPlanEntries(for: date)
     }
     
@@ -129,21 +163,21 @@ struct DayMealCard: View {
                 ForEach([MealType.breakfast, .lunch, .dinner, .snack], id: \.self) { mealType in
                     MealSlot(
                         mealType: mealType,
-                        entry: mealEntries[mealType],
+                        entries: mealEntries[mealType] ?? [],
                         onTap: {
                             selectedMealType = mealType
-                            showingRecipePicker = true
+                            showingItemPicker = true
                         },
-                        onRemove: {
-                            if let entry = mealEntries[mealType] {
-                                appState.removeMealPlanEntry(entry, context: modelContext)
-                                // Regenerate shopping list
-                                appState.generateShoppingListFromMealPlan(context: modelContext)
+                        onRemove: { entry in
+                            appState.removeMealPlanEntry(entry)
+                            // Regenerate shopping list
+                            if let ownerId = appState.currentOwnerId {
+                                appState.generateShoppingListFromMealPlan()
                             }
                         }
                     )
                     .accessibilityLabel(mealType.rawValue.capitalized)
-                    .accessibilityHint(mealEntries[mealType] == nil ? "Tap to add a recipe" : "Tap to change, swipe down to remove")
+                    .accessibilityHint(mealEntries[mealType]?.isEmpty ?? true ? "Tap to add items" : "Tap to add more items")
                 }
             }
         }
@@ -154,9 +188,9 @@ struct DayMealCard: View {
                 .stroke(isToday ? appState.themeColor : Color.gray.opacity(0.2), lineWidth: isToday ? 2 : 1)
         )
         .padding(.horizontal)
-        .sheet(isPresented: $showingRecipePicker) {
+        .sheet(isPresented: $showingItemPicker) {
             if let mealType = selectedMealType {
-                RecipePickerSheet(
+                ItemPickerSheet(
                     date: date,
                     mealType: mealType,
                     appState: appState
@@ -168,29 +202,17 @@ struct DayMealCard: View {
 
 struct MealSlot: View {
     let mealType: MealType
-    let entry: MealPlanEntry?
+    let entries: [MealPlanEntry]
     let onTap: () -> Void
-    let onRemove: () -> Void
-    
+    let onRemove: (MealPlanEntry) -> Void
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(mealType.rawValue.uppercased())
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            
-            if let entry = entry {
-                HStack {
-                    Text(entry.recipeName)
-                        .font(.subheadline)
-                        .lineLimit(2)
-                    Spacer()
-                    Button(action: onRemove) {
-                        Image(systemName: "trash")
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                    }
-                }
-            } else {
+
+            if entries.isEmpty {
                 Button(action: onTap) {
                     HStack {
                         Image(systemName: "plus.circle")
@@ -199,50 +221,264 @@ struct MealSlot: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 }
+            } else {
+                VStack(spacing: 6) {
+                    ForEach(entries) { entry in
+                        HStack {
+                            Text(entry.displayName)
+                                .font(.subheadline)
+                                .lineLimit(2)
+                            Spacer()
+                            Button(action: { onRemove(entry) }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(.red.opacity(0.7))
+                            }
+                        }
+                    }
+
+                    // "Add more" button
+                    Button(action: onTap) {
+                        HStack {
+                            Image(systemName: "plus.circle")
+                            Text("Add more")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    }
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(entry != nil ? Color(.secondarySystemBackground) : Color(.tertiarySystemBackground))
+        .background(!entries.isEmpty ? Color(.secondarySystemBackground) : Color(.tertiarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .onTapGesture {
-            if entry == nil {
-                onTap()
+    }
+}
+
+struct ItemPickerSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
+    let date: Date
+    let mealType: MealType
+    @Bindable var appState: AppState
+
+    enum ItemType: String, CaseIterable {
+        case recipe = "Recipe"
+        case food = "Food"
+    }
+
+    @State private var selectedItemType: ItemType = .recipe
+    @State private var showAllMealTypes = false
+
+    private var filteredRecipes: [Recipe] {
+        if showAllMealTypes {
+            return appState.recipes
+        } else {
+            return appState.recipes.filter { recipe in
+                recipe.mealTypes.contains(mealType)
             }
         }
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                // Item Type Picker
+                Picker("Item Type", selection: $selectedItemType) {
+                    ForEach(ItemType.allCases, id: \.self) { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding()
+
+                // Content based on selection
+                if selectedItemType == .recipe {
+                    VStack(spacing: 0) {
+                        // Meal Type Filter Toggle
+                        HStack {
+                            Toggle("Show all meal types", isOn: $showAllMealTypes)
+                                .tint(appState.themeColor)
+                            Spacer()
+                        }
+                        .padding()
+                        .background(Color(.secondarySystemBackground))
+
+                        // Recipe List
+                        if filteredRecipes.isEmpty {
+                            ContentUnavailableView {
+                                Label("No Recipes", systemImage: "fork.knife")
+                            } description: {
+                                if showAllMealTypes {
+                                    Text("You haven't created any recipes yet.")
+                                } else {
+                                    Text("No recipes found for \(mealType.rawValue).\nTurn on 'Show all meal types' to see all recipes.")
+                                }
+                            }
+                        } else {
+                            List(filteredRecipes) { recipe in
+                                Button {
+                                    addRecipeToMealPlan(recipe)
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(recipe.title)
+                                            .font(.headline)
+                                            .foregroundStyle(.primary)
+                                        Text(recipe.ingredients)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                            .lineLimit(1)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // Food List
+                    List(appState.allKnownFoods) { food in
+                        Button {
+                            addFoodToMealPlan(food)
+                        } label: {
+                            HStack {
+                                Text(food.emoji)
+                                    .font(.title2)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(food.name)
+                                        .font(.headline)
+                                        .foregroundStyle(.primary)
+                                    Text(food.category.rawValue.capitalized)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Add to \(mealType.rawValue)")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private func addRecipeToMealPlan(_ recipe: Recipe) {
+        // Get existing entries for this meal to determine sortOrder
+        let existingEntries = appState.getMealPlanEntries(for: date)[mealType] ?? []
+        let nextSortOrder = existingEntries.count
+
+        if let ownerId = appState.currentOwnerId, let childId = appState.currentChildId {
+            let entry = MealPlanEntry(
+                ownerId: ownerId,
+                childId: childId,
+                date: date,
+                mealType: mealType,
+                recipeId: recipe.id ?? UUID().uuidString, // Fallback if ID invalid, though should be valid from DB
+                recipeName: recipe.title,
+                sortOrder: nextSortOrder
+            )
+            appState.addMealPlanEntry(entry)
+
+            // Regenerate shopping list
+            appState.generateShoppingListFromMealPlan()
+        }
+        dismiss()
+    }
+
+    private func addFoodToMealPlan(_ food: FoodItem) {
+        // Get existing entries for this meal to determine sortOrder
+        let existingEntries = appState.getMealPlanEntries(for: date)[mealType] ?? []
+        let nextSortOrder = existingEntries.count
+
+        if let ownerId = appState.currentOwnerId, let childId = appState.currentChildId {
+            let entry = MealPlanEntry(
+                ownerId: ownerId,
+                childId: childId,
+                date: date,
+                mealType: mealType,
+                foodId: food.id,
+                foodName: food.name,
+                sortOrder: nextSortOrder
+            )
+            appState.addMealPlanEntry(entry)
+        }
+        dismiss()
     }
 }
 
 struct RecipePickerSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.errorPresenter) private var errorPresenter
     let date: Date
     let mealType: MealType
     @Bindable var appState: AppState
-    
+
+    @State private var showAllMealTypes = false
+
+    private var filteredRecipes: [Recipe] {
+        if showAllMealTypes {
+            return appState.recipes
+        } else {
+            return appState.recipes.filter { recipe in
+                recipe.mealTypes.contains(mealType)
+            }
+        }
+    }
+
     var body: some View {
         NavigationStack {
-            List(appState.recipes) { recipe in
-                Button {
-                    let entry = MealPlanEntry(
-                        date: date,
-                        mealType: mealType,
-                        recipeId: recipe.id,
-                        recipeName: recipe.title
-                    )
-                    appState.addMealPlanEntry(entry, context: modelContext)
-                    // Regenerate shopping list
-                    appState.generateShoppingListFromMealPlan(context: modelContext)
-                    dismiss()
-                } label: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(recipe.title)
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                        Text(recipe.ingredients)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
+            VStack(spacing: 0) {
+                // Filter Toggle
+                HStack {
+                    Toggle("Show all meal types", isOn: $showAllMealTypes)
+                        .tint(appState.themeColor)
+                    Spacer()
+                }
+                .padding()
+                .background(Color(.secondarySystemBackground))
+
+                if filteredRecipes.isEmpty {
+                    ContentUnavailableView {
+                        Label("No Recipes", systemImage: "fork.knife")
+                    } description: {
+                        if showAllMealTypes {
+                            Text("You haven't created any recipes yet.")
+                        } else {
+                            Text("No recipes found for \(mealType.rawValue).\nTurn on 'Show all meal types' to see all recipes.")
+                        }
+                    }
+                } else {
+                    List(filteredRecipes) { recipe in
+                        Button {
+                            if let ownerId = appState.currentOwnerId, let childId = appState.currentChildId {
+                                let entry = MealPlanEntry(
+                                    ownerId: ownerId,
+                                    childId: childId,
+                                    date: date,
+                                    mealType: mealType,
+                                    recipeId: recipe.id ?? UUID().uuidString,
+                                    recipeName: recipe.title
+                                )
+                                appState.addMealPlanEntry(entry)
+                                // Regenerate shopping list
+                                appState.generateShoppingListFromMealPlan()
+                            }
+                            dismiss()
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(recipe.title)
+                                    .font(.headline)
+                                    .foregroundStyle(.primary)
+                                Text(recipe.ingredients)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
+                        }
                     }
                 }
             }
@@ -260,7 +496,6 @@ struct RecipePickerSheet: View {
 // MARK: - Recipe Box View
 
 struct RecipeBoxView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     @State private var activeSheet: SheetType?
     @State private var showingShoppingList = false
@@ -277,6 +512,9 @@ struct RecipeBoxView: View {
     }
     
     var body: some View {
+        // Create a bindable proxy for the recipe manager to allow binding to its properties
+        @Bindable var recipeManager = appState.recipeManager
+
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 20) {
@@ -319,7 +557,7 @@ struct RecipeBoxView: View {
                         } label: {
                             VStack(spacing: 8) {
                                 SageIcon(size: .medium, style: .gradient)
-                                Text("AI Chef")
+                                Text("Chef Sage")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                             }
@@ -329,8 +567,8 @@ struct RecipeBoxView: View {
                             .foregroundStyle(.purple)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
-                        .accessibilityLabel("AI Recipe Chef")
-                        .accessibilityHint("Generate a recipe using AI")
+                        .accessibilityLabel("Smart Recipe Chef")
+                        .accessibilityHint("Generate a recipe automatically")
                         
                         Button {
                             activeSheet = .scanRecipe
@@ -338,6 +576,7 @@ struct RecipeBoxView: View {
                             VStack(spacing: 8) {
                                 Image(systemName: "camera")
                                     .font(.title2)
+                                .foregroundStyle(.blue)
                                 Text("Scan Recipe")
                                     .font(.subheadline)
                                     .fontWeight(.medium)
@@ -357,40 +596,23 @@ struct RecipeBoxView: View {
                         ContentUnavailableView(
                             "No Recipes Yet",
                             systemImage: "book.closed",
-                            description: Text("Create your first recipe using AI or manual entry")
+                            description: Text("Create your first recipe automatically or with manual entry")
                         )
                         .padding(.vertical, 40)
                     } else {
                         VStack(spacing: 12) {
-                            ForEach(appState.recipes) { recipe in
-                                NavigationLink(destination: RecipeDetailView(recipe: recipe, appState: appState)) {
-                                    RecipeListRow(recipe: recipe)
-                                }
-                            }
-                            
-                            // Load More Button
-                            if appState.recipeManager.hasMoreRecipes {
-                                Button {
-                                    appState.recipeManager.loadMoreRecipes(context: modelContext)
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "arrow.down.circle")
-                                        Text("Load More Recipes")
-                                    }
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(appState.themeColor)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(appState.themeColor.opacity(0.1))
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            ForEach($recipeManager.recipes) { $recipe in
+                                NavigationLink(destination: RecipeDetailView(recipe: $recipe, appState: appState)) {
+                                    RecipeListRow(recipe: $recipe.wrappedValue)
                                 }
                             }
                         }
                         .padding(.horizontal)
                         .refreshable {
-                            // Pull to refresh - reload first page
-                            appState.recipeManager.loadData(context: modelContext)
+                            // Pull to refresh - reload data
+                            if let ownerId = appState.currentOwnerId {
+                                appState.recipeManager.loadData(ownerId: ownerId)
+                            }
                         }
                     }
                 }
@@ -480,7 +702,7 @@ struct RecipeListRow: View {
 
 struct ShoppingListView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.errorPresenter) private var errorPresenter
     @Bindable var appState: AppState
     @State private var newItemName = ""
     @State private var newItemQuantity = ""
@@ -653,17 +875,22 @@ struct ShoppingListView: View {
                 case .recipePicker:
                     GenericRecipePickerSheet(appState: appState) { recipe in
                         // Add ingredients from recipe with parsing
-                        for ingredient in recipe.parsedIngredients {
-                            let parsed = appState.recipeManager.parseIngredient(ingredient)
-                            let category = appState.recipeManager.categorizeIngredient(parsed.name)
-                            let item = ShoppingListItem(
-                                name: parsed.name,
-                                quantity: parsed.quantity,
-                                unit: parsed.unit,
-                                category: category,
-                                source: .manual
-                            )
-                            appState.addShoppingListItem(item, context: modelContext)
+                        if let ownerId = appState.currentOwnerId {
+                            for ingredient in recipe.parsedIngredients {
+                                let parsed = appState.recipeManager.parseIngredient(ingredient)
+                                let category = appState.recipeManager.categorizeIngredient(parsed.name)
+                                let item = ShoppingListItem(
+                                    ownerId: ownerId,
+                                    name: parsed.name,
+                                    quantity: parsed.quantity,
+                                    unit: parsed.unit,
+                                    category: category,
+                                    source: .manual
+                                )
+                                Task {
+                                    try? await appState.addShoppingListItem(item)
+                                }
+                            }
                         }
                     }
                 case .addItemDetail:
@@ -673,15 +900,20 @@ struct ShoppingListView: View {
                         unit: $newItemUnit,
                         appState: appState,
                         onAdd: {
-                            let category = appState.recipeManager.categorizeIngredient(newItemName)
-                            let item = ShoppingListItem(
-                                name: newItemName,
-                                quantity: newItemQuantity.isEmpty ? nil : newItemQuantity,
-                                unit: newItemUnit.isEmpty ? nil : newItemUnit,
-                                category: category,
-                                source: .manual
-                            )
-                            appState.addShoppingListItem(item, context: modelContext)
+                            if let ownerId = appState.currentOwnerId {
+                                let category = appState.recipeManager.categorizeIngredient(newItemName)
+                                let item = ShoppingListItem(
+                                    ownerId: ownerId,
+                                    name: newItemName,
+                                    quantity: newItemQuantity.isEmpty ? nil : newItemQuantity,
+                                    unit: newItemUnit.isEmpty ? nil : newItemUnit,
+                                    category: category,
+                                    source: .manual
+                                )
+                                Task {
+                                    try? await appState.addShoppingListItem(item)
+                                }
+                            }
                             newItemName = ""
                             newItemQuantity = ""
                             newItemUnit = ""
@@ -716,7 +948,7 @@ struct ShoppingListView: View {
     private func deleteItems(at indexSet: IndexSet, in category: GroceryCategory) {
         let items = groupedItems[category] ?? []
         for index in indexSet {
-            appState.removeShoppingListItem(items[index], context: modelContext)
+            appState.removeShoppingListItem(items[index])
         }
     }
     
@@ -775,7 +1007,9 @@ struct ShoppingItemRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Button {
-                appState.toggleShoppingItemComplete(item)
+                Task {
+                    try? await appState.toggleShoppingItemComplete(item)
+                }
             } label: {
                 Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
@@ -813,6 +1047,7 @@ struct ShoppingItemRow: View {
 
 struct AddItemDetailSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
     @Binding var itemName: String
     @Binding var quantity: String
     @Binding var unit: String
@@ -861,7 +1096,7 @@ struct AddItemDetailSheet: View {
 
 struct FoodPickerSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.errorPresenter) private var errorPresenter
     @Bindable var appState: AppState
     @State private var searchText = ""
     
@@ -876,8 +1111,12 @@ struct FoodPickerSheet: View {
         NavigationStack {
             List(filteredFoods) { food in
                 Button {
-                    let item = ShoppingListItem(name: food.name, source: .manual)
-                    appState.addShoppingListItem(item, context: modelContext)
+                    if let ownerId = appState.currentOwnerId {
+                        let item = ShoppingListItem(ownerId: ownerId, name: food.name, source: .manual)
+                        Task {
+                            try? await appState.addShoppingListItem(item)
+                        }
+                    }
                     dismiss()
                 } label: {
                     HStack {
@@ -903,10 +1142,10 @@ struct FoodPickerSheet: View {
 // MARK: - Unchanged Components (RecipeDetailView, RecipeFormView, AIRecipeGeneratorSheet)
 
 struct RecipeDetailView: View {
-    let recipe: Recipe
+    @Binding var recipe: Recipe
     var appState: AppState
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
     @State private var showingEditSheet = false
     @State private var showingDeleteAlert = false
     @State private var isLoadingSubstitutions = false
@@ -964,7 +1203,7 @@ struct RecipeDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundStyle(.red)
+                            .foregroundStyle(.red)
                             Text("Allergen Warning")
                                 .font(.headline)
                                 .foregroundStyle(.red)
@@ -996,7 +1235,7 @@ struct RecipeDetailView: View {
                             .padding(.top, 8)
                         } else if let suggestions = substitutionSuggestions {
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("AI Suggestions:")
+                                Text("Suggestions:")
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(appState.themeColor)
@@ -1036,7 +1275,7 @@ struct RecipeDetailView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                             }
                             .padding(.top, 8)
-                            .accessibilityLabel("Get AI Substitution Suggestions")
+                            .accessibilityLabel("Get Smart Substitution Suggestions")
                         }
                     }
                     .padding()
@@ -1121,7 +1360,7 @@ struct RecipeDetailView: View {
         }
         .alert("Delete Recipe?", isPresented: $showingDeleteAlert) {
             Button("Delete", role: .destructive) {
-                appState.deleteRecipe(recipe, context: modelContext)
+                appState.deleteRecipe(recipe)
                 dismiss()
             }
             Button("Cancel", role: .cancel) {}
@@ -1166,14 +1405,19 @@ struct RecipeDetailView: View {
                     // Update the current recipe instead of creating a new one
                     recipe.ingredients = modifiedIngredients
                     recipe.title = "\(recipe.title) (Allergen-Free)"
-                    
-                    HapticManager.success()
+                }
+                
+                // Save changes to persistence
+                try await appState.saveRecipe(recipe)
+                
+                await MainActor.run {
+                    errorPresenter.showSuccess("Recipe updated")
                     substitutionSuggestions = nil
                     showingApplySubstitution = false
                 }
             } catch {
                 await MainActor.run {
-                    HapticManager.error()
+                    errorPresenter.present(error)
                 }
             }
         }
@@ -1214,8 +1458,8 @@ struct RecipeDetailView: View {
 }
 
 struct RecipeFormView: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
     var appState: AppState
     
     enum Mode {
@@ -1345,69 +1589,146 @@ struct RecipeFormView: View {
     }
     
     private func saveRecipe() {
-        switch mode {
-        case .new:
-            let recipe = Recipe(
-                title: title,
-                ingredients: ingredients,
-                instructions: instructions,
-                imageData: selectedImageData
-            )
-            appState.saveRecipe(recipe, context: modelContext)
-            
-        case .edit(let recipe):
-            recipe.title = title
-            recipe.ingredients = ingredients
-            recipe.instructions = instructions
-            recipe.imageData = selectedImageData
+        Task {
+            do {
+                switch mode {
+                case .new:
+                    if let ownerId = appState.currentOwnerId {
+                        let recipe = Recipe(
+                            ownerId: ownerId,
+                            title: title,
+                            ingredients: ingredients,
+                            instructions: instructions,
+                            imageData: selectedImageData
+                        )
+                        try await appState.saveRecipe(recipe)
+                    }
+                    
+                case .edit(let recipe):
+                    var updatedRecipe = recipe
+                    updatedRecipe.title = title
+                    updatedRecipe.ingredients = ingredients
+                    updatedRecipe.instructions = instructions
+                    updatedRecipe.imageData = selectedImageData
+                    
+                    try await appState.saveRecipe(updatedRecipe)
+                }
+                
+                errorPresenter.showSuccess("Recipe saved")
+                dismiss()
+            } catch {
+                errorPresenter.present(error)
+            }
         }
-        dismiss()
     }
 }
 
 struct AIRecipeGeneratorSheet: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
     @Bindable var appState: AppState
     
     @State private var ingredientsInput = ""
     @State private var isGenerating = false
+    @State private var generatedRecipe: Recipe?
     
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Ingredients") {
-                    TextEditor(text: $ingredientsInput)
-                        .frame(height: 100)
-                    Text("Enter available ingredients separated by commas")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                
-                Section {
-                    Button {
-                        generateRecipe()
-                    } label: {
-                        if isGenerating {
-                            HStack {
-                                ProgressView()
-                                Text("Generating...")
+            Group {
+                if let recipe = generatedRecipe {
+                    // Preview Mode
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text(recipe.title)
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                            
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Ingredients")
+                                    .font(.headline)
+                                    .foregroundStyle(appState.themeColor)
+                                
+                                Text(recipe.ingredients)
                             }
-                        } else {
-                            HStack {
-                                SageIcon(size: .medium, style: .gradient)
-                                Text("Generate Recipe with AI")
+                            .padding()
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Instructions")
+                                    .font(.headline)
+                                    .foregroundStyle(appState.themeColor)
+                                
+                                Text(recipe.instructions)
                             }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
+                            .padding()
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .padding()
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        VStack(spacing: 12) {
+                            Button {
+                                saveRecipe(recipe)
+                            } label: {
+                                Text("Save to Cookbook")
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(appState.themeColor)
+                                    .clipShape(Capsule())
+                            }
+                            
+                            Button("Try Again") {
+                                withAnimation {
+                                    generatedRecipe = nil
+                                }
+                            }
+                            .foregroundStyle(.secondary)
+                        }
+                        .padding()
+                        .background(.ultraThinMaterial)
+                    }
+                    .navigationTitle("Recipe Preview")
+                } else {
+                    // Input Mode
+                    Form {
+                        Section("Ingredients") {
+                            TextEditor(text: $ingredientsInput)
+                                .frame(height: 100)
+                            Text("Enter available ingredients separated by commas")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        Section {
+                            Button {
+                                generateRecipe()
+                            } label: {
+                                if isGenerating {
+                                    HStack {
+                                        ProgressView()
+                                        Text("Generating...")
+                                    }
+                                } else {
+                                    HStack {
+                                        SageIcon(size: .medium, style: .gradient)
+                                        Text("Generate Recipe")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 8)
+                                }
+                            }
+                            .disabled(ingredientsInput.isEmpty || isGenerating)
+                            .accessibilityLabel("Generate Recipe")
+                            .accessibilityHint("Creates a recipe based on entered ingredients")
                         }
                     }
-                    .disabled(ingredientsInput.isEmpty || isGenerating)
-                    .accessibilityLabel("Generate Recipe")
-                    .accessibilityHint("Creates a recipe based on entered ingredients")
+                    .navigationTitle("Chef Sage")
                 }
             }
-            .navigationTitle("AI Recipe Generator")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -1423,12 +1744,37 @@ struct AIRecipeGeneratorSheet: View {
         Task {
             do {
                 let recipe = try await appState.generateRecipe(ingredients: ingredients)
-                appState.saveRecipe(recipe, context: modelContext)
-                dismiss()
+                
+                await MainActor.run {
+                    self.generatedRecipe = recipe
+                    self.isGenerating = false
+                }
             } catch {
-                print("Error generating recipe: \(error)")
+                await MainActor.run {
+                    errorPresenter.present(error)
+                    self.isGenerating = false
+                }
             }
-            isGenerating = false
+        }
+    }
+    
+    private func saveRecipe(_ recipe: Recipe) {
+        guard let ownerId = appState.currentOwnerId else { return }
+        
+        Task {
+            do {
+                var recipeToSave = recipe
+                recipeToSave.ownerId = ownerId
+                try await appState.saveRecipe(recipeToSave)
+                await MainActor.run {
+                    errorPresenter.showSuccess("Recipe saved")
+                    dismiss()
+                }
+            } catch {
+                await MainActor.run {
+                    errorPresenter.present(error)
+                }
+            }
         }
     }
 }
@@ -1443,6 +1789,7 @@ extension Calendar {
 
 struct GenericRecipePickerSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.errorPresenter) private var errorPresenter
     @Bindable var appState: AppState
     let onSelect: (Recipe) -> Void
     

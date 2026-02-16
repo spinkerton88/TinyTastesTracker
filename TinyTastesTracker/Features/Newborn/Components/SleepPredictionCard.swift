@@ -20,7 +20,7 @@ struct SleepPredictionCard: View {
             HStack {
                 Image(systemName: "brain.head.profile")
                     .foregroundStyle(themeColor)
-                Text("AI Sleep Prediction")
+                Text("Smart Sleep Prediction")
                     .font(.title3)
                     .fontWeight(.bold)
                 

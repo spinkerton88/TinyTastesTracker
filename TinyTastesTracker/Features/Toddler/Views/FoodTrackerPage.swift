@@ -4,7 +4,6 @@
 import SwiftUI
 
 struct FoodTrackerPage: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     
     @State private var selectedFood: FoodItem?
@@ -235,8 +234,11 @@ struct FoodTrackerPage: View {
     
     @ViewBuilder
     private var mainContent: some View {
-        ScrollView {
-            VStack(spacing: 20) {
+        ZStack {
+            GradientBackground(color: appState.themeColor)
+            
+            ScrollView {
+                VStack(spacing: 20) {
                 progressHeader
                 searchBar
                 filterChips
@@ -255,6 +257,7 @@ struct FoodTrackerPage: View {
                 foodGridContent
             }
             .padding(.bottom, 100)
+        }
         }
     }
     
@@ -294,7 +297,21 @@ struct FoodTrackerPage: View {
                     ToolbarItem(placement: .primaryAction) {
                         HStack {
                             Button(action: { showingAddCustomFood = true }) {
-                                Image(systemName: "plus")
+                                ZStack(alignment: .bottomTrailing) {
+                                    // Carrot SF Symbol as main icon
+                                    Image(systemName: "carrot.fill")
+
+                                    // Plus badge overlay
+                                    Circle()
+                                        .fill(appState.themeColor)
+                                        .frame(width: 14, height: 14)
+                                        .overlay {
+                                            Image(systemName: "plus")
+                                                .font(.system(size: 8, weight: .bold))
+                                                .foregroundStyle(.white)
+                                        }
+                                        .offset(x: 3, y: 3)
+                                }
                             }
                             .accessibilityLabel("Add Custom Food")
                             
@@ -331,7 +348,11 @@ struct FoodTrackerPage: View {
                 }
             }
             .fullScreenCover(isPresented: $showingCamera) {
-                CameraView { capturedImage in
+                CameraView(
+                    title: "Identify Food",
+                    subtitle: "Point camera at food to identify",
+                    iconName: "carrot.fill"
+                ) { capturedImage in
                     Task {
                         await identifyAndSelectFood(from: capturedImage)
                     }
@@ -349,7 +370,7 @@ struct FoodTrackerPage: View {
                 if let error = identificationError {
                     Text(error)
                 } else {
-                    Text("AI identified: \(aiIdentifiedFoodName)\n\nThis food isn't in our database yet. Try searching for it manually or log a similar food.")
+                    Text("Identified: \(aiIdentifiedFoodName)\n\nThis food isn't in our database yet. Try searching for it manually or log a similar food.")
                 }
             }
             .alert("Allergen Warning", isPresented: $showAllergenWarning) {
@@ -376,7 +397,7 @@ struct FoodTrackerPage: View {
             ) { food in
                 Button("Unmark", role: .destructive) {
                     lastUnmarkedFoodId = food.id
-                    appState.unmarkFoodAsTried(food.id, context: modelContext)
+                    appState.unmarkFoodAsTried(food.id)
                     withAnimation {
                         showUndoToast = true
                     }
@@ -393,7 +414,7 @@ struct FoodTrackerPage: View {
     
     private func performUndo() {
         if let foodId = lastUnmarkedFoodId {
-            appState.undoUnmarkFood(foodId, context: modelContext)
+            appState.undoUnmarkFood(foodId)
             withAnimation {
                 showUndoToast = false
             }

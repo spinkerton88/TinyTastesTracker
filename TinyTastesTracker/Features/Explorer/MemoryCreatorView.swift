@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct MemoryCreatorView: View {
     @Bindable var appState: AppState
@@ -271,8 +270,8 @@ struct MemoryCreatorView: View {
         
         // Prepare Sendable data on MainActor
         let assets = availablePhotos.compactMap { log -> PhotoAssetData? in
-            guard let data = log.messyFaceImage else { return nil }
-            return PhotoAssetData(id: log.id, date: log.date, imageData: data)
+            guard let data = log.messyFaceImage, let id = log.id else { return nil }
+            return PhotoAssetData(id: id, date: log.date, imageData: data)
         }
         let type = selectedMemoryType
         let range = dateRange

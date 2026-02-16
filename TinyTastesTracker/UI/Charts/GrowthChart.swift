@@ -242,7 +242,7 @@ struct GrowthChart: View {
                         HStack {
                             Image("sage.leaf.sprig")
                                 .foregroundStyle(.purple)
-                            Text("AI Growth Insights")
+                            Text("Growth Insights")
                                 .font(.headline)
                             Spacer()
                         }
@@ -309,7 +309,7 @@ struct GrowthChart: View {
     
     private func exportChart() {
         let metadata = ExportMetadata(
-            babyName: appState.userProfile?.babyName ?? "Baby",
+            babyName: appState.userProfile?.name ?? "Baby",
             ageMonths: appState.userProfile?.ageInMonths ?? 0,
             chartType: "Growth Chart - \(selectedMetric.rawValue)",
             dateRange: nil
@@ -348,7 +348,7 @@ struct GrowthChart: View {
     }
     
     @ChartContentBuilder
-    private func percentileOverlays(for profile: UserProfile) -> some ChartContent {
+    private func percentileOverlays(for profile: ChildProfile) -> some ChartContent {
         let whoMetric = mapToWHOMetric(selectedMetric)
         
         // Get birth date and calculate age range for percentile curves

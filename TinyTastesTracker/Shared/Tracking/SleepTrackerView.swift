@@ -6,13 +6,10 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct SleepTrackerView: View {
     let mode: AppMode
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
-    
     @State private var showingSleepSheet = false
     @State private var isSleeping = false
     @State private var currentTime = Date()

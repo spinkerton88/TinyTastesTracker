@@ -50,16 +50,23 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             isProcessingQueue = false
             return
         }
-        
+
         isProcessingQueue = true
         let audioData = audioQueue.removeFirst()
-        
+
         do {
+            // Stop and clear old player's delegate to prevent crash
+            if let oldPlayer = audioPlayer {
+                oldPlayer.delegate = nil
+                oldPlayer.stop()
+            }
+
+            // Create new player
             audioPlayer = try AVAudioPlayer(data: audioData)
             audioPlayer?.delegate = self
             audioPlayer?.prepareToPlay()
             audioPlayer?.play()
-            
+
             DispatchQueue.main.async {
                 self.isPlaying = true
             }
@@ -72,38 +79,48 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     
     /// Stop current playback and clear queue
     func stop() {
+        audioPlayer?.delegate = nil  // Clear delegate to prevent crash
         audioPlayer?.stop()
         audioQueue.removeAll()
         isProcessingQueue = false
-        
+
         DispatchQueue.main.async {
             self.isPlaying = false
         }
     }
     
     // MARK: - AVAudioPlayerDelegate
-    
+
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        DispatchQueue.main.async {
-            self.isPlaying = false
+        // Guard against calls after deallocation
+        guard audioPlayer != nil else { return }
+
+        DispatchQueue.main.async { [weak self] in
+            self?.isPlaying = false
         }
-        
+
         // Process next item in queue
         processQueue()
     }
-    
+
     func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+        // Guard against calls after deallocation
+        guard audioPlayer != nil else { return }
+
         print("Audio player decode error: \(error?.localizedDescription ?? "unknown")")
-        
-        DispatchQueue.main.async {
-            self.isPlaying = false
+
+        DispatchQueue.main.async { [weak self] in
+            self?.isPlaying = false
         }
-        
+
         // Try next item in queue
         processQueue()
     }
     
     deinit {
-        stop()
+        // CRITICAL: Clear delegate immediately to prevent crash
+        audioPlayer?.delegate = nil
+        audioPlayer?.stop()
+        audioQueue.removeAll()
     }
 }

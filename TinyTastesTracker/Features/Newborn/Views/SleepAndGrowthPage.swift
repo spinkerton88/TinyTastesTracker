@@ -1,16 +1,20 @@
 import SwiftUI
-import SwiftData
 
 struct SleepAndGrowthPage: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     
     @State private var showingGrowthSheet = false
-    @Query(sort: \SleepLog.startTime, order: .reverse) private var sleepLogs: [SleepLog]
+    
+    private var sleepLogs: [SleepLog] {
+        appState.sleepLogs.sorted { $0.startTime > $1.startTime }
+    }
     
     var body: some View {
         NavigationStack {
-            ScrollView {
+            ZStack {
+                GradientBackground(color: appState.themeColor)
+                
+                ScrollView {
                 VStack(spacing: 24) {
                     
                     // MARK: - Sleep Insights
@@ -91,6 +95,7 @@ struct SleepAndGrowthPage: View {
                 }
                 .padding()
             }
+            }
             .navigationTitle("Sleep & Growth")
             .withSage(context: "User is checking Sleep & Growth insights. Last 24h stats: Feedings, Diapers, Sleep.", appState: appState)
             .sheet(isPresented: $showingGrowthSheet) {
@@ -168,7 +173,7 @@ struct SleepSessionRow: View {
 // MARK: - Growth Row
 struct GrowthRow: View {
     let measurement: GrowthMeasurement
-    let userProfile: UserProfile?
+    let userProfile: ChildProfile?
     
     private func calculatePercentile(value: Double, metric: String, ageInMonths: Int, gender: Gender) -> Int? {
         guard ageInMonths >= 0 else { return nil }

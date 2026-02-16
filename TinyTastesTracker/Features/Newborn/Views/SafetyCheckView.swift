@@ -1,8 +1,6 @@
 import SwiftUI
-import SwiftData
 
 struct SafetyCheckView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
     
     @State private var isChecking = false
@@ -11,19 +9,22 @@ struct SafetyCheckView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
+            ZStack {
+                GradientBackground(color: appState.themeColor)
+                
+                ScrollView {
                 VStack(spacing: 24) {
                     // Header Card
                     VStack(spacing: 12) {
                         Image(systemName: "checkmark.shield.fill")
                             .font(.system(size: 60))
                             .foregroundStyle(.pink.gradient)
-                        
+
                         Text("Is It Normal?")
                             .font(.title)
                             .fontWeight(.bold)
-                        
-                        Text("Get AI-powered safety guidance based on your baby's daily logs")
+
+                        Text("Get personalized safety guidance based on your baby's daily logs")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
@@ -106,6 +107,7 @@ struct SafetyCheckView: View {
                 }
                 .padding()
             }
+            }
             .navigationTitle("Safety Check")
             .navigationBarTitleDisplayMode(.inline)
         }
@@ -114,34 +116,19 @@ struct SafetyCheckView: View {
     // MARK: - Computed Properties
     
     private var todayWetDiapers: Int {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        return appState.diaperLogs.filter { log in
-            calendar.isDate(log.timestamp, inSameDayAs: today) && (log.type == .wet || log.type == .both)
-        }.count
+        appState.todayStats.wetDiapers
     }
     
     private var todayDirtyDiapers: Int {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        return appState.diaperLogs.filter { log in
-            calendar.isDate(log.timestamp, inSameDayAs: today) && (log.type == .dirty || log.type == .both)
-        }.count
+        appState.todayStats.dirtyDiapers
     }
     
     private var todayFeedings: Int {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let nursing = appState.nursingLogs.filter { calendar.isDate($0.timestamp, inSameDayAs: today) }.count
-        let bottle = appState.bottleFeedLogs.filter { calendar.isDate($0.timestamp, inSameDayAs: today) }.count
-        return nursing + bottle
+        appState.todayStats.feedingCount
     }
     
     private var todaySleepHours: Double {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let todaySleep = appState.sleepLogs.filter { calendar.isDate($0.startTime, inSameDayAs: today) }
-        return todaySleep.reduce(0.0) { $0 + $1.duration } / 3600.0
+        appState.todayStats.sleepHours
     }
     
     // MARK: - Actions

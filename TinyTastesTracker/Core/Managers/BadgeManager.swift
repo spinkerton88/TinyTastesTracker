@@ -2,67 +2,79 @@
 //  BadgeManager.swift
 //  TinyTastesTracker
 //
-//  Created by Antigravity AI on 1/3/26.
+//  Manages logic for unlocking badges based on user activity
 //
 
 import Foundation
-import SwiftData
 
+@MainActor
 class BadgeManager {
     static let shared = BadgeManager()
     
     private init() {}
     
-    func refreshBadges(for profile: UserProfile, context: ModelContext) {
-        guard let badges = profile.badges else { return }
+    /// Checks and updates badge progress based on AppState logs
+    /// Returns the updated list of badges if changes occurred, otherwise returns nil
+    func checkBadges(for profile: ChildProfile, appState: AppState) -> [Badge]? {
+        guard let badges = profile.badges else { return nil }
         
-        let explorerBadges = badges.filter { $0.category == .explorer }
+        var updatedBadges = badges
+        var hasChanges = false
+        
+        // Filter badges by category to optimize checks
+        let explorerBadges = updatedBadges.filter { $0.category == .explorer }
         if !explorerBadges.isEmpty {
-            updateExplorerBadges(explorerBadges, for: profile, context: context)
+            if updateExplorerBadges(&updatedBadges, appState: appState) {
+                hasChanges = true
+            }
         }
         
-        let newbornBadges = badges.filter { $0.category == .newborn }
+        let newbornBadges = updatedBadges.filter { $0.category == .newborn }
         if !newbornBadges.isEmpty {
-            updateNewbornBadges(newbornBadges, for: profile, context: context)
+            if updateNewbornBadges(&updatedBadges, appState: appState) {
+                hasChanges = true
+            }
         }
         
-        // Save changes if any
-        try? context.save()
+        return hasChanges ? updatedBadges : nil
     }
     
     // MARK: - Explorer Logic
-    private func updateExplorerBadges(_ badges: [Badge], for profile: UserProfile, context: ModelContext) {
-        // Fetch all tried foods (id is the food ID string)
-        let triedFoodsDescriptor = FetchDescriptor<TriedFoodLog>()
-        guard let allTriedFoods = try? context.fetch(triedFoodsDescriptor) else { return }
-        
+    private func updateExplorerBadges(_ badges: inout [Badge], appState: AppState) -> Bool {
+        var hasChanges = false
+        let triedFoods = appState.foodLogs // Assuming appState has foodLogs loaded
+        let allFoods = appState.recipeManager.allKnownFoods
+
         // Helper to find food details
         func getFoodItem(for log: TriedFoodLog) -> FoodItem? {
-            return Constants.allFoods.first { $0.id == log.id }
+            return allFoods.first { $0.id == log.foodName } // log.foodName is likely the storage key/ID
         }
         
-        let greenVeggiesCount = allTriedFoods.filter { log in
+        // Calculate Counts
+        let greenVeggiesCount = triedFoods.filter { log in
             guard let item = getFoodItem(for: log) else { return false }
             return item.color == .green && item.category == .vegetables
         }.count
         
-        // Count unique IDs
-        let uniqueFoodsCount = Set(allTriedFoods.map { $0.id }).count
+        let uniqueFoodsCount = Set(triedFoods.map { $0.foodName }).count
         
-        let fruitCount = allTriedFoods.filter { log in
+        let fruitCount = triedFoods.filter { log in
             guard let item = getFoodItem(for: log) else { return false }
             return item.category == .fruits
         }.count
         
-        let proteinCount = allTriedFoods.filter { log in
+        let proteinCount = triedFoods.filter { log in
             guard let item = getFoodItem(for: log) else { return false }
             return item.category == .proteins
         }.count
         
-        for badge in badges {
-            var newProgress = badge.progress
+        // Update Badges
+        for i in 0..<badges.count {
+            if badges[i].category != .explorer { continue }
             
-            switch badge.type {
+            var newProgress = badges[i].progress
+            
+            switch badges[i].type {
             case .greenMachine:
                 newProgress = greenVeggiesCount
             case .firstTen:
@@ -75,29 +87,32 @@ class BadgeManager {
                 break
             }
             
-            updateBadgeStatus(badge, progress: newProgress)
+            if updateBadgeStatus(&badges[i], progress: newProgress) {
+                hasChanges = true
+            }
         }
+        
+        return hasChanges
     }
     
     // MARK: - Newborn Logic
-    private func updateNewbornBadges(_ badges: [Badge], for profile: UserProfile, context: ModelContext) {
-        // Fetch specific log types
-        let sleepDescriptor = FetchDescriptor<SleepLog>()
-        let nursingDescriptor = FetchDescriptor<NursingLog>()
-        let bottleDescriptor = FetchDescriptor<BottleFeedLog>()
-        let growthDescriptor = FetchDescriptor<GrowthMeasurement>()
+    private func updateNewbornBadges(_ badges: inout [Badge], appState: AppState) -> Bool {
+        var hasChanges = false
         
-        let sleepCount = (try? context.fetch(sleepDescriptor))?.count ?? 0
-        let nursingCount = (try? context.fetch(nursingDescriptor))?.count ?? 0
-        let bottleCount = (try? context.fetch(bottleDescriptor))?.count ?? 0
-        let growthCount = (try? context.fetch(growthDescriptor))?.count ?? 0
+        // Helper counts from AppState
+        let sleepCount = appState.sleepLogs.count
+        let nursingCount = appState.nursingLogs.count
+        let bottleCount = appState.bottleFeedLogs.count
+        let growthCount = appState.growthMeasurements.count
         
         let totalFeedCount = nursingCount + bottleCount
         
-        for badge in badges {
-            var newProgress = badge.progress
+        for i in 0..<badges.count {
+            if badges[i].category != .newborn { continue }
             
-            switch badge.type {
+            var newProgress = badges[i].progress
+            
+            switch badges[i].type {
             case .sleepPro:
                 newProgress = sleepCount
             case .milkMonster:
@@ -108,11 +123,15 @@ class BadgeManager {
                 break
             }
             
-            updateBadgeStatus(badge, progress: newProgress)
+            if updateBadgeStatus(&badges[i], progress: newProgress) {
+                hasChanges = true
+            }
         }
+        
+        return hasChanges
     }
     
-    private func updateBadgeStatus(_ badge: Badge, progress: Int) {
+    private func updateBadgeStatus(_ badge: inout Badge, progress: Int) -> Bool {
         if badge.progress != progress {
             badge.progress = min(progress, badge.target) // Cap at target for UI
             
@@ -120,6 +139,8 @@ class BadgeManager {
                 badge.isUnlocked = true
                 badge.dateUnlocked = Date()
             }
+            return true
         }
+        return false
     }
 }

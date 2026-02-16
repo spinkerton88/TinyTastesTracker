@@ -42,7 +42,7 @@ struct QuickLogEntryView: View {
             VStack(spacing: 8) {
                 HStack(spacing: 8) {
                     logButton(
-                        icon: "drop.fill",
+                        icon: "fork.knife",
                         label: "Bottle",
                         lastTime: entry.lastBottleTime,
                         color: .pink,
@@ -76,7 +76,11 @@ struct QuickLogEntryView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
         }
-        .background(Color(UIColor.systemBackground))
+        .background {
+            if #unavailable(iOS 17.0) {
+                Color(UIColor.systemBackground)
+            }
+        }
     }
 
     // MARK: - Large Widget (3x2 grid)
@@ -102,7 +106,7 @@ struct QuickLogEntryView: View {
             VStack(spacing: 10) {
                 HStack(spacing: 10) {
                     logButton(
-                        icon: "drop.fill",
+                        icon: "fork.knife",
                         label: "Bottle",
                         lastTime: entry.lastBottleTime,
                         color: .pink,
@@ -156,7 +160,11 @@ struct QuickLogEntryView: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 20)
         }
-        .background(Color(UIColor.systemBackground))
+        .background {
+            if #unavailable(iOS 17.0) {
+                Color(UIColor.systemBackground)
+            }
+        }
     }
 
     // MARK: - Button Component

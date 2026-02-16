@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 // MARK: - Editable Log Enum
 
@@ -19,15 +18,15 @@ enum EditableLog: Identifiable {
     case pumping(PumpingLog)
     case growth(GrowthMeasurement)
     
-    var id: UUID {
+    var id: String {
         switch self {
-        case .nursing(let log): return log.id
-        case .bottle(let log): return log.id
-        case .diaper(let log): return log.id
-        case .sleep(let log): return log.id
-        case .medication(let log): return log.id
-        case .pumping(let log): return log.id
-        case .growth(let measurement): return measurement.id
+        case .nursing(let log): return log.id ?? UUID().uuidString
+        case .bottle(let log): return log.id ?? UUID().uuidString
+        case .diaper(let log): return log.id ?? UUID().uuidString
+        case .sleep(let log): return log.id ?? UUID().uuidString
+        case .medication(let log): return log.id ?? UUID().uuidString
+        case .pumping(let log): return log.id ?? UUID().uuidString
+        case .growth(let measurement): return measurement.id ?? UUID().uuidString
         }
     }
 }
@@ -35,10 +34,15 @@ enum EditableLog: Identifiable {
 // MARK: - Edit Log Sheet
 
 struct EditLogSheet: View {
-    let log: EditableLog
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    
+    @State private var draftLog: EditableLog
+    
+    init(log: EditableLog, appState: AppState) {
+        self.appState = appState
+        _draftLog = State(initialValue: log)
+    }
     
     var body: some View {
         NavigationStack {
@@ -64,29 +68,63 @@ struct EditLogSheet: View {
     }
     
     private func saveChanges() {
-        // Changes are automatically saved because we're editing the objects directly
-        // SwiftData observes the changes
-        try? modelContext.save()
+        switch draftLog {
+        case .nursing(let log):
+            appState.updateNursingLog(log)
+        case .bottle(let log):
+            appState.updateBottleFeedLog(log)
+        case .diaper(let log):
+            appState.updateDiaperLog(log)
+        case .sleep(let log):
+            appState.updateSleepLog(log)
+        case .medication(let log):
+            appState.updateMedicationLog(log)
+        case .pumping(let log):
+            appState.updatePumpingLog(log)
+        case .growth(let log):
+            appState.updateGrowthMeasurement(log)
+        }
         HapticManager.success()
     }
     
     @ViewBuilder
     private var formContent: some View {
-        switch log {
-        case .nursing(let nursingLog):
-            NursingEditForm(log: nursingLog)
-        case .bottle(let bottleLog):
-            BottleEditForm(log: bottleLog)
-        case .diaper(let diaperLog):
-            DiaperEditForm(log: diaperLog)
-        case .sleep(let sleepLog):
-            SleepEditForm(log: sleepLog)
-        case .medication(let medLog):
-            MedicationEditForm(log: medLog)
-        case .pumping(let pumpLog):
-            PumpingEditForm(log: pumpLog)
-        case .growth(let measurement):
-            GrowthEditForm(measurement: measurement)
+        switch draftLog {
+        case .nursing(let log):
+            NursingEditForm(log: Binding(
+                get: { log },
+                set: { draftLog = .nursing($0) }
+            ))
+        case .bottle(let log):
+            BottleEditForm(log: Binding(
+                get: { log },
+                set: { draftLog = .bottle($0) }
+            ))
+        case .diaper(let log):
+            DiaperEditForm(log: Binding(
+                get: { log },
+                set: { draftLog = .diaper($0) }
+            ))
+        case .sleep(let log):
+            SleepEditForm(log: Binding(
+                get: { log },
+                set: { draftLog = .sleep($0) }
+            ))
+        case .medication(let log):
+            MedicationEditForm(log: Binding(
+                get: { log },
+                set: { draftLog = .medication($0) }
+            ))
+        case .pumping(let log):
+            PumpingEditForm(log: Binding(
+                get: { log },
+                set: { draftLog = .pumping($0) }
+            ))
+        case .growth(let log):
+            GrowthEditForm(measurement: Binding(
+                get: { log },
+                set: { draftLog = .growth($0) }
+            ))
         }
     }
 }
@@ -94,7 +132,7 @@ struct EditLogSheet: View {
 // MARK: - Nursing Edit Form
 
 struct NursingEditForm: View {
-    @Bindable var log: NursingLog
+    @Binding var log: NursingLog
     
     var body: some View {
         Section("Details") {
@@ -125,7 +163,7 @@ struct NursingEditForm: View {
 // MARK: - Bottle Edit Form
 
 struct BottleEditForm: View {
-    @Bindable var log: BottleFeedLog
+    @Binding var log: BottleFeedLog
     
     var body: some View {
         Section("Details") {
@@ -158,7 +196,7 @@ struct BottleEditForm: View {
 // MARK: - Diaper Edit Form
 
 struct DiaperEditForm: View {
-    @Bindable var log: DiaperLog
+    @Binding var log: DiaperLog
     
     var body: some View {
         Section("Details") {
@@ -176,7 +214,7 @@ struct DiaperEditForm: View {
 // MARK: - Sleep Edit Form
 
 struct SleepEditForm: View {
-    @Bindable var log: SleepLog
+    @Binding var log: SleepLog
     
     var body: some View {
         Section("Time") {
@@ -216,7 +254,7 @@ struct SleepEditForm: View {
 // MARK: - Medication Edit Form
 
 struct MedicationEditForm: View {
-    @Bindable var log: MedicationLog
+    @Binding var log: MedicationLog
     
     var body: some View {
         Section("Details") {
@@ -255,7 +293,7 @@ struct MedicationEditForm: View {
 // MARK: - Pumping Edit Form
 
 struct PumpingEditForm: View {
-    @Bindable var log: PumpingLog
+    @Binding var log: PumpingLog
     
     var body: some View {
         Section("Details") {
@@ -296,7 +334,7 @@ struct PumpingEditForm: View {
 // MARK: - Growth Edit Form
 
 struct GrowthEditForm: View {
-    @Bindable var measurement: GrowthMeasurement
+    @Binding var measurement: GrowthMeasurement
     
     var body: some View {
         Section("Date") {

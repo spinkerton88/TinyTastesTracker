@@ -1,0 +1,262 @@
+/*
+  Localizable.strings
+  TinyTastesTracker
+
+  Created by Tiny Tastes Tracker AI on 2024.
+*/
+
+// MARK: - Onboarding / Welcome
+"onboarding.welcome.pretitle" = "Welcome to";
+"onboarding.welcome.title" = "Tiny Tastes Tracker";
+"onboarding.welcome.subtitle" = "Track your little one's feeding journey with personalized guidance";
+
+"onboarding.action.sample_data.title" = "Explore with Sample Data";
+"onboarding.action.sample_data.description" = "See how the app works with realistic data";
+"onboarding.action.sample_data.accessibility_hint" = "Loads realistic sample data to explore app features";
+
+"onboarding.action.start_fresh.title" = "Start Fresh";
+"onboarding.action.start_fresh.description" = "Add your own data from scratch";
+"onboarding.action.start_fresh.accessibility_hint" = "Begin with empty data and add your own information";
+
+"onboarding.loading.sample_data" = "Loading sample data...";
+
+// MARK: - Navigation Titles
+"nav.title.home" = "Home";
+"nav.title.newborn" = "Newborn";
+"nav.title.toddler" = "Toddler";
+"nav.title.recipes" = "Recipes";
+"nav.title.settings" = "Settings";
+"nav.title.food_tracker" = "Food Tracker";
+"nav.title.meal_planner" = "Meal Planner";
+"nav.title.sage" = "Sage";
+"nav.title.today" = "Today";
+"nav.title.week" = "Week";
+"nav.title.month" = "Month";
+
+// MARK: - Profile Management
+"profile.section.children" = "Children";
+"profile.action.add" = "Add Child";
+"profile.navigation.title" = "Manage Profiles";
+
+"profile.alert.delete.title" = "Delete Profile?";
+"profile.alert.delete.cancel" = "Cancel";
+"profile.alert.delete.confirm" = "Delete";
+"profile.alert.delete.message" = "Are you sure you want to delete %@'s profile? This will delete all their data and cannot be undone.";
+
+"profile.row.months_suffix" = "months";
+"profile.row.switch_to" = "Switch to %@";
+"profile.row.edit" = "Edit";
+"profile.row.delete" = "Delete";
+
+"profile.add.title" = "Add Child";
+"profile.add.section.info" = "Child Information";
+"profile.add.field.name" = "Name";
+"profile.add.field.name.accessibility" = "Child Name";
+"profile.add.field.birthdate" = "Birth Date";
+"profile.add.field.birthdate.accessibility" = "Child's Birth Date";
+"profile.add.field.gender" = "Gender";
+"profile.add.field.gender.accessibility" = "Gender Selection";
+"profile.add.field.gender.boy" = "Boy";
+"profile.add.field.gender.girl" = "Girl";
+"profile.add.field.gender.other" = "Other";
+"profile.add.section.allergies" = "Known Allergies (Optional)";
+"profile.add.field.allergies.placeholder" = "Separate with commas";
+"profile.add.action.cancel" = "Cancel";
+"profile.add.action.add" = "Add";
+
+"profile.edit.title" = "Edit Profile";
+"profile.edit.section.mode" = "Preferred Mode (Optional)";
+"profile.edit.field.mode" = "Mode";
+"profile.edit.field.mode.auto" = "Auto (Based on Age)";
+"profile.edit.field.mode.newborn" = "Newborn";
+"profile.edit.field.mode.explorer" = "Explorer";
+"profile.edit.field.mode.toddler" = "Toddler";
+"profile.edit.section.allergies" = "Known Allergies";
+"profile.edit.action.save" = "Save";
+
+// MARK: - Newborn Section
+"newborn.dashboard.title" = "Dashboard";
+"newborn.section.nursing" = "Nursing";
+"newborn.section.sleep" = "Sleep";
+"newborn.section.diaper" = "Diaper";
+"newborn.section.bottle" = "Bottle";
+"newborn.section.pumping" = "Pumping";
+"newborn.section.medication" = "Medication";
+"newborn.section.growth" = "Growth";
+
+"newborn.quicklog.title" = "Quick Log";
+"newborn.quicklog.nursing" = "Nursing";
+"newborn.quicklog.sleep" = "Sleep";
+"newborn.quicklog.diaper" = "Diaper";
+"newborn.quicklog.bottle" = "Bottle";
+
+"newborn.stats.last_fed" = "Last Fed";
+"newborn.stats.next_feed" = "Next Feed";
+"newborn.stats.total_sleep" = "Total Sleep";
+"newborn.stats.wet_diapers" = "Wet Diapers";
+"newborn.stats.dirty_diapers" = "Dirty Diapers";
+
+"newborn.nursing.side.left" = "Left";
+"newborn.nursing.side.right" = "Right";
+"newborn.nursing.side.both" = "Both";
+"newborn.nursing.duration" = "Duration";
+"newborn.nursing.start_time" = "Start Time";
+"newborn.nursing.add_log" = "Add Nursing Log";
+
+"newborn.sleep.quality.excellent" = "Excellent";
+"newborn.sleep.quality.good" = "Good";
+"newborn.sleep.quality.fair" = "Fair";
+"newborn.sleep.quality.poor" = "Poor";
+"newborn.sleep.start" = "Start";
+"newborn.sleep.end" = "End";
+"newborn.sleep.duration" = "Duration";
+"newborn.sleep.add_log" = "Add Sleep Log";
+
+"newborn.diaper.type.wet" = "Wet";
+"newborn.diaper.type.dirty" = "Dirty";
+"newborn.diaper.type.both" = "Both";
+"newborn.diaper.add_log" = "Add Diaper Log";
+
+"newborn.bottle.amount" = "Amount";
+"newborn.bottle.type.breastmilk" = "Breast Milk";
+"newborn.bottle.type.formula" = "Formula";
+"newborn.bottle.type.mixed" = "Mixed";
+"newborn.bottle.add_log" = "Add Bottle Log";
+
+// MARK: - Toddler Section
+"toddler.food_tracker.title" = "Food Tracker";
+"toddler.food_tracker.search" = "Search foods";
+"toddler.food_tracker.filter.all" = "All";
+"toddler.food_tracker.filter.tried" = "Tried";
+"toddler.food_tracker.filter.untried" = "Not Tried";
+
+"toddler.food.categories.vegetables" = "Vegetables";
+"toddler.food.categories.fruits" = "Fruits";
+"toddler.food.categories.proteins" = "Proteins";
+"toddler.food.categories.grains" = "Grains";
+"toddler.food.categories.dairy" = "Dairy";
+
+"toddler.food.reaction.loved" = "Loved It";
+"toddler.food.reaction.liked" = "Liked It";
+"toddler.food.reaction.neutral" = "Neutral";
+"toddler.food.reaction.disliked" = "Disliked";
+"toddler.food.reaction.refused" = "Refused";
+
+"toddler.meal.breakfast" = "Breakfast";
+"toddler.meal.lunch" = "Lunch";
+"toddler.meal.dinner" = "Dinner";
+"toddler.meal.snack" = "Snack";
+
+"toddler.nutrition.iron" = "Iron";
+"toddler.nutrition.calcium" = "Calcium";
+"toddler.nutrition.vitamin_c" = "Vitamin C";
+"toddler.nutrition.omega3" = "Omega-3";
+"toddler.nutrition.protein" = "Protein";
+
+// MARK: - Recipe Section
+"recipes.title" = "Recipes";
+"recipes.search" = "Search recipes";
+"recipes.add" = "Add Recipe";
+"recipes.generate" = "Generate with AI";
+"recipes.custom_foods" = "Custom Foods";
+
+"recipes.difficulty.easy" = "Easy";
+"recipes.difficulty.medium" = "Medium";
+"recipes.difficulty.hard" = "Hard";
+
+"recipes.prep_time" = "Prep Time";
+"recipes.cook_time" = "Cook Time";
+"recipes.servings" = "Servings";
+"recipes.ingredients" = "Ingredients";
+"recipes.instructions" = "Instructions";
+
+// MARK: - Sage (AI Assistant)
+"sage.title" = "Sage";
+"sage.subtitle" = "Your AI nutrition assistant";
+"sage.placeholder" = "Ask me anything about feeding...";
+"sage.example.1" = "What foods should I introduce next?";
+"sage.example.2" = "Create a meal plan for this week";
+"sage.example.3" = "How can I overcome picky eating?";
+
+// MARK: - Settings
+"settings.title" = "Settings";
+"settings.section.baby_profile" = "Baby Profile";
+"settings.section.account" = "Account";
+"settings.section.app" = "App Settings";
+"settings.section.data" = "Data Management";
+"settings.section.about" = "About";
+
+"settings.app_mode" = "App Mode";
+"settings.night_mode" = "Night Mode";
+"settings.notifications" = "Notifications";
+"settings.sign_out" = "Sign Out";
+"settings.signed_in" = "Signed in";
+
+// MARK: - Common Actions
+"action.save" = "Save";
+"action.cancel" = "Cancel";
+"action.delete" = "Delete";
+"action.edit" = "Edit";
+"action.add" = "Add";
+"action.done" = "Done";
+"action.close" = "Close";
+"action.share" = "Share";
+"action.continue" = "Continue";
+"action.skip" = "Skip";
+"action.retry" = "Retry";
+
+// MARK: - Common Terms
+"common.today" = "Today";
+"common.week" = "Week";
+"common.month" = "Month";
+"common.all" = "All";
+"common.none" = "None";
+"common.loading" = "Loading...";
+"common.error" = "Error";
+"common.success" = "Success";
+"common.age" = "Age";
+"common.name" = "Name";
+"common.date" = "Date";
+"common.time" = "Time";
+"common.notes" = "Notes";
+
+// MARK: - Time & Date
+"time.minutes_short" = "min";
+"time.hours_short" = "hr";
+"time.days_short" = "day";
+"time.just_now" = "Just now";
+"time.ago" = "ago";
+
+// MARK: - Validation & Errors
+"error.network.title" = "Connection Error";
+"error.network.message" = "Please check your internet connection";
+"error.auth.title" = "Authentication Error";
+"error.auth.message" = "Please sign in again";
+"error.required_field" = "This field is required";
+"error.invalid_email" = "Please enter a valid email";
+"error.password_too_short" = "Password must be at least 6 characters";
+"error.passwords_dont_match" = "Passwords don't match";
+
+// MARK: - Offline Mode
+"offline.indicator" = "Offline Mode";
+"offline.sync.pending" = "Changes will sync when online";
+
+// MARK: - Profile Sharing
+"sharing.title" = "Family Sharing";
+"sharing.invite.title" = "Invite User";
+"sharing.invite.email" = "Email Address";
+"sharing.invite.send" = "Send Invitation";
+"sharing.invite.code" = "Invitation Code";
+"sharing.accept" = "Accept Invitation";
+"sharing.revoke" = "Revoke Access";
+"sharing.shared_with" = "Shared With";
+
+// MARK: - Accessibility
+"accessibility.tab.home" = "Home Tab";
+"accessibility.tab.newborn" = "Newborn Tab";
+"accessibility.tab.toddler" = "Toddler Tab";
+"accessibility.tab.recipes" = "Recipes Tab";
+"accessibility.tab.settings" = "Settings Tab";
+"accessibility.close" = "Close";
+"accessibility.menu" = "Menu";
+

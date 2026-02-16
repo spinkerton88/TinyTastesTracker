@@ -1,26 +1,26 @@
-//
-//  ActivityLog.swift
-//  TinyTastesTracker
-//
-//  Model for general activity and milestone logs
-//
-
 import Foundation
-import SwiftData
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
-@Model
-class ActivityLog {
+struct ActivityLog: Identifiable, Codable {
+    @DocumentID var id: String?
+    var ownerId: String
+    var babyId: String
     var timestamp: Date
     var activityType: String // "play", "mood", "milestone", "other"
     var activityDescription: String
     var notes: String?
     
-    init(
-        timestamp: Date,
-        activityType: String,
-        description: String,
-        notes: String? = nil
-    ) {
+    init(id: String? = nil,
+         ownerId: String,
+         babyId: String,
+         timestamp: Date,
+         activityType: String,
+         description: String,
+         notes: String? = nil) {
+        self.id = id
+        self.ownerId = ownerId
+        self.babyId = babyId
         self.timestamp = timestamp
         self.activityType = activityType
         self.activityDescription = description

@@ -85,14 +85,15 @@ struct FoodItem: Identifiable, Codable {
     let chokeHazard: Bool
     let color: FoodColor
     let nutrients: [Nutrient]
-    let imageFileName: String?
+    let imageFileName: String? // Deprecated: kept for backward compatibility
+    let imageStoragePath: String? // Firebase Storage path for cloud sync
 
     init(id: String, name: String, emoji: String, category: FoodCategory,
          allergens: [String] = [], allergyRisk: AllergyRisk = .low,
          nutritionHighlights: String = "",
          howToServe: String = "", chokeHazard: Bool = false,
          color: FoodColor = .brown, nutrients: [Nutrient] = [],
-         imageFileName: String? = nil) {
+         imageFileName: String? = nil, imageStoragePath: String? = nil) {
         self.id = id
         self.name = name
         self.emoji = emoji
@@ -105,6 +106,7 @@ struct FoodItem: Identifiable, Codable {
         self.color = color
         self.nutrients = nutrients
         self.imageFileName = imageFileName
+        self.imageStoragePath = imageStoragePath
     }
 }
 
@@ -825,11 +827,11 @@ struct Constants {
                 chokeHazard: false,
                 color: .white, nutrients: [.calcium, .protein]),
 
-        FoodItem(id: "CHEESE", name: "Cheese", emoji: "🧀", category: .dairy,
+        FoodItem(id: "PROVOLONE", name: "Provolone", emoji: "🧀", category: .dairy,
                 allergens: ["dairy"],
                 allergyRisk: .high,
                 nutritionHighlights: "Calcium, protein, vitamin B12, vitamin A",
-                howToServe: "6+ months: Shredded or small soft pieces. 9+ months: Small cubes or strips. Introduce early",
+                howToServe: "6+ months: Shredded or thin strips. 9+ months: Small cubes. Melts well for pasta and sandwiches.",
                 chokeHazard: true,
                 color: .yellow, nutrients: [.calcium, .protein]),
 

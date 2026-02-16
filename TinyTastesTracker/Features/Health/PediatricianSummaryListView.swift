@@ -6,14 +6,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct PediatricianSummaryListView: View {
-    @Environment(\.modelContext) private var modelContext
     @Bindable var appState: AppState
-
-    @Query(sort: \PediatricianSummary.generatedAt, order: .reverse)
-    private var allSummaries: [PediatricianSummary]
 
     @State private var showingCreateSheet = false
     @State private var selectedStartDate = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
@@ -24,16 +19,45 @@ struct PediatricianSummaryListView: View {
 
     private var currentChildSummaries: [PediatricianSummary] {
         guard let currentChild = appState.userProfile else { return [] }
-        return allSummaries.filter { $0.childID == currentChild.id }
+        return appState.pediatricianSummaries.filter { $0.childId == currentChild.id }
     }
 
     var body: some View {
+        @Bindable var healthManager = appState.healthManager
+        
         NavigationStack {
-            Group {
-                if currentChildSummaries.isEmpty {
+            ZStack {
+                // Background
+                Color(UIColor.systemGroupedBackground)
+                    .ignoresSafeArea()
+                
+                if appState.healthManager.pediatricianSummaries.isEmpty {
                     emptyState
                 } else {
-                    summaryList
+                    summaryList(healthManager: healthManager)
+                }
+                
+                // Loading Overlay
+                if isGenerating {
+                    ZStack {
+                        Color.black.opacity(0.4)
+                            .ignoresSafeArea()
+                        
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .scaleEffect(1.5)
+                                .tint(.white)
+                            Text("Generating summary...")
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                            Text("This may take a moment")
+                                .font(.caption)
+                                .foregroundStyle(.white.opacity(0.8))
+                        }
+                        .padding(32)
+                        .background(.ultraThinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                    }
                 }
             }
             .navigationTitle("Checkup Prep")
@@ -91,11 +115,16 @@ struct PediatricianSummaryListView: View {
         .padding()
     }
 
-    private var summaryList: some View {
+    private func summaryList(healthManager: HealthManager) -> some View {
         List {
             ForEach(currentChildSummaries) { summary in
-                NavigationLink(destination: SummaryDetailView(summary: summary, appState: appState)) {
-                    SummaryRow(summary: summary, themeColor: appState.themeColor)
+                if let index = healthManager.pediatricianSummaries.firstIndex(where: { $0.id == summary.id }) {
+                    NavigationLink(destination: SummaryDetailView(
+                        summary: Bindable(healthManager).pediatricianSummaries[index],
+                        appState: appState
+                    )) {
+                        SummaryRow(summary: summary, themeColor: appState.themeColor)
+                    }
                 }
             }
             .onDelete(perform: deleteSummaries)
@@ -133,29 +162,6 @@ struct PediatricianSummaryListView: View {
                     .disabled(isGenerating || selectedStartDate > selectedEndDate)
                 }
             }
-            .overlay {
-                if isGenerating {
-                    ZStack {
-                        Color.black.opacity(0.4)
-                            .ignoresSafeArea()
-
-                        VStack(spacing: 16) {
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(.white)
-                            Text("Generating summary...")
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                            Text("This may take a moment")
-                                .font(.caption)
-                                .foregroundStyle(.white.opacity(0.8))
-                        }
-                        .padding(32)
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                    }
-                }
-            }
         }
     }
 
@@ -166,14 +172,19 @@ struct PediatricianSummaryListView: View {
         defer { isGenerating = false }
 
         do {
-            print("🏥 Starting summary generation for child: \(currentChild.id)")
+            guard let childId = currentChild.id else {
+                print("❌ No child ID found")
+                return
+            }
+            
+            print("🏥 Starting summary generation for child: \(childId)")
             print("📅 Date range: \(selectedStartDate) to \(selectedEndDate)")
 
             let summary = try await DataAggregationService.shared.generateSummary(
-                for: currentChild.id,
+                for: childId,
                 from: selectedStartDate,
                 to: selectedEndDate,
-                context: modelContext
+                appState: appState
             )
 
             print("✅ Summary generated successfully")
@@ -181,10 +192,10 @@ struct PediatricianSummaryListView: View {
             print("⚠️ Concerns: \(summary.concerns.count)")
             print("❓ Questions: \(summary.suggestedQuestions.count)")
 
-            modelContext.insert(summary)
-            try modelContext.save()
+            // Save via HealthManager linked in AppState
+            appState.healthManager.saveSummary(summary)
 
-            print("💾 Summary saved to database")
+            print("💾 Summary saved to database via HealthManager")
 
             await MainActor.run {
                 showingCreateSheet = false
@@ -205,9 +216,8 @@ struct PediatricianSummaryListView: View {
     private func deleteSummaries(at offsets: IndexSet) {
         for index in offsets {
             let summary = currentChildSummaries[index]
-            modelContext.delete(summary)
+            appState.healthManager.deleteSummary(summary)
         }
-        try? modelContext.save()
     }
 }
 
@@ -245,10 +255,10 @@ struct SummaryRow: View {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.caption)
-                        .foregroundStyle(Color.warningOrangeAccessible)
+                        .foregroundStyle(Color.orange)
                     Text("\(summary.concerns.count) concerns noted")
                         .font(.caption)
-                        .foregroundStyle(Color.warningOrangeAccessible)
+                        .foregroundStyle(Color.orange)
                 }
             }
         }

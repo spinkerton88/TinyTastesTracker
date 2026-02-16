@@ -25,8 +25,8 @@ struct VoiceChatView: View {
         self.appState = appState
         self.initialContext = initialContext
         
-        // Initialize GeminiLiveService with API key
-        _geminiLive = StateObject(wrappedValue: GeminiLiveService(apiKey: appState.geminiApiKey ?? ""))
+        // Initialize GeminiLiveService (now fetches config internally)
+        _geminiLive = StateObject(wrappedValue: GeminiLiveService())
     }
     
     var body: some View {
@@ -125,6 +125,13 @@ struct VoiceChatView: View {
             }
             .task {
                 await connectToGemini()
+            }
+            .onChange(of: geminiLive.connectionState) { _, newState in
+                // Show error alert if connection fails
+                if case .error(let message) = newState {
+                    errorMessage = message
+                    showError = true
+                }
             }
         }
     }

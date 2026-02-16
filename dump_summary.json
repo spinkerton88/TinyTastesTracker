@@ -1,0 +1,3695 @@
+{
+  "_type" : {
+    "_name" : "ActionTestSummary",
+    "_supertype" : {
+      "_name" : "ActionTestSummaryIdentifiableObject",
+      "_supertype" : {
+        "_name" : "ActionAbstractTestSummary"
+      }
+    }
+  },
+  "activitySummaries" : {
+    "_type" : {
+      "_name" : "Array"
+    },
+    "_values" : [
+      {
+        "_type" : {
+          "_name" : "ActionTestActivitySummary"
+        },
+        "activityType" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "com.apple.dt.xctest.activity-type.internal"
+        },
+        "finish" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:06:23.219-0600"
+        },
+        "start" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:06:22.865-0600"
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Start Test at 2026-01-24 17:06:22.865"
+        },
+        "uuid" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "FFB91ADF-76CD-4813-845B-498FF55FC071"
+        }
+      },
+      {
+        "_type" : {
+          "_name" : "ActionTestActivitySummary"
+        },
+        "activityType" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "com.apple.dt.xctest.activity-type.internal"
+        },
+        "finish" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:25.305-0600"
+        },
+        "start" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:06:23.220-0600"
+        },
+        "subactivities" : {
+          "_type" : {
+            "_name" : "Array"
+          },
+          "_values" : [
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:25.305-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:06:23.227-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:25.303-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:06:23.227-0600"
+                    },
+                    "subactivities" : {
+                      "_type" : {
+                        "_name" : "Array"
+                      },
+                      "_values" : [
+                        {
+                          "_type" : {
+                            "_name" : "ActionTestActivitySummary"
+                          },
+                          "activityType" : {
+                            "_type" : {
+                              "_name" : "String"
+                            },
+                            "_value" : "com.apple.dt.xctest.activity-type.internal"
+                          },
+                          "finish" : {
+                            "_type" : {
+                              "_name" : "Date"
+                            },
+                            "_value" : "2026-01-24T17:07:24.295-0600"
+                          },
+                          "start" : {
+                            "_type" : {
+                              "_name" : "Date"
+                            },
+                            "_value" : "2026-01-24T17:06:24.266-0600"
+                          },
+                          "title" : {
+                            "_type" : {
+                              "_name" : "String"
+                            },
+                            "_value" : "Setting up automation session"
+                          },
+                          "uuid" : {
+                            "_type" : {
+                              "_name" : "String"
+                            },
+                            "_value" : "03C2D521-6509-4BA7-9098-63EAE60D60F1"
+                          }
+                        },
+                        {
+                          "_type" : {
+                            "_name" : "ActionTestActivitySummary"
+                          },
+                          "activityType" : {
+                            "_type" : {
+                              "_name" : "String"
+                            },
+                            "_value" : "com.apple.dt.xctest.activity-type.internal"
+                          },
+                          "finish" : {
+                            "_type" : {
+                              "_name" : "Date"
+                            },
+                            "_value" : "2026-01-24T17:07:24.297-0600"
+                          },
+                          "start" : {
+                            "_type" : {
+                              "_name" : "Date"
+                            },
+                            "_value" : "2026-01-24T17:07:24.296-0600"
+                          },
+                          "title" : {
+                            "_type" : {
+                              "_name" : "String"
+                            },
+                            "_value" : "Wait for com.tinytastes.tracker to idle"
+                          },
+                          "uuid" : {
+                            "_type" : {
+                              "_name" : "String"
+                            },
+                            "_value" : "69CFE4C0-A4CF-4D95-A3A0-2BC7FBBF238D"
+                          }
+                        }
+                      ]
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Launch com.tinytastes.tracker"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "D97B88A0-0150-41E3-A65E-D5C36AF3392F"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Open com.tinytastes.tracker"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "C3FBAE23-83A6-4CA8-95D0-6C731A7ABDAC"
+              }
+            }
+          ]
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Set Up"
+        },
+        "uuid" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "EEDBA513-D310-4C9A-B364-8D35DC43C035"
+        }
+      },
+      {
+        "_type" : {
+          "_name" : "ActionTestActivitySummary"
+        },
+        "activityType" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "com.apple.dt.xctest.activity-type.internal"
+        },
+        "finish" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:37.328-0600"
+        },
+        "start" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:25.308-0600"
+        },
+        "subactivities" : {
+          "_type" : {
+            "_name" : "Array"
+          },
+          "_values" : [
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:26.349-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:26.346-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:26.348-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:26.347-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Balance\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "3F25F9C9-C7BF-4F86-B2C6-562926FCE386"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:26.349-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:26.348-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "AC6A18CA-7622-4DEB-AECC-67B81E744940"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "6370DACA-0B83-475B-9A82-A5FBEA7595C0"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:27.387-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:27.385-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:27.386-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:27.385-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Balance\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "7BD01510-4FAC-49BD-BF00-6FDC7BEB9792"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:27.387-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:27.386-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "CDAB5541-A849-4A88-9175-D69D20D16D47"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "989A2DEA-F9F3-4E43-A95C-DFEA0C82A921"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:28.322-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:28.318-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:28.320-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:28.319-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Balance\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "3161B238-A9DF-4575-9E2A-260B48EF0CA2"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:28.321-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:28.320-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "1ECDE2CC-10C9-411B-9A46-720EA67AB054"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "CC2D645B-DA70-49BA-81CC-A750B70DE1A2"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:29.359-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:29.356-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:29.357-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:29.357-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Balance\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "E1A4135F-7FF1-47EB-8517-4CA0D4837882"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:29.358-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:29.358-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "C52D828A-46C8-4355-A3FD-A8069AA28DAE"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "E465C5EF-32AE-4888-94A4-271408699B94"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:30.400-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:30.396-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:30.398-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:30.397-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Balance\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "033D2F4C-66EB-44F0-B0FC-3F4C5907BE2C"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:30.400-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:30.399-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "CC6B57F8-FB1D-4104-816C-720D329759CB"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "79473CAE-318B-438A-BCBD-FE8D77995F72"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:31.332-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:31.328-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:31.330-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:31.329-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Balance\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "9A913858-5FA2-4FAE-923C-EBAA8BAE2B40"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:31.331-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:31.331-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "561B6E76-9A96-4281-B6B5-97128FB8EB6B"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "12530112-A3BF-4CE0-807D-C9FB92D981A2"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:32.369-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:32.367-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:32.368-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:32.367-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Balance\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "C2C2F1EC-535C-45A5-9192-0E892D754B50"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:32.369-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:32.368-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "996299DD-F0DE-4CF1-A0E1-904B7113BEF2"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "4D844A4A-C4F9-47D4-A571-D0E569AC426F"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:33.404-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:33.400-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:33.402-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:33.401-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Balance\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "78B315F3-5EE1-4A53-81C0-3A2D7801AD22"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:33.403-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:33.403-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "338ABF83-C975-4C0E-8C17-866624E61AD1"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "524EE977-120B-478A-AAD8-AA37487ADE51"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:34.341-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:34.338-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:34.339-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:34.338-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Balance\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "3AD854D5-DFA6-474B-85E4-035F90533A18"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:34.341-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:34.340-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "63A9054C-2D47-4B5F-AAB1-48D69B27871C"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "6C415C09-A86C-4C87-9AB9-19F32A54A259"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:35.314-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:35.310-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:35.313-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:35.312-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Balance\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "FB81B181-B33F-433F-8723-B0DEBBED3E35"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:35.314-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:35.313-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "4E36E475-E727-4820-A9EC-8EE47A667BAC"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "F6CEFC42-D289-4860-A0E2-6428FE030C11"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:35.315-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:35.315-0600"
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking existence of `\"Balance\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "D8069AA0-085A-4200-8B5D-F54FCD626A2A"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:36.322-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:36.322-0600"
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking existence of `\"Balance\" Button` (retry 1)"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "5356F69A-EE8A-4856-8F6F-B957EFCF6FA4"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:37.328-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:37.327-0600"
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking existence of `\"Balance\" Button` (retry 2)"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "CFB14EEB-FB89-4764-A9F5-30EDA3F6A6AA"
+              }
+            }
+          ]
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Waiting 10.0s for \"Balance\" Button to exist"
+        },
+        "uuid" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "5F241641-0564-404C-8322-BD6E8559A3D5"
+        }
+      },
+      {
+        "_type" : {
+          "_name" : "ActionTestActivitySummary"
+        },
+        "activityType" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "com.apple.dt.xctest.activity-type.internal"
+        },
+        "finish" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:37.330-0600"
+        },
+        "start" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:37.329-0600"
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Collecting debug information to assist test failure triage"
+        },
+        "uuid" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "8FCB6076-69A1-4EFE-ADEE-B0074527A6A7"
+        }
+      },
+      {
+        "_type" : {
+          "_name" : "ActionTestActivitySummary"
+        },
+        "activityType" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "com.apple.dt.xctest.activity-type.internal"
+        },
+        "finish" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:44.347-0600"
+        },
+        "start" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:37.331-0600"
+        },
+        "subactivities" : {
+          "_type" : {
+            "_name" : "Array"
+          },
+          "_values" : [
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:38.365-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:38.361-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:38.363-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:38.362-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Profile\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "60CFEED8-2129-4249-8D22-29223C30AE56"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:38.364-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:38.364-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "39797E37-7798-4DEF-A644-EC18DE607251"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Profile\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "A852AD0E-4E7D-4AF3-B553-A93E96F16281"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:39.404-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:39.400-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:39.402-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:39.401-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Profile\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "182C9E93-32B8-41AF-8E8A-679F9087F92B"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:39.404-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:39.403-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "AC9B9AE4-E612-4DF5-AE6C-9EC0F0FBD372"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Profile\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "E74CA9ED-D6CE-4B7B-AC17-3AA157FD5CE5"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:40.342-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:40.338-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:40.340-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:40.340-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Profile\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "D9D09DF6-9BC0-4B42-9C24-091496148771"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:40.342-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:40.341-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "D65F0CE1-CE1F-4347-8EA4-0E309DA47D62"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Profile\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "35D3A3CD-FA19-43F5-9551-623827E8BF3C"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:41.382-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:41.380-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:41.381-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:41.381-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Profile\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "1DE66447-FD25-4171-B008-2E53ADD5DEB0"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:41.382-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:41.381-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "E169BAB4-4277-4515-9A1E-208ED1F4E079"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Profile\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "10ADC636-E6E7-4F77-97B4-2C6237B0AE74"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:42.335-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:42.333-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:42.334-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:42.334-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Profile\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "3938BDC6-A0B2-481A-A611-85557EC67EAD"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:42.335-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:42.334-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "B3C50AC5-61F1-4BB9-B241-83CBF0ADB2DF"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Profile\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "051E80D5-9BA7-4ACC-8E7A-577E4EBD3DD9"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:42.336-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:42.336-0600"
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking existence of `\"Profile\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "DC87200A-FD05-4189-95B1-105AB0374FC5"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:43.339-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:43.339-0600"
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking existence of `\"Profile\" Button` (retry 1)"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "AE119AA3-7E81-4A14-9C36-EA2827EDE05C"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:44.346-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:44.345-0600"
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking existence of `\"Profile\" Button` (retry 2)"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "7C0CE857-ADCD-41BE-BFF2-201AE7A0B111"
+              }
+            }
+          ]
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Waiting 5.0s for \"Profile\" Button to exist"
+        },
+        "uuid" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "1A422079-1C91-4559-AAFE-7F28C512C2CE"
+        }
+      },
+      {
+        "_type" : {
+          "_name" : "ActionTestActivitySummary"
+        },
+        "activityType" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "com.apple.dt.xctest.activity-type.internal"
+        },
+        "finish" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:44.348-0600"
+        },
+        "start" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:44.347-0600"
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Collecting debug information to assist test failure triage"
+        },
+        "uuid" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "3E35FC29-52F3-4D17-8CE6-27805EF3B5A7"
+        }
+      },
+      {
+        "_type" : {
+          "_name" : "ActionTestActivitySummary"
+        },
+        "activityType" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "com.apple.dt.xctest.activity-type.internal"
+        },
+        "finish" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:56.371-0600"
+        },
+        "start" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:44.348-0600"
+        },
+        "subactivities" : {
+          "_type" : {
+            "_name" : "Array"
+          },
+          "_values" : [
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:45.382-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:45.379-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:45.380-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:45.379-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Foods\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "086F1343-30E4-4761-89B0-DF928A21AD90"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:45.381-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:45.380-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "4C4E27C2-ACA2-48AB-9052-77A8F8AA4E91"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "7B932D45-34B1-42D7-8FC6-CEA01795BE53"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:46.421-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:46.417-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:46.420-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:46.418-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Foods\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "B5557239-2D14-4D7B-80F4-4135D2096648"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:46.421-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:46.420-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "306C0642-E076-451B-8CFE-1D4FBEC54AD2"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "22529A98-FDC4-4227-A22E-D25C50B47BD1"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:47.359-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:47.355-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:47.357-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:47.355-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Foods\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "B3FF7217-9DFC-42A0-9DB2-3D325D4C80F3"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:47.358-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:47.357-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "58D99CD5-8B80-4765-B905-8C7DB75DF9D5"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "3EC94478-8355-4871-9CFA-CF0C8621FDCC"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:48.396-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:48.393-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:48.395-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:48.394-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Foods\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "3D30FEAF-819A-4928-93D5-FCC3C6B25CF1"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:48.396-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:48.395-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "3811D86F-D239-4BD5-BFB3-3B4EAD6DDE58"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "A3028380-72B4-401F-AC84-9D83D00FA66C"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:49.438-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:49.436-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:49.437-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:49.436-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Foods\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "A25A9A2B-472B-4787-9B4A-5F9CC9011783"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:49.438-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:49.437-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "56EBD589-179D-479B-8B8D-3A9AB63FCAA3"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "C1C6DC18-9E25-4A5E-94EC-9FA3D6AD593C"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:50.376-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:50.371-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:50.374-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:50.373-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Foods\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "F43B701A-7AA1-4A5A-B967-8FED0E81FD78"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:50.375-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:50.374-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "05F530B7-51E8-4953-A2EF-E9F273E797D6"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "3D28E88E-FE58-4E4F-977D-8CE79DE9A1D3"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:51.415-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:51.412-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:51.414-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:51.413-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Foods\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "FFD53760-4038-4A0F-88C7-300CEC501885"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:51.415-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:51.414-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "5AED9403-6B16-4FD2-80C5-682B43F2CE0E"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "B1221407-9DE7-4343-8B11-31B57C5D118A"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:52.447-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:52.446-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:52.446-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:52.446-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Foods\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "254640B3-A6E3-44D2-AE21-12598845127E"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:52.447-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:52.446-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "4CFA3D21-A7CE-40EE-B9A8-4577F9CC2CE1"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "B03353E2-ECF1-4524-90AE-64B5BA64264B"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:53.384-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:53.380-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:53.382-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:53.381-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Foods\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "10E09472-1A69-4009-990D-D02BF012AF1A"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:53.383-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:53.382-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "3AECD7D7-372B-4F0D-8E98-EAE360DEC369"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "8E04982E-65EE-4CEA-A1A4-F9F4E2F0E693"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:54.356-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:54.352-0600"
+              },
+              "subactivities" : {
+                "_type" : {
+                  "_name" : "Array"
+                },
+                "_values" : [
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:54.354-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:54.353-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Checking existence of `\"Foods\" Button`"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "C649AAD4-F20E-4A85-BF76-38F329196D5D"
+                    }
+                  },
+                  {
+                    "_type" : {
+                      "_name" : "ActionTestActivitySummary"
+                    },
+                    "activityType" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "com.apple.dt.xctest.activity-type.internal"
+                    },
+                    "finish" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:54.355-0600"
+                    },
+                    "start" : {
+                      "_type" : {
+                        "_name" : "Date"
+                      },
+                      "_value" : "2026-01-24T17:07:54.354-0600"
+                    },
+                    "title" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Capturing element debug description"
+                    },
+                    "uuid" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "D5092FA4-E6A4-4CD2-9733-150B30CFC5CB"
+                    }
+                  }
+                ]
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking `Expect predicate `existsNoRetry == 1` for object \"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "0C6EBEA6-382F-4FD3-9F17-C83F5C9E61D6"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:54.357-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:54.356-0600"
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking existence of `\"Foods\" Button`"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "9399B232-037C-42BE-9E9B-63D6E161E9D0"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:55.363-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:55.362-0600"
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking existence of `\"Foods\" Button` (retry 1)"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "FA66C8B6-AF2F-4589-92FF-D1D9E50D7C77"
+              }
+            },
+            {
+              "_type" : {
+                "_name" : "ActionTestActivitySummary"
+              },
+              "activityType" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.dt.xctest.activity-type.internal"
+              },
+              "finish" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:56.370-0600"
+              },
+              "start" : {
+                "_type" : {
+                  "_name" : "Date"
+                },
+                "_value" : "2026-01-24T17:07:56.369-0600"
+              },
+              "title" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "Checking existence of `\"Foods\" Button` (retry 2)"
+              },
+              "uuid" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "5931F35F-978F-4A8A-B8D3-2DE7A28B7457"
+              }
+            }
+          ]
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Waiting 10.0s for \"Foods\" Button to exist"
+        },
+        "uuid" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "20AC7757-715B-4289-9CE9-1712F7D45E83"
+        }
+      },
+      {
+        "_type" : {
+          "_name" : "ActionTestActivitySummary"
+        },
+        "activityType" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "com.apple.dt.xctest.activity-type.internal"
+        },
+        "finish" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:56.372-0600"
+        },
+        "start" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:56.371-0600"
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Collecting debug information to assist test failure triage"
+        },
+        "uuid" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "CB1529A5-5AD1-4B94-BA06-C35C4A9EA27D"
+        }
+      },
+      {
+        "_type" : {
+          "_name" : "ActionTestActivitySummary"
+        },
+        "activityType" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "com.apple.dt.xctest.activity-type.internal"
+        },
+        "finish" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:56.404-0600"
+        },
+        "start" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:56.372-0600"
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Tear Down"
+        },
+        "uuid" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "76A42B21-834B-4DE9-8DD3-9094313B0751"
+        }
+      },
+      {
+        "_type" : {
+          "_name" : "ActionTestActivitySummary"
+        },
+        "activityType" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "com.apple.dt.xctest.activity-type.internal"
+        },
+        "finish" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:08:16.419-0600"
+        },
+        "start" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-01-24T17:07:56.405-0600"
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Checking for crash reports corresponding to unexpected termination of com.tinytastes.tracker"
+        },
+        "uuid" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "B0E85711-B585-4157-9BBE-9C8A74E88FD6"
+        }
+      }
+    ]
+  },
+  "duration" : {
+    "_type" : {
+      "_name" : "Double"
+    },
+    "_value" : "113.55558598041534"
+  },
+  "identifier" : {
+    "_type" : {
+      "_name" : "String"
+    },
+    "_value" : "SnapshotUITests\/testCaptureScreenshots()"
+  },
+  "identifierURL" : {
+    "_type" : {
+      "_name" : "String"
+    },
+    "_value" : "test:\/\/com.apple.xcode\/TinyTastesTracker\/TinyTastesTrackerUITests\/SnapshotUITests\/testCaptureScreenshots"
+  },
+  "name" : {
+    "_type" : {
+      "_name" : "String"
+    },
+    "_value" : "testCaptureScreenshots()"
+  },
+  "testStatus" : {
+    "_type" : {
+      "_name" : "String"
+    },
+    "_value" : "Success"
+  }
+}

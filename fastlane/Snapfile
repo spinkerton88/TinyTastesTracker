@@ -1,0 +1,19 @@
+# A list of devices you want to take the screenshots from
+devices([
+  "iPhone 15 Pro",
+  "iPhone 15 Pro Max",
+  "iPhone SE (3rd generation)"
+])
+
+languages([
+  "en-US"
+])
+
+# The name of the scheme which includes the UI Tests
+scheme("TinyTastesTracker")
+
+# Where should the resulting screenshots be stored?
+output_directory("./fastlane/screenshots")
+
+# Clear previous screenshots before running?
+clear_previous_screenshots(true)

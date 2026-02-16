@@ -6,13 +6,10 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct MedicationTrackerView: View {
     let mode: AppMode
     @Bindable var appState: AppState
-    @Environment(\.modelContext) private var modelContext
-    
     @State private var showingMedicationSheet = false
     
     var medicationLogs: [MedicationLog] {

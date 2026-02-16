@@ -2,22 +2,20 @@
 //  Milestone.swift
 //  TinyTastesTracker
 //
-//  Created by Antigravity AI on 1/3/26.
+//  Created by Antigravity AI on 2/4/26.
 //
 
 import Foundation
-import SwiftData
 
-@Model
-final class Milestone: Codable {
-    var id: UUID
+struct Milestone: Identifiable, Codable, Equatable {
+    var id: String = UUID().uuidString
     var title: String
     var category: AppMode
     var isCompleted: Bool
     var dateCompleted: Date?
     var icon: String
     
-    init(id: UUID = UUID(),
+    init(id: String = UUID().uuidString,
          title: String,
          category: AppMode,
          isCompleted: Bool = false,
@@ -29,32 +27,6 @@ final class Milestone: Codable {
         self.isCompleted = isCompleted
         self.dateCompleted = dateCompleted
         self.icon = icon
-    }
-    
-    // MARK: - Codable Conformance
-    
-    enum CodingKeys: String, CodingKey {
-        case id, title, category, isCompleted, dateCompleted, icon
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(UUID.self, forKey: .id)
-        self.title = try container.decode(String.self, forKey: .title)
-        self.category = try container.decode(AppMode.self, forKey: .category)
-        self.isCompleted = try container.decode(Bool.self, forKey: .isCompleted)
-        self.dateCompleted = try container.decodeIfPresent(Date.self, forKey: .dateCompleted)
-        self.icon = try container.decode(String.self, forKey: .icon)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(title, forKey: .title)
-        try container.encode(category, forKey: .category)
-        try container.encode(isCompleted, forKey: .isCompleted)
-        try container.encodeIfPresent(dateCompleted, forKey: .dateCompleted)
-        try container.encode(icon, forKey: .icon)
     }
     
     static func defaults() -> [Milestone] {

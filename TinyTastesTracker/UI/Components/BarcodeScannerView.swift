@@ -113,42 +113,12 @@ struct BarcodeScannerSheet: View {
             .ignoresSafeArea()
             
             // Overlay UI
-            VStack {
-                // Top bar with cancel button
-                HStack {
-                    Spacer()
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title)
-                            .foregroundStyle(.white)
-                            .shadow(color: .black.opacity(0.5), radius: 4)
-                    }
-                    .padding()
-                }
-                
-                Spacer()
-                
-                // Instructions
-                VStack(spacing: 12) {
-                    Image(systemName: "barcode.viewfinder")
-                        .font(.system(size: 50)) // Large decorative icon
-                        .foregroundStyle(.white)
-                    
-                    Text("Scan Product Barcode")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.white)
-                    
-                    Text("Position barcode within frame")
-                        .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.8))
-                }
-                .padding()
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .padding()
+            CameraOverlayView(
+                title: "Scan Product Barcode",
+                subtitle: "Position barcode within frame",
+                iconName: "barcode.viewfinder"
+            ) {
+                dismiss()
             }
         }
         .withSage(context: "User is scanning product barcode to identify food.", appState: appState)

@@ -106,7 +106,11 @@ struct RainbowProgressEntryView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
         }
-        .background(Color(UIColor.systemBackground))
+        .background {
+            if #unavailable(iOS 17.0) {
+                Color(UIColor.systemBackground)
+            }
+        }
     }
 
     private func colorProgressBar(progress: ColorProgressData) -> some View {
