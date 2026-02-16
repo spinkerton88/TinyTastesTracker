@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -405,7 +405,7 @@
 		6A52456EBD64B5839917E03A /* DiaperLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaperLog.swift; sourceTree = "<group>"; };
 		6B1CDA9504DF3515D4E54D00 /* DocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentScannerView.swift; sourceTree = "<group>"; };
 		6CF71D685AD4A3344AC3CF02 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
-		6DD9DE21AA4F83B669FDE016 /* TinyTastesWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TinyTastesWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6DD9DE21AA4F83B669FDE016 /* TinyTastesWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TinyTastesWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F61DE304B669C847EB95DDB /* PhotoCollageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollageService.swift; sourceTree = "<group>"; };
 		7017205A54FE22590123CCBB /* GrowthTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthTrackerView.swift; sourceTree = "<group>"; };
 		719D0BF3CBA06555A47152A3 /* ChartDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartDataModels.swift; sourceTree = "<group>"; };
@@ -419,7 +419,7 @@
 		797ADF507156C9082ACE4621 /* Milestone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Milestone.swift; sourceTree = "<group>"; };
 		7A15569505033CD1C5D850C1 /* TinyTastesTrackerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TinyTastesTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A44490AF8023540CBC30077 /* ChartExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartExporter.swift; sourceTree = "<group>"; };
-		7BDB1DBB10F5708B378AC500 /* GenerativeAI-Info.plist.example */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "GenerativeAI-Info.plist.example"; sourceTree = "<group>"; };
+		7BDB1DBB10F5708B378AC500 /* GenerativeAI-Info.plist.example */ = {isa = PBXFileReference; path = "GenerativeAI-Info.plist.example"; sourceTree = "<group>"; };
 		7E3A06A756BA6CB15EDC5B85 /* WidgetLogDiaperIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLogDiaperIntent.swift; sourceTree = "<group>"; };
 		7E6600F88106A2E72300D853 /* TinyTastesWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TinyTastesWidget.entitlements; sourceTree = "<group>"; };
 		7E789BA51EDA71F0D3A7F389 /* ImageCompression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompression.swift; sourceTree = "<group>"; };
@@ -489,7 +489,7 @@
 		BCB35311949885846E3F4F15 /* BarcodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerView.swift; sourceTree = "<group>"; };
 		BCBF23C77F109EF5D7975BBE /* WidgetStartSleepIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetStartSleepIntent.swift; sourceTree = "<group>"; };
 		BD463CAF7A0E7DEA3E792611 /* SleepLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepLog.swift; sourceTree = "<group>"; };
-		BD78C7ABFE6FFD440CE98470 /* WidgetKit */ = {isa = PBXFileReference; lastKnownFileType = text; path = WidgetKit; sourceTree = "<group>"; };
+		BD78C7ABFE6FFD440CE98470 /* WidgetKit */ = {isa = PBXFileReference; path = WidgetKit; sourceTree = "<group>"; };
 		BD929E10C71FF478227EAB8C /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		BF05456128B71784051C87E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BF49F1777E439C76C492F402 /* FeatureTourView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureTourView.swift; sourceTree = "<group>"; };
@@ -499,7 +499,7 @@
 		C2ECF900E2B15E3612180420 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		C316ECB3CED03A796DB9F508 /* NewbornTrackingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewbornTrackingUITests.swift; sourceTree = "<group>"; };
 		C4B209D12BC511BFD3DC2989 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		C4B5496E8AD01605397B242D /* TinyTastesTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TinyTastesTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4B5496E8AD01605397B242D /* TinyTastesTracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TinyTastesTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C53F37F4236F02EA0BD98B53 /* ToddlerManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToddlerManagerTests.swift; sourceTree = "<group>"; };
 		C5865AD53EA4DF188D89920E /* SnapshotUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotUITests.swift; sourceTree = "<group>"; };
 		C69034D4F2B7FDA1F2874795 /* GeminiServiceIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiServiceIntegrationTests.swift; sourceTree = "<group>"; };
@@ -548,7 +548,7 @@
 		F3593412FAAF5B8F1598B204 /* TimelineExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineExportView.swift; sourceTree = "<group>"; };
 		F384A4C15A0FAAAF03009CE2 /* ToddlerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToddlerManager.swift; sourceTree = "<group>"; };
 		F3B1008B4EEB08B75192ADE3 /* PumpingLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PumpingLog.swift; sourceTree = "<group>"; };
-		F54156ED44CEB1CCAC581D7E /* SwiftUI */ = {isa = PBXFileReference; lastKnownFileType = text; path = SwiftUI; sourceTree = "<group>"; };
+		F54156ED44CEB1CCAC581D7E /* SwiftUI */ = {isa = PBXFileReference; path = SwiftUI; sourceTree = "<group>"; };
 		F58D866EE454928B7831B2E2 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		F5CB2247690412BFDA58C29D /* PhotoCollageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollageView.swift; sourceTree = "<group>"; };
 		F760EFD73C2BA599FF3866BC /* SleepTimerActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerActivity.swift; sourceTree = "<group>"; };
@@ -556,7 +556,7 @@
 		F76B588BE461E8558ED3382F /* QuickLogProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLogProvider.swift; sourceTree = "<group>"; };
 		F958BE1F15208306D7F31BB6 /* PediatricianSummaryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PediatricianSummaryListView.swift; sourceTree = "<group>"; };
 		FA7D8734EE475DDBFBA7A943 /* AppError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
-		FCE48317B52A1599354CE159 /* AppIntents */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppIntents; sourceTree = "<group>"; };
+		FCE48317B52A1599354CE159 /* AppIntents */ = {isa = PBXFileReference; path = AppIntents; sourceTree = "<group>"; };
 		FD7F90CDAAB102FC3FB329C7 /* RainbowProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RainbowProgressWidget.swift; sourceTree = "<group>"; };
 		FE965151A4E2A0808639F236 /* RainbowProgressProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RainbowProgressProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1293,6 +1293,20 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		"TEMP_0D7094D2-681B-4A8A-9945-41C63460519C" /* FeatureTests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = FeatureTests;
+			sourceTree = "<group>";
+		};
+		"TEMP_4B2D19D4-2D25-4C0D-9AC6-C88321636160" /* .github */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = .github;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1394,6 +1408,12 @@
 					23D003CE00F155E6B82720FE = {
 						DevelopmentTeam = "${DEVELOPMENT_TEAM}";
 					};
+					C71A723F1FD7C83942D72473 = {
+						DevelopmentTeam = "${DEVELOPMENT_TEAM}";
+					};
+					F141441AB47B54255665F271 = {
+						DevelopmentTeam = "${DEVELOPMENT_TEAM}";
+					};
 					F6498BF35D7E7B88C257A151 = {
 						DevelopmentTeam = "${DEVELOPMENT_TEAM}";
 						TestTargetID = F141441AB47B54255665F271;
@@ -1414,6 +1434,7 @@
 				4CE3EE4E08E204F848BE02B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				8D0A62033D58C5D150F31BD2 /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
 			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -1811,7 +1832,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = TinyTastesTracker/TinyTastesTracker.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = ZMFU99W6M4;
+				DEVELOPMENT_TEAM = "${DEVELOPMENT_TEAM}";
 				INFOPLIST_FILE = TinyTastesTracker/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1828,7 +1849,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = TinyTastesWidget/TinyTastesWidget.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZMFU99W6M4;
+				DEVELOPMENT_TEAM = "${DEVELOPMENT_TEAM}";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\".\"",
@@ -1869,7 +1890,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = TinyTastesWidget/TinyTastesWidget.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZMFU99W6M4;
+				DEVELOPMENT_TEAM = "${DEVELOPMENT_TEAM}";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\".\"",
@@ -2010,7 +2031,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = TinyTastesTracker/TinyTastesTracker.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = ZMFU99W6M4;
+				DEVELOPMENT_TEAM = "${DEVELOPMENT_TEAM}";
 				INFOPLIST_FILE = TinyTastesTracker/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
