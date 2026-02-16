@@ -262,6 +262,7 @@
 		EB861215E231F5967F9ABDEC /* AllergenMonitoringPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002221F2A0A3F3B0D4FEABD0 /* AllergenMonitoringPrompt.swift */; };
 		EBECFDB8ED82A77C492D0306 /* ImageGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F26B4A0F92837BAD40F3B5 /* ImageGenerationService.swift */; };
 		EE0954FB6855EA064355843E /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB35311949885846E3F4F15 /* BarcodeScannerView.swift */; };
+		EEF364AD5FBDA77899EC1453 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 52CF228A9A4BD160D90F111A /* FirebaseAnalytics */; };
 		EF3A06AB93F5025F202A3565 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD929E10C71FF478227EAB8C /* PrivacyPolicyView.swift */; };
 		F06FC513326CE1303C064459 /* SiblingComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509BD00E6468C411951BECBE /* SiblingComparisonView.swift */; };
 		F26A194FC4C0D487C11F0B9B /* DiaperLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A52456EBD64B5839917E03A /* DiaperLog.swift */; };
@@ -579,6 +580,7 @@
 				F66816C7AD1210F90BE1A27E /* FirebaseFirestore in Frameworks */,
 				9C974659EE4AAE46512EAEA7 /* FirebaseFirestoreSwift in Frameworks */,
 				DAF1E28814CDDDE1B90AF51D /* FirebaseStorage in Frameworks */,
+				EEF364AD5FBDA77899EC1453 /* FirebaseAnalytics in Frameworks */,
 				030B4933669FC3A2E70266B5 /* EventKit.framework in Frameworks */,
 				17B53208A8D0C5CB1A0494B9 /* Network.framework in Frameworks */,
 			);
@@ -1293,18 +1295,18 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
-		"TEMP_0D7094D2-681B-4A8A-9945-41C63460519C" /* FeatureTests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = FeatureTests;
-			sourceTree = "<group>";
-		};
-		"TEMP_4B2D19D4-2D25-4C0D-9AC6-C88321636160" /* .github */ = {
+		"TEMP_4895B99C-082E-4540-A133-3BB55F014A27" /* .github */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			path = .github;
+			sourceTree = "<group>";
+		};
+		"TEMP_6415C6A7-3900-4A4C-8516-CE01B980E2D2" /* FeatureTests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = FeatureTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1373,6 +1375,7 @@
 				216945B91C35B25B59155C09 /* FirebaseFirestore */,
 				19B4E5AC5C11C95C9B8E85DC /* FirebaseFirestoreSwift */,
 				841F6D7DA4A906A5EC33653F /* FirebaseStorage */,
+				52CF228A9A4BD160D90F111A /* FirebaseAnalytics */,
 			);
 			productName = TinyTastesTracker;
 			productReference = C4B5496E8AD01605397B242D /* TinyTastesTracker.app */;
@@ -2127,6 +2130,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4CE3EE4E08E204F848BE02B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		52CF228A9A4BD160D90F111A /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CE3EE4E08E204F848BE02B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
 		};
 		594DD838FEAF4AC8FDB7D15E /* GoogleGenerativeAI */ = {
 			isa = XCSwiftPackageProductDependency;

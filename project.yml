@@ -43,6 +43,8 @@ targets:
         package: Firebase
       - product: FirebaseStorage
         package: Firebase
+      - product: FirebaseAnalytics
+        package: Firebase
       - sdk: EventKit.framework
       - sdk: Network.framework
 
