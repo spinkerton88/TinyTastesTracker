@@ -31,7 +31,11 @@ class NewbornDashboardViewModel {
     }
 
     deinit {
-        updateTask?.cancel()
+        // Cancel task in nonisolated context
+        let task = updateTask
+        Task { @MainActor in
+            task?.cancel()
+        }
     }
 
     private func setupSmartUpdates() {
@@ -44,16 +48,12 @@ class NewbornDashboardViewModel {
                 let newIsSleeping = WidgetDataManager.activeSleepStartTime() != nil
 
                 // Only update if values actually changed
-                var needsUpdate = false
-
                 if self.currentTime.formatted(date: .omitted, time: .shortened) != newTime.formatted(date: .omitted, time: .shortened) {
                     self.currentTime = newTime
-                    needsUpdate = true
                 }
 
                 if self.isSleeping != newIsSleeping {
                     self.isSleeping = newIsSleeping
-                    needsUpdate = true
                 }
 
                 // Sleep until next minute boundary for efficiency
