@@ -2,3 +2,27 @@ title: Tiny Tastes Tracker
 theme: minima
 description: >-
   Privacy Policy and Support for Tiny Tastes Tracker, the AI-powered baby tracking app.
+
+# Exclude development documentation from the site
+exclude:
+  - planning/
+  - guides/
+  - architecture/
+  - assessments/
+  - market/
+  - releases/
+  - GEMINI_CONTEXT_PROFILE.md
+  - "*.log"
+  - "*.tmp"
+
+# Only show privacy and legal pages
+include:
+  - compliance/
+
+# Navigation
+header_pages:
+  - index.md
+  - compliance/terms.md
+  - support.md
+
+

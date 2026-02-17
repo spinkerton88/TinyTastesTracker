@@ -1,3 +1,9 @@
+---
+layout: page
+title: Privacy Policy
+permalink: /
+---
+
 # Privacy Policy for Tiny Tastes Tracker
 
 **Last Updated:** January 12, 2026
