@@ -427,7 +427,8 @@ struct FoodDetailModal: View {
                         allergenName: info.allergenName,
                         allergyRisk: info.allergyRisk,
                         childName: profile.name,
-                        forceTimer: isKnownAllergy
+                        forceTimer: isKnownAllergy,
+                        notificationManager: appState.notificationManager
                     )
                 }
             }

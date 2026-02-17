@@ -1,15 +1,20 @@
-import requests
-import json
-import base64
+import plistlib
 import os
-import time
 
-# Configuration
-API_KEY = "AIzaSyDzyKA_uYVtRszxZRkx_FMKgg79ZGvt3cY" # Retrieved from plist
-MODEL_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict"
+def get_api_key():
+    plist_path = os.path.join("TinyTastesTracker", "Resources", "GenerativeAI-Info.plist")
+    if os.path.exists(plist_path):
+        with open(plist_path, 'rb') as fp:
+            pl = plistlib.load(fp)
+            return pl.get("API_KEY")
+    return os.environ.get("GEMINI_API_KEY")
+
+API_KEY = get_api_key()
+if not API_KEY:
+    print("❌ Error: API_KEY not found in GenerativeAI-Info.plist or environment.")
+    exit(1)
+
 OUTPUT_DIR = "generated_assets"
-
-if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
 # List of foods to generate (Missing Items)

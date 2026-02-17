@@ -201,12 +201,12 @@ class ToddlerManager {
     func saveMealLog(_ log: MealLog, ownerId: String, childId: String) async throws {
         var logToSave = log
         let isNew = logToSave.id == nil
-        
+
         // 1. Prepare ID
         if isNew {
             logToSave.id = UUID().uuidString
         }
-        
+
         // 2. Optimistic Update (Local)
         if let index = mealLogs.firstIndex(where: { $0.id == logToSave.id }) {
              mealLogs[index] = logToSave
@@ -215,10 +215,7 @@ class ToddlerManager {
              // Sort to keep "Today's Logs" ordered correctly immediately
              mealLogs.sort { $0.timestamp > $1.timestamp }
         }
-        
-        // Update Rainbow Progress Widget Optimistically
-        updateRainbowProgressWidget()
-        
+
         // 3. Network / Queue Logic
         guard NetworkMonitor.shared.isConnected else {
             if let encoded = try? JSONEncoder().encode(logToSave) {
@@ -232,7 +229,7 @@ class ToddlerManager {
             // Offline success
             return
         }
-        
+
         // 4. Online Save
         try await withRetry(maxAttempts: 3) {
             try await withTimeout(seconds: 10) {
@@ -243,7 +240,7 @@ class ToddlerManager {
                 }
             }
         }
-        
+
         // Also update tried foods log for each item in the meal
         for foodId in log.foods {
             if !isFoodTried(foodId) {
@@ -262,7 +259,10 @@ class ToddlerManager {
                 try await saveFoodLog(triedLog, ownerId: ownerId, childId: childId)
             }
         }
-        
+
+        // Update Rainbow Progress Widget AFTER food logs are created
+        updateRainbowProgressWidget()
+
         // Schedule meal reminder notification
         Task {
             await scheduleMealReminderIfEnabled(mealType: log.mealType, childName: "Baby") // Needs name
@@ -569,8 +569,12 @@ class ToddlerManager {
     // MARK: - Data Loading
 
     func loadData(ownerId: String, childId: String) {
+        // Remove old listeners
         listeners.forEach { $0.remove() }
         listeners.removeAll()
+        
+        // NOTE: We do NOT clear foodLogs/mealLogs here to prevent UI flicker
+        // The listeners will update the arrays with fresh data
         
         // Listen for Food Logs
         listeners.append(foodService.addListener(forUserId: ownerId) { [weak self] logs in

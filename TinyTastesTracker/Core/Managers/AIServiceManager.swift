@@ -94,7 +94,8 @@ class AIServiceManager {
 
     func predictNextSleepWindow(
         sleepLogs: [SleepLog],
-        ageInMonths: Int
+        ageInMonths: Int,
+        childName: String
     ) async throws -> SleepPredictionResponse {
         let last48Hours = Date().addingTimeInterval(-48 * 3600)
         let recentSleepLogs = sleepLogs.filter { $0.startTime >= last48Hours }
@@ -104,7 +105,8 @@ class AIServiceManager {
             recentSleepLogs: recentSleepLogs,
             currentTime: Date(),
             lastWakeTime: lastWakeTime,
-            ageInMonths: ageInMonths
+            ageInMonths: ageInMonths,
+            childName: childName
         )
     }
 

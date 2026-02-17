@@ -1,9 +1,22 @@
-import requests
-import json
-import base64
+import plistlib
 import os
 
-API_KEY = "AIza[REDACTED_API_KEY]" 
+def get_api_key():
+    # Try looking relative to script location
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Go up one level to root, then down to TinyTastesTracker/Resources
+    plist_path = os.path.join(script_dir, "..", "TinyTastesTracker", "Resources", "GenerativeAI-Info.plist")
+    
+    if os.path.exists(plist_path):
+        with open(plist_path, 'rb') as fp:
+            pl = plistlib.load(fp)
+            return pl.get("API_KEY")
+    return os.environ.get("GEMINI_API_KEY")
+
+API_KEY = get_api_key()
+if not API_KEY:
+    print("❌ Error: API_KEY not found in GenerativeAI-Info.plist or environment.")
+    exit(1)
 
 # Target Model: Imagen 4.0 (Upgrade from 3!)
 # Endpoint matches what the ListModels call showed for 'predict' method

@@ -270,7 +270,8 @@ class GeminiService {
                     ownerId: "",
                     title: response.title,
                     ingredients: response.ingredients,
-                    instructions: response.instructions
+                    instructions: response.instructions,
+                    sourceType: .aiGenerated
                 )
             } catch {
                 // If JSON parsing fails, create a simple recipe from the text
@@ -279,7 +280,8 @@ class GeminiService {
                     ownerId: "",
                     title: "Recipe for \(ingredients.joined(separator: " & "))",
                     ingredients: ingredients.joined(separator: "\n"),
-                    instructions: text
+                    instructions: text,
+                    sourceType: .aiGenerated
                 )
             }
         }
@@ -335,7 +337,7 @@ class GeminiService {
         }
     }
 
-    func predictSleepWindow(recentSleepLogs: [SleepLog], currentTime: Date, lastWakeTime: Date?, ageInMonths: Int) async throws -> SleepPredictionResponse {
+    func predictSleepWindow(recentSleepLogs: [SleepLog], currentTime: Date, lastWakeTime: Date?, ageInMonths: Int, childName: String) async throws -> SleepPredictionResponse {
         // Generate cache key
         let cacheKey = AIResponseCache.sleepCacheKey(ageInMonths: ageInMonths, lastWakeTime: lastWakeTime)
         
@@ -369,6 +371,7 @@ class GeminiService {
             You are a pediatric sleep expert. Analyze the sleep patterns and predict the next optimal sleep window.
 
             BABY INFO:
+            - Name: \(childName)
             - Age: \(ageInMonths) months
             - Current time: \(currentTimeStr)
             - Last wake time: \(lastWakeStr)
@@ -377,7 +380,7 @@ class GeminiService {
             \(sleepSummary.isEmpty ? "No recent sleep data" : sleepSummary)
 
             TASK:
-            Based on age-appropriate wake windows (\(ageInMonths) months), predict when the baby will be ready for the next sleep.
+            Based on age-appropriate wake windows (\(ageInMonths) months), predict when \(childName) will be ready for the next sleep.
 
             Age-based wake windows:
             - 0-1 months: 45-60 min
@@ -393,7 +396,7 @@ class GeminiService {
               "nextSweetSpotStart": "HH:MM" (24-hour format, or null if status is "Needs More Data"),
               "nextSweetSpotEnd": "HH:MM" (24-hour format, or null),
               "confidence": "High", "Medium", or "Low",
-              "reasoning": "Brief explanation of the prediction based on patterns and wake windows"
+              "reasoning": "Brief explanation mentioning \(childName) by name"
             }
             """
 

@@ -257,7 +257,7 @@ struct DataDeletionView: View {
             case .mealPlans:
                 // Meal Plan entries
                 for entry in appState.recipeManager.mealPlanEntries {
-                    appState.recipeManager.deleteMealPlanEntry(entry)
+                    try? await appState.recipeManager.deleteMealPlanEntry(entry)
                 }
                 for item in appState.recipeManager.shoppingListItems {
                     appState.recipeManager.deleteShoppingListItem(item)

@@ -241,14 +241,12 @@ struct SageView: View {
                                 ingredients: pairing.ingredients.joined(separator: "\n"),
                                 instructions: """
                                 \(pairing.description)
-                                
+
                                 Why it works: \(pairing.whyItWorks)
                                 """,
                                 tags: ["Sage Suggestion", "Flavor Pairing"]
                             )
-                            Task {
-                                try? await appState.saveRecipe(recipe)
-                            }
+                            try await appState.saveRecipe(recipe)
                         }
                     }
                 case .toddler:
@@ -257,9 +255,7 @@ struct SageView: View {
                             recipe: recipe,
                             themeColor: appState.themeColor,
                             onSave: {
-                                Task {
-                                    try? await appState.saveRecipe(recipe)
-                                }
+                                try await appState.saveRecipe(recipe)
                                 dismiss()
                             },
                             onRegenerate: {
@@ -284,9 +280,7 @@ struct SageView: View {
                                     instructions: strategy.steps.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n\n"),
                                     tags: ["Sage Strategy", "Picky Eater", strategy.strategyType]
                                 )
-                                Task {
-                                    try? await appState.saveRecipe(recipe)
-                                }
+                                try await appState.saveRecipe(recipe)
                             }
                         )
                     }
@@ -492,32 +486,42 @@ struct SageOptionButton: View {
 struct RecipeCardView: View {
     let recipe: Recipe
     let themeColor: Color
-    var onSave: (() -> Void)?
+    var onSave: (() async throws -> Void)?
     var onRegenerate: (() -> Void)?
-    
+
+    @State private var isSaving = false
+    @State private var saveError: String?
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(recipe.title)
                 .font(.title3)
                 .fontWeight(.bold)
                 .foregroundStyle(themeColor)
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 Text("Ingredients").font(.headline)
                 Text(recipe.ingredients)
                     .font(.body)
                     .foregroundStyle(.secondary)
             }
-            
+
             Divider()
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 Text("Instructions").font(.headline)
                 Text(recipe.instructions)
                     .font(.body)
                     .foregroundStyle(.secondary)
             }
-            
+
+            // Show error if save failed
+            if let error = saveError {
+                Text("Error: \(error)")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+
             // Action Buttons
             HStack(spacing: 12) {
                 // Regenerate Button
@@ -534,22 +538,40 @@ struct RecipeCardView: View {
                         .background(themeColor.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
+                    .disabled(isSaving)
                 }
-                
+
                 // Save Button
                 if let onSave = onSave {
-                    Button(action: onSave) {
+                    Button {
+                        Task {
+                            isSaving = true
+                            saveError = nil
+                            do {
+                                try await onSave()
+                            } catch {
+                                saveError = error.localizedDescription
+                            }
+                            isSaving = false
+                        }
+                    } label: {
                         HStack {
-                            Image(systemName: "square.and.arrow.down")
-                            Text("Save")
+                            if isSaving {
+                                ProgressView()
+                                    .tint(.white)
+                            } else {
+                                Image(systemName: "square.and.arrow.down")
+                            }
+                            Text(isSaving ? "Saving..." : "Save")
                         }
                         .font(.headline)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(themeColor)
+                        .background(isSaving ? themeColor.opacity(0.6) : themeColor)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
+                    .disabled(isSaving)
                 }
             }
             .padding(.top, 8)
@@ -565,8 +587,11 @@ struct RecipeCardView: View {
 
 struct FlavorPairingsList: View {
     let response: FlavorPairingResponse
-    var onSave: ((FlavorPairing) -> Void)?
-    
+    var onSave: ((FlavorPairing) async throws -> Void)?
+
+    @State private var savingPairingId: String?
+    @State private var saveErrors: [String: String] = [:]
+
     var body: some View {
         VStack(spacing: 16) {
             Text(response.chefTips)
@@ -574,9 +599,25 @@ struct FlavorPairingsList: View {
                 .italic()
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-            
+
             ForEach(response.pairings, id: \.title) { pairing in
-                FlavorPairingCard(pairing: pairing, onSave: onSave != nil ? { onSave?(pairing) } : nil)
+                FlavorPairingCard(
+                    pairing: pairing,
+                    isSaving: savingPairingId == pairing.title,
+                    saveError: saveErrors[pairing.title],
+                    onSave: onSave != nil ? {
+                        Task {
+                            savingPairingId = pairing.title
+                            saveErrors[pairing.title] = nil
+                            do {
+                                try await onSave?(pairing)
+                            } catch {
+                                saveErrors[pairing.title] = error.localizedDescription
+                            }
+                            savingPairingId = nil
+                        }
+                    } : nil
+                )
             }
         }
     }
@@ -584,10 +625,12 @@ struct FlavorPairingsList: View {
 
 struct FlavorPairingCard: View {
     let pairing: FlavorPairing
+    var isSaving: Bool = false
+    var saveError: String?
     var onSave: (() -> Void)?
-    
+
     @State private var isSaved = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -598,24 +641,31 @@ struct FlavorPairingCard: View {
                 Image(systemName: "fork.knife")
                     .foregroundStyle(.purple.opacity(0.5))
             }
-            
+
             Text(pairing.description)
                 .font(.body)
                 .fontWeight(.medium)
-            
+
             Divider()
-            
+
             HStack(alignment: .top, spacing: 8) {
                 Image(systemName: "lightbulb.fill")
                     .font(.caption)
                     .foregroundStyle(.orange)
                     .padding(.top, 2)
-                
+
                 Text(pairing.whyItWorks)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-            
+
+            // Show error if save failed
+            if let error = saveError {
+                Text("Error: \(error)")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+
             // Save Button
             if let onSave = onSave {
                 Button {
@@ -623,8 +673,13 @@ struct FlavorPairingCard: View {
                     withAnimation { isSaved = true }
                 } label: {
                     HStack {
-                        Image(systemName: isSaved ? "checkmark.circle.fill" : "square.and.arrow.down")
-                        Text(isSaved ? "Saved!" : "Save to Recipes")
+                        if isSaving {
+                            ProgressView()
+                                .tint(.purple)
+                        } else {
+                            Image(systemName: isSaved ? "checkmark.circle.fill" : "square.and.arrow.down")
+                        }
+                        Text(isSaving ? "Saving..." : isSaved ? "Saved!" : "Save to Recipes")
                     }
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(isSaved ? .green : .purple)
@@ -633,7 +688,7 @@ struct FlavorPairingCard: View {
                     .background(isSaved ? Color.green.opacity(0.1) : Color.purple.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .disabled(isSaved)
+                .disabled(isSaved || isSaving)
                 .padding(.top, 4)
             }
         }
@@ -770,10 +825,12 @@ struct PickyEaterStrategyCard: View {
     @Binding var selectedIndex: Int
     let themeColor: Color
     var onRegenerate: (() -> Void)?
-    var onSave: ((PickyEaterStrategyResponse) -> Void)?
-    
+    var onSave: ((PickyEaterStrategyResponse) async throws -> Void)?
+
     @State private var isSaved = false
-    
+    @State private var isSaving = false
+    @State private var saveError: String?
+
     private var currentStrategy: PickyEaterStrategyResponse {
         strategies.indices.contains(selectedIndex) ? strategies[selectedIndex] : strategies[0]
     }
@@ -848,7 +905,14 @@ struct PickyEaterStrategyCard: View {
             }
             
             Divider()
-            
+
+            // Show error if save failed
+            if let error = saveError {
+                Text("Error: \(error)")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+
             // Action Buttons
             HStack(spacing: 12) {
                 // Regenerate Button
@@ -867,26 +931,41 @@ struct PickyEaterStrategyCard: View {
                         .background(themeColor.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
+                    .disabled(isSaving)
                 }
-                
+
                 // Save to Recipes Button
                 if let onSave = onSave {
                     Button {
-                        onSave(currentStrategy)
-                        withAnimation { isSaved = true }
+                        Task {
+                            isSaving = true
+                            saveError = nil
+                            do {
+                                try await onSave(currentStrategy)
+                                withAnimation { isSaved = true }
+                            } catch {
+                                saveError = error.localizedDescription
+                            }
+                            isSaving = false
+                        }
                     } label: {
                         HStack {
-                            Image(systemName: isSaved ? "checkmark.circle.fill" : "square.and.arrow.down")
-                            Text(isSaved ? "Saved!" : "Save Plan")
+                            if isSaving {
+                                ProgressView()
+                                    .tint(.white)
+                            } else {
+                                Image(systemName: isSaved ? "checkmark.circle.fill" : "square.and.arrow.down")
+                            }
+                            Text(isSaving ? "Saving..." : isSaved ? "Saved!" : "Save Plan")
                         }
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(isSaved ? .green : .white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                        .background(isSaved ? Color.green.opacity(0.1) : themeColor)
+                        .background(isSaving ? themeColor.opacity(0.6) : isSaved ? Color.green.opacity(0.1) : themeColor)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                    .disabled(isSaved)
+                    .disabled(isSaved || isSaving)
                 }
             }
         }
@@ -896,6 +975,7 @@ struct PickyEaterStrategyCard: View {
         .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
         .onChange(of: selectedIndex) { _, _ in
             isSaved = false
+            saveError = nil
         }
     }
 }

@@ -9,6 +9,17 @@ import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
+enum RecipeDifficulty: String, Codable {
+    case easy = "Easy"
+    case medium = "Medium"
+    case hard = "Hard"
+}
+
+enum RecipeSourceType: String, Codable {
+    case manual = "Manual"
+    case aiGenerated = "AI Generated"
+}
+
 struct Recipe: Identifiable, Codable {
     @DocumentID var id: String?
     var ownerId: String
@@ -20,6 +31,8 @@ struct Recipe: Identifiable, Codable {
     var tags: [String] = []
     var mealTypes: [MealType] = []
     var createdAt: Date = Date()
+    var difficulty: RecipeDifficulty?
+    var sourceType: RecipeSourceType = .manual
     
     // External storage logic is handled by services, but we keep the property for now.
     // In a real Firestore app, we would store the URL string here, not the Data.
@@ -37,7 +50,9 @@ struct Recipe: Identifiable, Codable {
          mealTypes: [MealType] = [],
          imageData: Data? = nil,
          thumbnailData: Data? = nil,
-         createdAt: Date = Date()) {
+         createdAt: Date = Date(),
+         difficulty: RecipeDifficulty? = nil,
+         sourceType: RecipeSourceType = .manual) {
         self.id = id
         self.ownerId = ownerId
         self.title = title
@@ -48,6 +63,8 @@ struct Recipe: Identifiable, Codable {
         self.imageData = imageData
         self.thumbnailData = thumbnailData
         self.createdAt = createdAt
+        self.difficulty = difficulty
+        self.sourceType = sourceType
     }
     
     // MARK: - Helpers

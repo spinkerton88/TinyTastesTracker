@@ -182,7 +182,7 @@ struct SettingsPage: View {
                 
                 Section("Notifications") {
                     NavigationLink {
-                        NotificationSettingsView()
+                        NotificationSettingsView(notificationManager: appState.notificationManager)
                     } label: {
                         Label("Notification Settings", systemImage: "bell.badge.fill")
                     }

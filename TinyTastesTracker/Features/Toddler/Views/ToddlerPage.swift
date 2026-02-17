@@ -29,6 +29,7 @@ struct ToddlerPage: View {
 
 struct MealBuilderView: View {
     @Bindable var appState: AppState
+    @Environment(\.errorPresenter) private var errorPresenter
     
     @State private var selectedFoods: Set<String> = []
     @State private var showingSaveSheet = false

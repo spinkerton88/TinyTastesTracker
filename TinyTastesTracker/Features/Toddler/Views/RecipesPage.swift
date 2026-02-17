@@ -169,10 +169,17 @@ struct DayMealCard: View {
                             showingItemPicker = true
                         },
                         onRemove: { entry in
-                            appState.removeMealPlanEntry(entry)
-                            // Regenerate shopping list
-                            if let ownerId = appState.currentOwnerId {
-                                appState.generateShoppingListFromMealPlan()
+                            Task {
+                                do {
+                                    try await appState.removeMealPlanEntry(entry)
+                                    // Regenerate shopping list only after successful delete
+                                    if let ownerId = appState.currentOwnerId {
+                                        appState.generateShoppingListFromMealPlan()
+                                    }
+                                } catch {
+                                    // Show error to user if delete fails
+                                    print("Error removing meal plan entry: \(error)")
+                                }
                             }
                         }
                     )
@@ -367,46 +374,58 @@ struct ItemPickerSheet: View {
     }
 
     private func addRecipeToMealPlan(_ recipe: Recipe) {
-        // Get existing entries for this meal to determine sortOrder
-        let existingEntries = appState.getMealPlanEntries(for: date)[mealType] ?? []
-        let nextSortOrder = existingEntries.count
+        Task {
+            do {
+                // Get existing entries for this meal to determine sortOrder
+                let existingEntries = appState.getMealPlanEntries(for: date)[mealType] ?? []
+                let nextSortOrder = existingEntries.count
 
-        if let ownerId = appState.currentOwnerId, let childId = appState.currentChildId {
-            let entry = MealPlanEntry(
-                ownerId: ownerId,
-                childId: childId,
-                date: date,
-                mealType: mealType,
-                recipeId: recipe.id ?? UUID().uuidString, // Fallback if ID invalid, though should be valid from DB
-                recipeName: recipe.title,
-                sortOrder: nextSortOrder
-            )
-            appState.addMealPlanEntry(entry)
+                if let ownerId = appState.currentOwnerId, let childId = appState.currentChildId {
+                    let entry = MealPlanEntry(
+                        ownerId: ownerId,
+                        childId: childId,
+                        date: date,
+                        mealType: mealType,
+                        recipeId: recipe.id ?? UUID().uuidString, // Fallback if ID invalid, though should be valid from DB
+                        recipeName: recipe.title,
+                        sortOrder: nextSortOrder
+                    )
+                    try await appState.addMealPlanEntry(entry)
 
-            // Regenerate shopping list
-            appState.generateShoppingListFromMealPlan()
+                    // Regenerate shopping list only after successful save
+                    appState.generateShoppingListFromMealPlan()
+                }
+                dismiss()
+            } catch {
+                errorPresenter.present(error)
+            }
         }
-        dismiss()
     }
 
     private func addFoodToMealPlan(_ food: FoodItem) {
-        // Get existing entries for this meal to determine sortOrder
-        let existingEntries = appState.getMealPlanEntries(for: date)[mealType] ?? []
-        let nextSortOrder = existingEntries.count
+        Task {
+            do {
+                // Get existing entries for this meal to determine sortOrder
+                let existingEntries = appState.getMealPlanEntries(for: date)[mealType] ?? []
+                let nextSortOrder = existingEntries.count
 
-        if let ownerId = appState.currentOwnerId, let childId = appState.currentChildId {
-            let entry = MealPlanEntry(
-                ownerId: ownerId,
-                childId: childId,
-                date: date,
-                mealType: mealType,
-                foodId: food.id,
-                foodName: food.name,
-                sortOrder: nextSortOrder
-            )
-            appState.addMealPlanEntry(entry)
+                if let ownerId = appState.currentOwnerId, let childId = appState.currentChildId {
+                    let entry = MealPlanEntry(
+                        ownerId: ownerId,
+                        childId: childId,
+                        date: date,
+                        mealType: mealType,
+                        foodId: food.id,
+                        foodName: food.name,
+                        sortOrder: nextSortOrder
+                    )
+                    try await appState.addMealPlanEntry(entry)
+                }
+                dismiss()
+            } catch {
+                errorPresenter.present(error)
+            }
         }
-        dismiss()
     }
 }
 
@@ -454,20 +473,26 @@ struct RecipePickerSheet: View {
                 } else {
                     List(filteredRecipes) { recipe in
                         Button {
-                            if let ownerId = appState.currentOwnerId, let childId = appState.currentChildId {
-                                let entry = MealPlanEntry(
-                                    ownerId: ownerId,
-                                    childId: childId,
-                                    date: date,
-                                    mealType: mealType,
-                                    recipeId: recipe.id ?? UUID().uuidString,
-                                    recipeName: recipe.title
-                                )
-                                appState.addMealPlanEntry(entry)
-                                // Regenerate shopping list
-                                appState.generateShoppingListFromMealPlan()
+                            Task {
+                                do {
+                                    if let ownerId = appState.currentOwnerId, let childId = appState.currentChildId {
+                                        let entry = MealPlanEntry(
+                                            ownerId: ownerId,
+                                            childId: childId,
+                                            date: date,
+                                            mealType: mealType,
+                                            recipeId: recipe.id ?? UUID().uuidString,
+                                            recipeName: recipe.title
+                                        )
+                                        try await appState.addMealPlanEntry(entry)
+                                        // Regenerate shopping list only after successful save
+                                        appState.generateShoppingListFromMealPlan()
+                                    }
+                                    dismiss()
+                                } catch {
+                                    errorPresenter.present(error)
+                                }
                             }
-                            dismiss()
                         } label: {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(recipe.title)
@@ -887,9 +912,7 @@ struct ShoppingListView: View {
                                     category: category,
                                     source: .manual
                                 )
-                                Task {
-                                    try? await appState.addShoppingListItem(item)
-                                }
+                                try await appState.addShoppingListItem(item)
                             }
                         }
                     }
@@ -910,9 +933,7 @@ struct ShoppingListView: View {
                                     category: category,
                                     source: .manual
                                 )
-                                Task {
-                                    try? await appState.addShoppingListItem(item)
-                                }
+                                try await appState.addShoppingListItem(item)
                             }
                             newItemName = ""
                             newItemQuantity = ""
@@ -1052,23 +1073,23 @@ struct AddItemDetailSheet: View {
     @Binding var quantity: String
     @Binding var unit: String
     @Bindable var appState: AppState
-    let onAdd: () -> Void
-    
+    let onAdd: () async throws -> Void
+
     var body: some View {
         NavigationStack {
             Form {
                 Section("Item Details") {
                     TextField("Item name", text: $itemName)
-                    
+
                     HStack {
                         TextField("Quantity (optional)", text: $quantity)
                             .keyboardType(.decimalPad)
-                        
+
                         TextField("Unit", text: $unit)
                             .frame(maxWidth: 100)
                     }
                 }
-                
+
                 Section {
                     Text("Examples: 2 cups, 1 lb, 3 cans")
                         .font(.caption)
@@ -1083,8 +1104,14 @@ struct AddItemDetailSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
-                        onAdd()
-                        dismiss()
+                        Task {
+                            do {
+                                try await onAdd()
+                                dismiss()
+                            } catch {
+                                errorPresenter.present(error)
+                            }
+                        }
                     }
                     .disabled(itemName.isEmpty)
                 }
@@ -1111,13 +1138,17 @@ struct FoodPickerSheet: View {
         NavigationStack {
             List(filteredFoods) { food in
                 Button {
-                    if let ownerId = appState.currentOwnerId {
-                        let item = ShoppingListItem(ownerId: ownerId, name: food.name, source: .manual)
-                        Task {
-                            try? await appState.addShoppingListItem(item)
+                    Task {
+                        do {
+                            if let ownerId = appState.currentOwnerId {
+                                let item = ShoppingListItem(ownerId: ownerId, name: food.name, source: .manual)
+                                try await appState.addShoppingListItem(item)
+                            }
+                            dismiss()
+                        } catch {
+                            errorPresenter.present(error)
                         }
                     }
-                    dismiss()
                 } label: {
                     HStack {
                         Text(food.emoji)
@@ -1791,14 +1822,20 @@ struct GenericRecipePickerSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.errorPresenter) private var errorPresenter
     @Bindable var appState: AppState
-    let onSelect: (Recipe) -> Void
-    
+    let onSelect: (Recipe) async throws -> Void
+
     var body: some View {
         NavigationStack {
             List(appState.recipes) { recipe in
                 Button {
-                    onSelect(recipe)
-                    dismiss()
+                    Task {
+                        do {
+                            try await onSelect(recipe)
+                            dismiss()
+                        } catch {
+                            errorPresenter.present(error)
+                        }
+                    }
                 } label: {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(recipe.title)

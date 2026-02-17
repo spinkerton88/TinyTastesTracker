@@ -41,9 +41,10 @@ class AppState {
 
     // MARK: - Initialization
 
-    init(authenticationManager: AuthenticationManager = AuthenticationManager()) {
-        self.authenticationManager = authenticationManager
-        self.profileSharingManager = ProfileSharingManager(authenticationManager: authenticationManager)
+    init(authenticationManager: AuthenticationManager? = nil) {
+        let authManager = authenticationManager ?? AuthenticationManager()
+        self.authenticationManager = authManager
+        self.profileSharingManager = ProfileSharingManager(authenticationManager: authManager)
 
         // Initialize managers with dependencies
         self.newbornManager = NewbornManager(notificationManager: notificationManager, errorPresenter: errorPresenter)
@@ -573,12 +574,12 @@ class AppState {
         return recipeManager.createCustomFoodFromRecipe(recipe, ownerId: ownerId)
     }
 
-    func addMealPlanEntry(_ entry: MealPlanEntry) {
-        recipeManager.addMealPlanEntry(entry)
+    func addMealPlanEntry(_ entry: MealPlanEntry) async throws {
+        try await recipeManager.addMealPlanEntry(entry)
     }
 
-    func removeMealPlanEntry(_ entry: MealPlanEntry) {
-        recipeManager.deleteMealPlanEntry(entry)
+    func removeMealPlanEntry(_ entry: MealPlanEntry) async throws {
+        try await recipeManager.deleteMealPlanEntry(entry)
     }
 
     func getMealPlanEntries(for date: Date) -> [MealType: [MealPlanEntry]] {
@@ -652,9 +653,11 @@ class AppState {
     }
 
     func predictNextSleepWindow() async throws -> SleepPredictionResponse {
+        let childName = userProfile?.name ?? "Baby"
         let prediction = try await aiServiceManager.predictNextSleepWindow(
             sleepLogs: newbornManager.sleepLogs,
-            ageInMonths: userProfile?.ageInMonths ?? 3
+            ageInMonths: userProfile?.ageInMonths ?? 3,
+            childName: childName
         )
 
         // Save prediction to widget

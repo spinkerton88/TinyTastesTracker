@@ -6,6 +6,7 @@
 
 import Foundation
 import SwiftUI
+import UIKit
 import FirebaseFirestore
 import FirebaseAnalytics
 import Combine
@@ -73,14 +74,29 @@ class RecipeManager {
             throw FirebaseError.networkUnavailable
         }
 
+        var recipeToSave = recipe
         let isNew = recipe.id == nil
 
+        // Compress images to avoid Firestore document size limit (1 MB)
+        if let imageData = recipeToSave.imageData, let image = UIImage(data: imageData) {
+            // Compress to max 400 KB for full image
+            if let compressedData = compressImage(image, maxSizeKB: 400) {
+                recipeToSave.imageData = compressedData
+            }
+        }
+        if let thumbnailData = recipeToSave.thumbnailData, let thumbnail = UIImage(data: thumbnailData) {
+            // Compress to max 100 KB for thumbnail
+            if let compressedData = compressImage(thumbnail, maxSizeKB: 100) {
+                recipeToSave.thumbnailData = compressedData
+            }
+        }
+
         try await withRetry(maxAttempts: 3) {
-            try await withTimeout(seconds: 10) {
-                if recipe.id != nil {
-                    try await self.recipeService.update(recipe)
+            try await withTimeout(seconds: 15) {
+                if recipeToSave.id != nil {
+                    try await self.recipeService.update(recipeToSave)
                 } else {
-                    try await self.recipeService.add(recipe)
+                    try await self.recipeService.add(recipeToSave)
                 }
             }
         }
@@ -93,6 +109,40 @@ class RecipeManager {
                 "source": recipe.sourceType == .aiGenerated ? "ai" : "manual"
             ])
         }
+    }
+
+    private func compressImage(_ image: UIImage, maxSizeKB: Int) -> Data? {
+        let maxBytes = maxSizeKB * 1024
+        var compression: CGFloat = 0.8
+
+        guard var data = image.jpegData(compressionQuality: compression) else { return nil }
+
+        // Reduce quality until under size limit
+        while data.count > maxBytes && compression > 0.1 {
+            compression -= 0.1
+            if let newData = image.jpegData(compressionQuality: compression) {
+                data = newData
+            } else {
+                break
+            }
+        }
+
+        // If still too large, resize the image
+        if data.count > maxBytes {
+            let ratio = sqrt(CGFloat(maxBytes) / CGFloat(data.count))
+            let newSize = CGSize(width: image.size.width * ratio, height: image.size.height * ratio)
+
+            UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+            let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+
+            if let resizedImage = resizedImage {
+                data = resizedImage.jpegData(compressionQuality: 0.8) ?? data
+            }
+        }
+
+        return data
     }
 
     func deleteRecipe(_ recipe: Recipe) {
@@ -316,7 +366,7 @@ class RecipeManager {
 
     // MARK: - Meal Planning
 
-    func addMealPlanEntry(_ entry: MealPlanEntry) {
+    func addMealPlanEntry(_ entry: MealPlanEntry) async throws {
         // Optimistic Update
         var optimisticEntry = entry
         let entryId = optimisticEntry.id ?? UUID().uuidString
@@ -326,41 +376,34 @@ class RecipeManager {
         mealPlanEntries.append(optimisticEntry)
 
         // Perform Firestore save - now properly async
-        Task {
-            do {
-                // Use the ID generated locally to ensure consistency
-                try await self.mealPlanService.add(optimisticEntry, withId: entryId)
-            } catch {
-                print("Error saving meal plan entry: \(error)")
-                // Rollback on failure
-                await MainActor.run {
-                    if let index = self.mealPlanEntries.firstIndex(where: { $0.id == entryId }) {
-                        self.mealPlanEntries.remove(at: index)
-                    }
-                }
+        do {
+            // Use the ID generated locally to ensure consistency
+            try await self.mealPlanService.add(optimisticEntry, withId: entryId)
+        } catch {
+            print("Error saving meal plan entry: \(error)")
+            // Rollback on failure
+            if let index = self.mealPlanEntries.firstIndex(where: { $0.id == entryId }) {
+                self.mealPlanEntries.remove(at: index)
             }
+            throw error
         }
     }
 
-    func deleteMealPlanEntry(_ entry: MealPlanEntry) {
+    func deleteMealPlanEntry(_ entry: MealPlanEntry) async throws {
         guard let id = entry.id else { return }
 
         // Optimistic Update - remove immediately
-        if let index = mealPlanEntries.firstIndex(where: { $0.id == id }) {
-            let removedEntry = mealPlanEntries.remove(at: index)
+        guard let index = mealPlanEntries.firstIndex(where: { $0.id == id }) else { return }
+        let removedEntry = mealPlanEntries.remove(at: index)
 
-            // Perform Firestore delete
-            Task {
-                do {
-                    try await self.mealPlanService.delete(id: id)
-                } catch {
-                    print("Error deleting meal plan entry: \(error)")
-                    // Rollback on failure - add it back
-                    await MainActor.run {
-                        self.mealPlanEntries.append(removedEntry)
-                    }
-                }
-            }
+        // Perform Firestore delete
+        do {
+            try await self.mealPlanService.delete(id: id)
+        } catch {
+            print("Error deleting meal plan entry: \(error)")
+            // Rollback on failure - add it back
+            self.mealPlanEntries.append(removedEntry)
+            throw error
         }
     }
 

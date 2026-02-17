@@ -30,13 +30,11 @@ class NewbornDashboardViewModel {
         updateStatus()
     }
 
-    deinit {
-        // Cancel task in nonisolated context
-        let task = updateTask
-        Task { @MainActor in
-            task?.cancel()
-        }
-    }
+    // deinit is not needed for Task cancellation if the task is stored as a property and the object is deallocated.
+    // However, explicit cancellation is good practice but tricky with actors.
+    // For @Observable class, we'll rely on the fact that if the view model is released,
+    // the task will naturally stop referencing 'self' (via [weak self]) and exit its loop.
+    // The previous implementation was accessing a MainActor property (updateTask) from a non-isolated deinit.
 
     private func setupSmartUpdates() {
         updateTask = Task { @MainActor [weak self] in
