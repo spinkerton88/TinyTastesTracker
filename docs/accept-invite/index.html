@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiny Tastes Tracker - Accept Invitation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        .icon {
+            width: 100px;
+            height: 100px;
+            background-color: #7AA288; /* App Theme Color */
+            border-radius: 22px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #86868b;
+            margin-bottom: 30px;
+        }
+        .code-display {
+            background: #f5f5f7;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 24px;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            color: #1d1d1f;
+            font-weight: bold;
+        }
+        .button {
+            display: inline-block;
+            background-color: #7AA288;
+            color: white;
+            text-decoration: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            box-sizing: border-box;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
+            background-color: #5C7A66;
+        }
+        .fallback {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">TTT</div>
+        <h1>Invitation Received</h1>
+        <p>You've been invited to view a child's profile on Tiny Tastes Tracker.</p>
+        
+        <div id="code-container" style="display: none;">
+            <p style="margin-bottom: 8px;">Your invitation code is:</p>
+            <div class="code-display" id="invite-code">------</div>
+        </div>
+
+        <a href="#" id="open-app-btn" class="button">Open in App</a>
+        
+        <p class="fallback">
+            If the app doesn't open automatically, please open Tiny Tastes Tracker, go to <strong>Settings &rarr; Family Sharing</strong> and enter your code.
+        </p>
+    </div>
+
+    <script>
+        // Extract the code from the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        const btn = document.getElementById('open-app-btn');
+        const customUrl = "tinytastes://accept-invite" + (code ? "?code=" + code : "");
+
+        if (code) {
+            document.getElementById('code-container').style.display = 'block';
+            document.getElementById('invite-code').textContent = code;
+            
+            // Try to redirect automatically after a brief delay
+            setTimeout(() => {
+                window.location.href = customUrl;
+            }, 1000);
+        }
+        
+        // Setup button click
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = customUrl;
+        });
+    </script>
+</body>
+</html>
