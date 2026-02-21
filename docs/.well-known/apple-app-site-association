@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "ZMFU99W6M4.com.tinytastes.tracker",
+        "paths": [
+          "/TinyTastesTracker/accept-invite/*",
+          "/accept-invite/*"
+        ]
+      }
+    ]
+  }
+}

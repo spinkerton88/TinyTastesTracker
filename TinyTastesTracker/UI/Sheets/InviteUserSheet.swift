@@ -12,7 +12,8 @@ struct InviteUserSheet: View {
     let profile: ChildProfile
     @Environment(\.dismiss) private var dismiss
 
-    @State private var email = ""
+    @State private var selectedRole = ProfileRole.coparent
+    @State private var expirationOption = ExpirationOption.never
     @State private var isGenerating = false
     @State private var error: String?
     @State private var invitation: ProfileInvitation?
@@ -56,9 +57,11 @@ struct InviteUserSheet: View {
                                 .cornerRadius(12)
                             }
 
-                            Text("Code expires in 7 days")
-                                .font(.caption)
-                                .foregroundStyle(.tertiary)
+                            if let expiresAt = invitation.accessExpiresAt {
+                                Text("Access expires on \(expiresAt.formatted(date: .abbreviated, time: .shortened))")
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
+                            }
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical)
@@ -87,7 +90,7 @@ struct InviteUserSheet: View {
                         }
                         .buttonStyle(.bordered)
                     } footer: {
-                        Text("They can enter this code in Settings → Family → Accept Invitation")
+                        Text("When they tap the link, the app will automatically open and prompt them to accept.")
                     }
                 } else {
                     // Initial state - generate invitation
@@ -100,23 +103,44 @@ struct InviteUserSheet: View {
                                     .fontWeight(.semibold)
                             }
 
-                            Text("Enter the email address of the person you want to invite. They'll receive an invitation code.")
+                            Text("Generate an invitation code or link to share with the person you want to invite.")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
                         .padding(.vertical, 4)
                     }
 
+
+
                     Section {
-                        TextField("Email address", text: $email)
-                            .textContentType(.emailAddress)
-                            .keyboardType(.emailAddress)
-                            .autocapitalization(.none)
+                        Picker("Access Level", selection: $selectedRole) {
+                            Text("Co-Parent (Full Access)")
+                                .tag(ProfileRole.coparent)
+                            Text("Caregiver (View & Log)")
+                                .tag(ProfileRole.caregiver)
+                        }
+                        
+                        if selectedRole == .caregiver {
+                            Picker("Expires", selection: $expirationOption) {
+                                Text("Never")
+                                    .tag(ExpirationOption.never)
+                                Text("In 24 Hours")
+                                    .tag(ExpirationOption.oneDay)
+                                Text("In 1 Week")
+                                    .tag(ExpirationOption.oneWeek)
+                                Text("In 1 Month")
+                                    .tag(ExpirationOption.oneMonth)
+                            }
+                        }
                     } header: {
-                        Text("Invite")
+                        Text("Permissions")
                     } footer: {
-                        Text("They'll need to create an account with this email to accept the invitation.")
-                    }
+                         if selectedRole == .coparent {
+                             Text("Co-Parents have full access to view, edit, and add all data, including tracking history.")
+                         } else {
+                             Text("Caregivers can view the dashboard and add logs, but their access can automatically expire.")
+                         }
+                     }
 
                     if let error = error {
                         Section {
@@ -143,10 +167,10 @@ struct InviteUserSheet: View {
 
                 if invitation == nil {
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Send Invite") {
+                        Button("Generate Link") {
                             generateInvitation()
                         }
-                        .disabled(isGenerating || email.isEmpty || !isValidEmail(email))
+                        .disabled(isGenerating)
                         .fontWeight(.semibold)
                     }
                 }
@@ -162,28 +186,28 @@ struct InviteUserSheet: View {
         }
     }
 
-    private func isValidEmail(_ email: String) -> Bool {
-        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)
-        return emailPredicate.evaluate(with: email)
-    }
-
     private var shareMessage: String {
         guard let invitation = invitation else { return "" }
 
-        return """
-        You're invited to view and edit \(profile.name)'s profile in Tiny Tastes Tracker!
-
-        Invitation Code: \(invitation.inviteCode)
-
-        To accept:
-        1. Download Tiny Tastes Tracker (if you haven't already)
-        2. Create an account with \(invitation.invitedEmail)
-        3. The invitation will appear automatically, or go to Settings → Family → Accept Invitation
-        4. Enter the code above
-
-        This invitation expires in 7 days.
+        let link = "https://spinkerton88.github.io/TinyTastesTracker/accept-invite?code=\(invitation.inviteCode)"
+        
+        var message = """
+        You're invited to view \(profile.name)'s profile in Tiny Tastes Tracker!
+        
+        Tap this link to accept your invitation:
+        \(link)
+        
+        If the link doesn't work:
+        1. Download Tiny Tastes Tracker
+        2. Create an account
+        3. Go to Settings → Family sharing and enter code: \(invitation.inviteCode)
         """
+        
+        if let expiresAt = invitation.accessExpiresAt {
+            message += "\n\nThis invitation and your access will expire on \(expiresAt.formatted(date: .abbreviated, time: .shortened))."
+        }
+        
+        return message
     }
 
     @MainActor
@@ -193,7 +217,13 @@ struct InviteUserSheet: View {
 
         Task {
             do {
-                let newInvitation = try await appState.inviteUser(toProfile: profile.id ?? "", email: email)
+                let expiresAt = selectedRole == .caregiver ? expirationOption.date : nil
+                
+                let newInvitation = try await appState.inviteUser(
+                    toProfile: profile.id ?? "",
+                    role: selectedRole,
+                    accessExpiresAt: expiresAt
+                )
 
                 await MainActor.run {
                     invitation = newInvitation
@@ -222,6 +252,22 @@ struct InviteUserSheet: View {
             withAnimation {
                 showCopiedConfirmation = false
             }
+        }
+    }
+}
+
+enum ExpirationOption {
+    case never
+    case oneDay
+    case oneWeek
+    case oneMonth
+    
+    var date: Date? {
+        switch self {
+        case .never: return nil
+        case .oneDay: return Calendar.current.date(byAdding: .day, value: 1, to: Date())
+        case .oneWeek: return Calendar.current.date(byAdding: .day, value: 7, to: Date())
+        case .oneMonth: return Calendar.current.date(byAdding: .month, value: 1, to: Date())
         }
     }
 }

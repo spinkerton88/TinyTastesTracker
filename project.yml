@@ -32,6 +32,8 @@ targets:
       properties:
         com.apple.security.application-groups:
           - group.com.tinytastes.tracker
+        com.apple.developer.associated-domains:
+          - applinks:spinkerton88.github.io
     dependencies:
       - target: TinyTastesWidget
       - package: GoogleGenerativeAI
