@@ -18,6 +18,7 @@ struct InviteUserSheet: View {
     @State private var error: String?
     @State private var invitation: ProfileInvitation?
     @State private var showCopiedConfirmation = false
+    @State private var showShareSheet = false
 
     var body: some View {
         NavigationStack {
@@ -68,7 +69,9 @@ struct InviteUserSheet: View {
                     }
 
                     Section {
-                        ShareLink(item: shareMessage) {
+                        Button {
+                            showShareSheet = true
+                        } label: {
                             Label("Share via iMessage, WhatsApp, etc.", systemImage: "square.and.arrow.up")
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
@@ -183,6 +186,19 @@ struct InviteUserSheet: View {
                         .cornerRadius(12)
                 }
             }
+            .sheet(isPresented: $showShareSheet) {
+                if let invitation = invitation, let url = URL(string: "https://spinkerton88.github.io/TinyTastesTracker/accept-invite?code=\(invitation.inviteCode)") {
+                    ShareSheet(items: [
+                        LinkMetadataProvider(
+                            url: url,
+                            title: "Join \(profile.name) on Tiny Tastes Tracker!",
+                            fallbackText: shareMessage
+                        ),
+                        shareMessage
+                    ])
+                    .presentationDetents([.medium, .large])
+                }
+            }
         }
     }
 
@@ -254,6 +270,7 @@ struct InviteUserSheet: View {
             }
         }
     }
+
 }
 
 enum ExpirationOption {
